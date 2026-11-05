@@ -1,6 +1,8 @@
 # Controller separation implementation record
 
-> Current W1 status: implementation candidate; the owner-authorized additional 30-minute/three-cycle trial also stopped incomplete. All three candidates passed 31 focused, 21 quality, 484 full tests and real Chrome/frozen F1 validation, but independent review rejected documentation provenance. Six actual cycles are preserved in total. W01/W17 remain incomplete; no PR or target merge. Earlier entries below are historical.
+> Current W1 status: the bounded recovery pilot reached `ready_for_merge_approval` at CoRA `81b1e21`: actual worker, checks, Chrome, independent review, automatic commit/push, exact-head push CI and report all passed. The original 3600-second/five-cycle grant consumed two cycles. Frozen W1 evaluation passed 18/18 and independent milestone review passed all 12 criteria; no PR or merge.
+
+> Historical status before the 60-minute trial: implementation candidate; the owner-authorized additional 30-minute/three-cycle trial also stopped incomplete. All three candidates passed 31 focused, 21 quality, 484 full tests and real Chrome/frozen F1 validation, but independent review rejected documentation provenance. Six actual cycles are preserved in total. W01/W17 remain incomplete; no PR or target merge. Earlier entries below are historical.
 
 ## 2026-11-05 — independent repository
 
@@ -396,3 +398,44 @@ regression case covers rewritten and unpinned raw evidence.
 Pinned-evidence recovery re-review passed all five criteria with no blockers or
 decisions; 63 regression tests passed. This authorizes no new allowance and makes
 no live acceptance claim. Recovery resumes only under the original fixed deadline.
+
+
+### Actual bounded recovery pilot reached the handoff gate
+
+The recovery reused the original start/deadline (3600 seconds / max five cycles),
+including the first timed-out review; it completed at cumulative cycle **2**.
+The child started from manually preserved incomplete WIP a037b1b. Bootstrap
+controller repair and WIP preservation preceded this final child; they are not
+claimed as unattended work. Within the child, the controller performed actual
+worker → focused 31 / quality 21 / full 484 / diff check → real Chrome/frozen F1
+(13 protected, four boundary comparisons, ten invalid inputs) → independent
+five-criterion pass → commit/push **81b1e217606ea78252b93d132660c1ca0102f4f0** →
+exact-head push `Test/test` CI **42126115535** → immutable report →
+`ready_for_merge_approval`, with no manual stage handoff or copied result.
+Current full base-to-head scope remains the allowed test and affected docs;
+the final child refined docs around the already preserved K01 implementation.
+
+Report: `.local/w1-approved-trial-60m-recovery/reports/d52f50ed2f008ea47546c325de4dba9472e8831708191a548309f67d2e10559c.json`.
+Its target is unchanged foundation **fe4aac5**, source is **81b1e21**, and
+proposed merge is an owner decision. All historical failures remain unchanged.
+No PR was created; neither CoRA target nor dev-workflow main was merged.
+Final W1 scenario evaluation and independent milestone audit remain separate
+from the CoRA task reviewer; their observed results are recorded below.
+
+Final frozen W1 evaluator: **PASS, 18/18 scenarios, 63 tests passed in
+57.855 seconds** (`evaluation-60m-final.json`). W01/W17 use the actual final
+child, not synthetic model/GitHub fixtures. Independent final milestone review
+is separate and remains pending until its final response is recorded. Only
+reporting docs changed after evaluation; controller/tests/contracts are unchanged.
+
+
+Final independent W1 milestone audit (`60m-milestone-review.json`) passed **all
+12 criteria**, with zero blockers/decisions. It inspected the frozen contract,
+actual source/diff, prior failures and repair records, final source/environment
+bindings, browser, exact-head CI, immutable report, cumulative budget and explicit
+bootstrap/manual boundaries. W1 revision 2 is implemented and verified within
+this constrained pilot scope. General semantic reliability, complete UI coverage,
+OS isolation and monetary measurement are not established. CoRA **81b1e21** and
+controller implementation remain on dedicated branches awaiting owner merge
+authorization; neither main nor CoRA foundation moved. No further live cycles
+were used or allowance renewed after cycle two completed.

@@ -65,7 +65,7 @@ F1 completed synthetic verification and merged in
 review/publication handoffs and a CI prerequisite fix; this was not a fully
 unattended run. Its contracts and run histories remain preserved.
 
-W1 revision 2 has an **opt-in implementation candidate; live acceptance remains incomplete after the additional authorized trial**:
+W1 revision 2 has an **opt-in verified implementation: 18/18 scenarios, 63 tests and all 12 final independent-review criteria passed**:
 [task contract](contracts/dev-workflow/W1-reviewable-delivery.md),
 [design and status](docs/01-reviewable-delivery-design.md).
 `tools/delivery_loop.py` adds actual Chrome execution, version-bound evidence,
@@ -110,4 +110,8 @@ The owner approved a further bounded 60-minute/five-cycle actual trial, recorded
 in `projects/cora-w1-approved-trial-60m.json`. Its first review hit a phase cap;
 the recovery profile preserves the same deadline/consumed cycles and guarded
 missing-review evidence. This does not automatically renew either trial's budget.
-Current actual outcome is recorded in the implementation record.
+The recovery reached `ready_for_merge_approval` at CoRA `81b1e21`, using two cumulative cycles with the original deadline. Its actual checks, Chrome, independent review, automatic commit/push, exact-head push CI and report passed; no PR or merge. Bootstrap repairs and prior failures remain recorded in the implementation record.
+
+The bounded recovery milestone passed final W1 evaluation and independent audit.
+It remains a constrained browser/kernel pilot, not general semantic or full UI
+certification. Dedicated branches are pushed; actual merging is owner-gated.

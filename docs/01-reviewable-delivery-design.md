@@ -283,3 +283,21 @@ records, unchanged source, no final review/decisions and remaining budget. This
 uses the existing crash-safe exclusive journal; recovery never resets limits.
 The owner-approved 60-minute/five-cycle profile and its recovery profile record
 this bounded case. A completed negative review cannot use timeout recovery.
+
+
+### Bounded actual recovery handoff
+
+With the reviewed timeout/provenance corrections, the final child completed all
+actual stages through exact-head CI and immutable report at CoRA 81b1e21, using
+cumulative cycle two of the original 3600-second/five-cycle grant. Bootstrap
+manual WIP preservation/controller repairs preceded that child and are explicitly
+retained as setup/failure history; no manual copying or publication completed a
+missing stage inside the final child. Task review passed; W1 final evaluator and
+milestone review are separate. CoRA and controller target branches await owner
+merge authorization. Historical incomplete entries above remain stage records.
+
+
+Final acceptance: frozen W1 evaluation passed **18/18**, all **63 tests** passed,
+and the independent final milestone audit passed **12/12 criteria** with no
+blockers/decisions. This establishes the constrained W1 revision-2 milestone,
+with the bootstrap/manual boundary above preserved. Merge remains owner-gated.
