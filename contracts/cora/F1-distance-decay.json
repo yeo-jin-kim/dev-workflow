@@ -1,0 +1,43 @@
+{
+  "id": "F1-distance-decay",
+  "decision": "F1-distance-decay-2026-11-01",
+  "goal": "Implement and evaluate topic-conditioned, distance-attenuated associative activation without abstraction-level or absolute node-depth restrictions.",
+  "allowed_scope": [
+    "activation/firing/Recall implementations and directly related configuration, traces, tests and design documents",
+    "Do not alter provenance-owner path eligibility, persistent weights, Knowledge approval or unrelated F2-F8 policies."
+  ],
+  "criteria": [
+    {
+      "id": "cross-level",
+      "requirement": "A relevant cross-level path and a path with changed node depth metadata receive identical activation when other factors are equal."
+    },
+    {
+      "id": "distance",
+      "requirement": "For equal relevance/weights, activation attenuates with increasing distance from the selected focus; document the candidate distance metric and decay, proving convergence under supported parameters."
+    },
+    {
+      "id": "topic",
+      "requirement": "Near but irrelevant branches are suppressed while relevant indirect associations without literal query-token overlap can activate; distance alone is not relevance."
+    },
+    {
+      "id": "termination",
+      "requirement": "Positive negligible threshold and bounded scores terminate cyclic/dense graphs; reject invalid parameters and distinguish convergence termination from resource truncation in traces."
+    },
+    {
+      "id": "parity",
+      "requirement": "Exercise Python associative Recall, SQLite-backed natural-language Recall and offline browser fallback, or explicitly block completion on a missing route. Preserve provenance/view path contracts."
+    },
+    {
+      "id": "regression",
+      "requirement": "Existing Recall/evidence quality tests pass; no stored weights change on pure activation; fixed evaluator cases are not weakened."
+    }
+  ],
+  "checks": [
+    [
+      ".local/workflow-test-env/bin/python",
+      "-m",
+      "pytest",
+      "-q"
+    ]
+  ]
+}

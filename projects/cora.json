@@ -1,0 +1,7 @@
+{
+  "id": "cora",
+  "root": "../cora",
+  "contract": "contracts/cora/F1-distance-decay.json",
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json"
+}

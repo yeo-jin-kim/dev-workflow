@@ -1,0 +1,29 @@
+{
+  "id": "authority-audit",
+  "goal": "Create docs/discussion/02-document-authority-audit.md describing conflicting document authority and stale definitions. Propose a resolution without adopting it or modifying existing theory/specification.",
+  "allowed_scope": [
+    "Create the audit document only; do not edit existing documents or code."
+  ],
+  "criteria": [
+    {
+      "id": "authority",
+      "requirement": "Quote and locate conflicting authority statements from foundation, alignment review and master design."
+    },
+    {
+      "id": "drift",
+      "requirement": "Identify concrete README discrepancies concerning Event sources and associative relation levels, with source locations."
+    },
+    {
+      "id": "decision",
+      "requirement": "Distinguish proposed options from accepted policy; give a recommendation and effects, leaving adoption explicitly pending human decision."
+    }
+  ],
+  "checks": [
+    [
+      "git",
+      "diff",
+      "--check"
+    ]
+  ],
+  "historical_note": "Original audit already performed and authority decision adopted; retained as history, not the active default."
+}
