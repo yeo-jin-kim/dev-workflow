@@ -1,0 +1,9 @@
+{
+  "id": "cora-f1",
+  "root": "../cora-f1",
+  "contract": "contracts/cora/F1-distance-decay.json",
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json",
+  "execution_authorization": "User: F1 개발 시작해줘. Isolated baseline prepared; approved to execute revision 2 pilot without changing acceptance labels.",
+  "baseline_record": "/Users/yeojin/Code/dev-workflow/.local/preflight/F1/baseline.json"
+}

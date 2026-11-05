@@ -39,6 +39,59 @@ not active resume instructions.
 Path separation and workspace-write/read-only CLI modes do not prove hostile
 process isolation. Trusted check commands still run with the user's permissions.
 No external scheduler, notification loop, monetary budget, protected-test service
-or OS security boundary is added. The independent repository has no remote
-configured and no publishing/deployment behavior. Historical notes are retained
+or OS security boundary is added. The independent repository was initially local-only. It is now connected to
+GitHub; the later owner instruction requires parent commit/push each delivery,
+without automatic merge/deployment. Historical notes are retained
 under docs/original-runner-notes.md; README is the current operating guide.
+
+## F1 contract preparation — 2026-11-05
+
+Expanded contracts/cora/F1-distance-decay.json to revision 2 with baseline,
+allowed/forbidden scope, candidate hop-distance/max-product decay, query relevance
+requirements, numerical/stopping semantics, route parity, public synthetic
+kernel/integration cases, decision boundaries and target documentation obligations.
+Added a Korean task brief and external evaluator fixture; evaluator content is
+embedded in the execution contract with a file hash for consistency. Labels are
+agent-proposed, not user-certified empirical gold. The mandatory documentation
+criterion remains controller-injected. No controller or CoRA runtime changed.
+No isolated checkout/live run was provisioned; the current original target must
+not be launched directly for this pilot before its execution preflight.
+
+Validation: JSON/fixture hash, criterion IDs and references checked; controller
+unit suite re-run and result recorded below. No CoRA feature tests were run
+because this delivery only prepares the external contract and documents.
+
+Contract-preparation validation result: **15 controller tests passed**. Contract/evaluator JSON, embedded fixture equality/hash, unique IDs, links and whitespace checks passed.
+
+## F1 pilot started
+
+User authorized F1 development. Prepared isolated sibling cora-f1 from all tracked/nonignored original CoRA working files; source content/mode digest matched before execution. Snapshot baseline and original source digest/status are retained in ignored preflight artifacts. No source private databases copied. Test Python and Node are available; explicit 3-cycle/1800-second pilot uses projects/cora-f1.json. Acceptance criteria/evaluation labels are unchanged.
+
+## First F1 pilot outcome — 2026-11-05
+
+The isolated worker produced an experimental implementation and stopped for a
+browser surface it could not access. Parent supplied actual in-app browser kernel
+execution and unrestricted loopback test execution, corrected two discovered
+boundary defects with regression tests, and obtained independent read-only review.
+Actual final full suite: 470 passed; browser/Python kernel comparison: 7 cases.
+Independent review requested changes: unified fixture across all routes,
+API/browser invalid-input coverage, explicit protected-evaluator execution, and
+consistent current documentation. Parent reconciled status/history wording;
+that final documentation update has not been independently re-reviewed.
+
+F1 is NOT complete or merged. Original CoRA unchanged. Evidence and structured
+outcome: ignored `.local/preflight/F1/final-status.json`; the initial controller
+state and all failures remain historical, not rewritten to pass. Next iteration
+must address review findings within a fresh bounded run. No owner conceptual
+policy decision is currently pending; the remaining work is implementation and
+verification. This pilot exposed the need for externally supplied browser/HTTP
+evidence and phase-specific review time allocation before more unattended work.
+
+## Per-delivery commit/push policy
+
+Owner explicitly requested commit/push after every work delivery. Applied to
+controller and target AGENTS.md and the F1 contract's parent-finalization policy.
+Preserve incomplete review status on a dedicated target branch; do not merge,
+force-push or include ignored private evidence. Automated workers remain unable
+to redefine task criteria or publish themselves. This is an operating instruction
+for the maintaining parent, not a new unattended Git executor in the loop.

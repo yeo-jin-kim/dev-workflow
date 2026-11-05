@@ -54,3 +54,21 @@ No merge/deploy/publish is automatically authorized.
 
 The preserved archive is historical: original state files contain old absolute
 paths. Do not resume them or rewrite their evidence. See migration.json.
+
+## Prepared CoRA pilot contract
+
+The F1 contract revision 2 is documented in
+[the task brief](contracts/cora/F1-distance-decay.md). It contains explicit
+implementation candidates, protected synthetic cases, completion evidence and
+owner-decision boundaries. Synthetic semantic labels are proposed, not certified
+empirical ground truth. The contract is prepared only; before a live run review
+it and prepare an isolated target baseline/test environment. Current project
+configuration has not been switched to an isolated checkout.
+
+## Delivery publication policy
+
+The owner requests commit/push after each delivery. The maintaining parent
+performs finalization after checking results. Incomplete milestones are pushed
+to dedicated branches with their failed/missing gates stated, never merged or
+reported accepted merely because they were published. Private .local logs stay
+excluded; implementation workers do not push during their runs.

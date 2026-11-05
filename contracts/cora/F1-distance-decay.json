@@ -1,35 +1,109 @@
 {
   "id": "F1-distance-decay",
+  "revision": 2,
+  "status": "authorized-for-isolated-pilot",
   "decision": "F1-distance-decay-2026-11-01",
-  "goal": "Implement and evaluate topic-conditioned, distance-attenuated associative activation without abstraction-level or absolute node-depth restrictions.",
-  "allowed_scope": [
-    "activation/firing/Recall implementations and directly related configuration, traces, tests and design documents",
-    "Do not alter provenance-owner path eligibility, persistent weights, Knowledge approval or unrelated F2-F8 policies."
+  "goal": "Deliver topic-conditioned, distance-attenuated associative activation across Python, local SQLite Recall and browser fallback, with reproducible positive/negative evaluation and auditable stopping reasons. This is an implementation experiment under adopted F1, not a new cognitive theory.",
+  "read_first": [
+    "AGENTS.md",
+    "docs/00-master-design.md",
+    "docs/foundations/00-conceptual-foundation.md",
+    "docs/implementation/decisions.json",
+    "docs/implementation/00-documentation-maintenance.md",
+    "docs/04-abstraction-and-association.md",
+    "docs/design/03-recall-path-api.md",
+    "docs/design/11-natural-language-recall.md"
   ],
+  "controller_references": [
+    "contracts/cora/F1-distance-decay.md",
+    "contracts/cora/evaluations/F1-distance-decay.json"
+  ],
+  "baseline": {
+    "observed": "2026-11-05, source inspection only",
+    "kernel": "src/cora/cognition/activation.py: default max_depth=2, threshold=.15, attenuation=.65, max_states=25; relation strength has a positive .1 floor.",
+    "routes": [
+      "src/cora/recall/associative_recall.py",
+      "src/cora/recall/grounded_recall.py",
+      "src/cora/recall/natural_language.py",
+      "src/cora/visualization/model_recall.py"
+    ],
+    "regression_reference": "453 CoRA tests passed after controller separation. Count is historical, not an acceptance target or semantic accuracy metric."
+  },
+  "allowed_scope": [
+    "CoRA activation/firing and directly affected Recall entry points, options and trace serialization",
+    "Browser fallback activation parity and UI indication of truncated/empty results",
+    "Synthetic public fixtures, meaningful regression tests and associated implementation/design documentation",
+    "Preserve unrelated in-progress work; do not require a clean baseline by deleting existing changes. Before edits record target HEAD, complete working-tree digest/status and environment. Use an isolated prepared checkout for the execution milestone; if a safe baseline cannot be prepared, report execution blocked."
+  ],
+  "forbidden_changes": [
+    "Do not modify controller code, contracts, evaluator labels or protected evaluation data.",
+    "Do not change provenance-owner path eligibility or convert associative paths into evidence/relationship paths.",
+    "Do not mutate stored state/relation weights or create abstractions during a pure Recall query.",
+    "No automatic abstract identity merge, Knowledge approval/storage migration, F2-F8 policy changes, private source modification or new external data/model dependency.",
+    "Implementation workers must not commit/push while the task runs. Per the later explicit user instruction, the parent finalizes commit/push after each delivery, preserving incomplete status on a dedicated branch. No automatic merge/deploy or background scheduler activation."
+  ],
+  "implementation_candidate": {
+    "status": "Authorized to try and revise implementation details within the fixed F1/acceptance boundaries; record every material alternative and outcome. Not a canonical cognitive equation.",
+    "distance": "Start with traversed edge count from a cue-selected focus, not absolute hierarchy depth, screen coordinates or abstraction level. Edges must already exist in experience-grounded structure; no semantic nearest-neighbor graph creation.",
+    "propagation": "For a path p, use A_p(v)=s(f)*product(alpha*w_norm(e)*r(q,e,context)). A(v) is the maximum supported path score, not a sum of repeated paths. This prevents cyclic amplification. Keep alternative grounding paths under their existing separate provenance policy.",
+    "parameters": {
+      "reference_alpha": 0.65,
+      "reference_epsilon": 0.05,
+      "seed_range": "[0,1]",
+      "relation_strength_range": "[0,1], actual zero stays zero; no artificial positive floor",
+      "topic_relevance_range": "[0,1]",
+      "alpha_constraint": "finite 0 < alpha < 1",
+      "epsilon_constraint": "finite 0 < epsilon <= 1"
+    },
+    "convergence": "A path of d hops is bounded by alpha^d for seed <=1; scores below epsilon do not propagate or become activated results. Equality with epsilon remains eligible. Stale/non-improving queue entries do not expand again.",
+    "topic_relevance": "Define and document a deterministic, experience-grounded query/context relevance policy usable without new model services. Use cue-selected structure/support/provenance context where appropriate. Do not equate literal query-token overlap with relevance, nor default every existing edge to relevance=1. Kernel tests may inject factors, but integrated topical tests must exercise the actual production relevance computation, never injected fixture labels.",
+    "limits": "Default propagation must not stop at two hops. Optional legacy hop caps and state/work limits are resource guards, never semantic definitions. Explicit limits must be respected and disclosed as truncation, distinct from epsilon/frontier exhaustion.",
+    "compatibility": "Preserve existing evidence links, focused graph/provenance paths, working-memory scope, historical Recall read-only behavior and additive old trace deserialization. New option defaults and legacy cap behavior must be documented."
+  },
   "criteria": [
     {
       "id": "cross-level",
-      "requirement": "A relevant cross-level path and a path with changed node depth metadata receive identical activation when other factors are equal."
+      "requirement": "K01: identical edges/weights/relevance with changed abstraction-level, absolute-depth and visual-layout metadata produce identical scores, eligible IDs and stopping reason."
     },
     {
       "id": "distance",
-      "requirement": "For equal relevance/weights, activation attenuates with increasing distance from the selected focus; document the candidate distance metric and decay, proving convergence under supported parameters."
+      "requirement": "K02/K03/K04: reference unit-factor chain follows .65^d, reaches beyond two hops, excludes d=7 for epsilon=.05, includes score exactly epsilon, and blocks zero-weight/relevance transmission. Prove the bound for supported parameters."
     },
     {
       "id": "topic",
-      "requirement": "Near but irrelevant branches are suppressed while relevant indirect associations without literal query-token overlap can activate; distance alone is not relevance."
+      "requirement": "I01/I02: fixed integrated cases include a nearer unrelated branch and a farther relevant association with no literal query-token overlap. Actual production relevance must suppress the former and retain the latter. Report false activation, missed activation, paths and relevance reasons; kernel injection alone cannot pass."
     },
     {
       "id": "termination",
-      "requirement": "Positive negligible threshold and bounded scores terminate cyclic/dense graphs; reject invalid parameters and distinguish convergence termination from resource truncation in traces."
+      "requirement": "K05/K06: cycles and multiple paths never amplify scores or exceed configured budgets; strongest-path result is deterministic and independent of adjacency order. State count includes seeds and never exceeds cap; handle duplicate seeds and bounded updates."
+    },
+    {
+      "id": "validation",
+      "requirement": "K07: reject NaN/infinity, invalid factors/limits, missing seed IDs and unsupported parameters with actionable errors across exposed routes. Define zero/empty seed handling and exact threshold boundary. No silent clamping of invalid configuration."
+    },
+    {
+      "id": "trace",
+      "requirement": "K08: record policy/version, actual parameters, focus IDs/scores, selected path distance/relevance basis, stopping reason and whether result is truncated. Separate threshold, exhausted frontier and resource guard. Legacy traces still deserialize."
     },
     {
       "id": "parity",
-      "requirement": "Exercise Python associative Recall, SQLite-backed natural-language Recall and offline browser fallback, or explicitly block completion on a missing route. Preserve provenance/view path contracts."
+      "requirement": "I03: use the same controlled fixture in Python kernel/associative Recall, SQLite natural-language Recall and actual executed browser JS fallback. Compare seeds/factors or explain their layers, then eligible IDs/scores/stopping at the kernel boundary. A string search or rendered screenshot is not JS execution; unavailable browser execution blocks parity completion."
+    },
+    {
+      "id": "grounding",
+      "requirement": "I04: existing owner/provenance, direct-hit evidence, citation, historical query and working-memory quality gates pass. A cognitive association must never be presented as a new observed relationship or empirical support."
+    },
+    {
+      "id": "read-only",
+      "requirement": "I05: stable before/after model snapshots show no node/edge/weight/grounding changes on pure activation/Recall. Allowed activation logs are separately identified; original source stores unchanged."
     },
     {
       "id": "regression",
-      "requirement": "Existing Recall/evidence quality tests pass; no stored weights change on pure activation; fixed evaluator cases are not weakened."
+      "requirement": "All new targeted tests, protected evaluator cases and existing CoRA suite pass on the final tree; record command, environment, tree digest, output and limitations. Never weaken existing expected outcomes merely to accept this implementation."
+    },
+    {
+      "id": "review",
+      "requirement": "Independent reviewer reads contract, fixed evaluator cases, actual diff and observed outputs. No unresolved blocking issue or undisclosed evaluation omission. If a necessary semantic decision cannot fit these boundaries, request an owner decision rather than declaring completion."
     }
   ],
   "checks": [
@@ -37,7 +111,238 @@
       ".local/workflow-test-env/bin/python",
       "-m",
       "pytest",
+      "-q",
+      "tests/test_distance_decay_activation.py"
+    ],
+    [
+      ".local/workflow-test-env/bin/python",
+      "-m",
+      "pytest",
       "-q"
+    ],
+    [
+      "git",
+      "diff",
+      "--check"
     ]
-  ]
+  ],
+  "deliverables": [
+    "Implementation and route-specific tests in CoRA, including tests/test_distance_decay_activation.py",
+    "docs/implementation/02-F1-distance-decay.md: candidate rationale, baseline/final version, case results, commands, convergence argument, performance/truncation observations and remaining limits",
+    "Update affected activation/abstraction/Recall/technical specification status and master map under documentation policy",
+    "Controller-owned raw execution/check/review artifacts outside the target; no private original source in permanent outputs"
+  ],
+  "execution_policy": {
+    "recommended_max_cycles": 3,
+    "recommended_total_seconds": 1800,
+    "note": "Pass the limits explicitly to the runner; descriptive fields do not change CLI limits. No monetary metering implemented. This prepares a contract only, not a live run.",
+    "retry": "Fix implementation/test harness defects within the stated budget. Do not retry valid negative semantic judgments until they pass or erase failed attempts.",
+    "notify_owner": [
+      "Changing F1 meaning, expected evaluator labels, core provenance contracts or acceptance criteria",
+      "A new model/service/private-data dependency or a material quality/cost tradeoff",
+      "Required route unavailable, unsafe baseline, repeated failure or budget exhaustion"
+    ],
+    "autonomous_choices": [
+      "Implementation structure, queue/data structures, local normalization/relevance candidates and efficiency improvements within fixed semantics",
+      "Related regression tests and documentation updates",
+      "Bounded corrections and independent re-review"
+    ],
+    "completion": "Only current-tree evidence and passing checks/review qualify. documentation_sync is injected by the controller and must also pass. Missing parity or pending decisions cannot be marked complete.",
+    "preflight": "User explicitly requested F1 development after reviewing this contract. The isolated cora-f1 checkout and test environment are prepared; baseline/authorization recorded in controller .local/preflight/F1/baseline.json. Proceed with development under the existing fixed criteria. Do not require a second approval for this pilot; labels remain synthetic and not empirical gold.",
+    "publication": "User subsequently requested commit/push after each delivery. Parent finalization may publish an explicitly incomplete experimental branch; this does not satisfy completion criteria or authorize merge/deploy."
+  },
+  "acceptance_evaluation": {
+    "id": "F1-evaluator-v1",
+    "status": "Fixed acceptance cases; changes require explicit owner decision. Synthetic only.",
+    "numeric_tolerance": 1e-09,
+    "kernel_reference": {
+      "alpha": 0.65,
+      "epsilon": 0.05,
+      "seed_score": 1.0,
+      "unit_factors": true
+    },
+    "cases": [
+      {
+        "id": "K01",
+        "name": "metadata invariance",
+        "expected": "Changing only node type/level/depth/layout leaves activation unchanged."
+      },
+      {
+        "id": "K02",
+        "name": "long chain",
+        "nodes": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H"
+        ],
+        "edges": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "B",
+            "C"
+          ],
+          [
+            "C",
+            "D"
+          ],
+          [
+            "D",
+            "E"
+          ],
+          [
+            "E",
+            "F"
+          ],
+          [
+            "F",
+            "G"
+          ],
+          [
+            "G",
+            "H"
+          ]
+        ],
+        "focus": "A",
+        "expected_scores": {
+          "A": 1.0,
+          "B": 0.65,
+          "C": 0.42250000000000004,
+          "D": 0.274625,
+          "E": 0.17850625000000003,
+          "F": 0.11602906250000002,
+          "G": 0.07541889062500001
+        },
+        "excluded": [
+          "H"
+        ],
+        "note": "Reference factors=1. No default two-hop cap. max_states>=8."
+      },
+      {
+        "id": "K03",
+        "name": "threshold boundary",
+        "alpha": 0.5,
+        "epsilon": 0.25,
+        "chain": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "expected_scores": {
+          "A": 1.0,
+          "B": 0.5,
+          "C": 0.25
+        },
+        "excluded": [
+          "D"
+        ]
+      },
+      {
+        "id": "K04",
+        "name": "zero barriers",
+        "expected": "A zero-weight edge or zero-relevance edge does not transmit. No .1 floor."
+      },
+      {
+        "id": "K05",
+        "name": "cycle",
+        "edges": [
+          [
+            "A",
+            "B"
+          ],
+          [
+            "B",
+            "C"
+          ],
+          [
+            "C",
+            "A"
+          ]
+        ],
+        "expected": "Finite bounded activation, seed not amplified; adjacency ordering leaves score map unchanged."
+      },
+      {
+        "id": "K06",
+        "name": "diamond and budgets",
+        "expected": "For multiple paths retain maximum product, not sum; count seeds in state limit, deduplicate seeds, report resource truncation honestly."
+      },
+      {
+        "id": "K07",
+        "name": "invalid configuration",
+        "expected": "NaN/infinite or out-of-range factors/limits and missing seed IDs are rejected, not silently accepted."
+      },
+      {
+        "id": "K08",
+        "name": "trace compatibility",
+        "expected": "Policy/parameters/focus/path/stop/truncation visible; old traces deserialize."
+      },
+      {
+        "id": "I01",
+        "name": "near irrelevant, far relevant",
+        "cue": "agency",
+        "focus": "Agency",
+        "nodes": {
+          "Agency": "Control over decisions and delegation",
+          "Delegation": "Transferring a decision to an assistant while retaining a veto",
+          "Decision ownership": "Who can accept or override the selected action",
+          "Agency logo file": "A visual branding asset; no connection to decision authority"
+        },
+        "edges": [
+          [
+            "Agency",
+            "Delegation"
+          ],
+          [
+            "Delegation",
+            "Decision ownership"
+          ],
+          [
+            "Agency",
+            "Agency logo file"
+          ]
+        ],
+        "expected_relevant": [
+          "Delegation",
+          "Decision ownership"
+        ],
+        "expected_irrelevant": [
+          "Agency logo file"
+        ],
+        "evidence_context": "First two relations are grounded in discussion of human-AI decision control. Logo link is merely a document mention, not decision authority. Fixture construction must encode these distinct observed contexts using normal production graph metadata. Do not special-case labels."
+      },
+      {
+        "id": "I02",
+        "name": "cross-topic control",
+        "cue": "brand visual assets",
+        "focus": "Agency logo file",
+        "context": "The logo belongs to brand visual assets; the human-AI decision-control branch is unrelated to this query.",
+        "expected": "Production relevance changes with cue/context and does not propagate brand-only context into decision ownership. Use normal query/seed selection, not evaluator-provided relevance scores."
+      },
+      {
+        "id": "I03",
+        "name": "route parity",
+        "expected": "Execute actual browser JS plus Python/SQLite paths on shared controlled inputs; compare kernel results and distinct presentation policies separately."
+      },
+      {
+        "id": "I04",
+        "name": "grounding preservation",
+        "expected": "Associative reachability never adds an owner/provenance relationship, new evidence or empirical support."
+      },
+      {
+        "id": "I05",
+        "name": "read-only model",
+        "expected": "Before/after canonical graph identical; activation audit logs separated."
+      }
+    ],
+    "label_authority": "Agent-proposed synthetic contract labels, not user-certified empirical gold. Prepared for owner review before the first live milestone."
+  },
+  "evaluation_file_sha256": "194206ae7fd5c9e02766d3dca482a11d1c4423b1f30c808dcc91b8bc4dec5d4b"
 }

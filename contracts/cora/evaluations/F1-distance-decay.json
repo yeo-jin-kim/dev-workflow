@@ -1,0 +1,193 @@
+{
+  "id": "F1-evaluator-v1",
+  "status": "Fixed acceptance cases; changes require explicit owner decision. Synthetic only.",
+  "numeric_tolerance": 1e-09,
+  "kernel_reference": {
+    "alpha": 0.65,
+    "epsilon": 0.05,
+    "seed_score": 1.0,
+    "unit_factors": true
+  },
+  "cases": [
+    {
+      "id": "K01",
+      "name": "metadata invariance",
+      "expected": "Changing only node type/level/depth/layout leaves activation unchanged."
+    },
+    {
+      "id": "K02",
+      "name": "long chain",
+      "nodes": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H"
+      ],
+      "edges": [
+        [
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "C"
+        ],
+        [
+          "C",
+          "D"
+        ],
+        [
+          "D",
+          "E"
+        ],
+        [
+          "E",
+          "F"
+        ],
+        [
+          "F",
+          "G"
+        ],
+        [
+          "G",
+          "H"
+        ]
+      ],
+      "focus": "A",
+      "expected_scores": {
+        "A": 1.0,
+        "B": 0.65,
+        "C": 0.42250000000000004,
+        "D": 0.274625,
+        "E": 0.17850625000000003,
+        "F": 0.11602906250000002,
+        "G": 0.07541889062500001
+      },
+      "excluded": [
+        "H"
+      ],
+      "note": "Reference factors=1. No default two-hop cap. max_states>=8."
+    },
+    {
+      "id": "K03",
+      "name": "threshold boundary",
+      "alpha": 0.5,
+      "epsilon": 0.25,
+      "chain": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "expected_scores": {
+        "A": 1.0,
+        "B": 0.5,
+        "C": 0.25
+      },
+      "excluded": [
+        "D"
+      ]
+    },
+    {
+      "id": "K04",
+      "name": "zero barriers",
+      "expected": "A zero-weight edge or zero-relevance edge does not transmit. No .1 floor."
+    },
+    {
+      "id": "K05",
+      "name": "cycle",
+      "edges": [
+        [
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "C"
+        ],
+        [
+          "C",
+          "A"
+        ]
+      ],
+      "expected": "Finite bounded activation, seed not amplified; adjacency ordering leaves score map unchanged."
+    },
+    {
+      "id": "K06",
+      "name": "diamond and budgets",
+      "expected": "For multiple paths retain maximum product, not sum; count seeds in state limit, deduplicate seeds, report resource truncation honestly."
+    },
+    {
+      "id": "K07",
+      "name": "invalid configuration",
+      "expected": "NaN/infinite or out-of-range factors/limits and missing seed IDs are rejected, not silently accepted."
+    },
+    {
+      "id": "K08",
+      "name": "trace compatibility",
+      "expected": "Policy/parameters/focus/path/stop/truncation visible; old traces deserialize."
+    },
+    {
+      "id": "I01",
+      "name": "near irrelevant, far relevant",
+      "cue": "agency",
+      "focus": "Agency",
+      "nodes": {
+        "Agency": "Control over decisions and delegation",
+        "Delegation": "Transferring a decision to an assistant while retaining a veto",
+        "Decision ownership": "Who can accept or override the selected action",
+        "Agency logo file": "A visual branding asset; no connection to decision authority"
+      },
+      "edges": [
+        [
+          "Agency",
+          "Delegation"
+        ],
+        [
+          "Delegation",
+          "Decision ownership"
+        ],
+        [
+          "Agency",
+          "Agency logo file"
+        ]
+      ],
+      "expected_relevant": [
+        "Delegation",
+        "Decision ownership"
+      ],
+      "expected_irrelevant": [
+        "Agency logo file"
+      ],
+      "evidence_context": "First two relations are grounded in discussion of human-AI decision control. Logo link is merely a document mention, not decision authority. Fixture construction must encode these distinct observed contexts using normal production graph metadata. Do not special-case labels."
+    },
+    {
+      "id": "I02",
+      "name": "cross-topic control",
+      "cue": "brand visual assets",
+      "focus": "Agency logo file",
+      "context": "The logo belongs to brand visual assets; the human-AI decision-control branch is unrelated to this query.",
+      "expected": "Production relevance changes with cue/context and does not propagate brand-only context into decision ownership. Use normal query/seed selection, not evaluator-provided relevance scores."
+    },
+    {
+      "id": "I03",
+      "name": "route parity",
+      "expected": "Execute actual browser JS plus Python/SQLite paths on shared controlled inputs; compare kernel results and distinct presentation policies separately."
+    },
+    {
+      "id": "I04",
+      "name": "grounding preservation",
+      "expected": "Associative reachability never adds an owner/provenance relationship, new evidence or empirical support."
+    },
+    {
+      "id": "I05",
+      "name": "read-only model",
+      "expected": "Before/after canonical graph identical; activation audit logs separated."
+    }
+  ],
+  "label_authority": "Agent-proposed synthetic contract labels, not user-certified empirical gold. Prepared for owner review before the first live milestone."
+}
