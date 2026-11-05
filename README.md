@@ -68,7 +68,8 @@ W1 is the next **specified, not implemented** controller extension:
 [machine-readable contract](contracts/dev-workflow/W1-reviewable-delivery.json),
 [design](docs/01-reviewable-delivery-design.md).
 It covers version-bound evidence, actual-browser execution, durable repair/review,
-commit/push, Draft PR and remote-check feedback. Owner decisions and actual merge
+commit/push, validated-branch/merge-decision reports and push-CI feedback. PR is
+optional and disabled by default. Owner decisions and actual merge
 remain explicit. No W1 project configuration, new runner behavior or scheduled
 execution is activated by this documentation delivery. The current runner must
 not be invoked against its own repository to bootstrap W1.

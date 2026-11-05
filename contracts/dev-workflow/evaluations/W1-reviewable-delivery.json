@@ -1,12 +1,12 @@
 {
-  "id": "W1-evaluator-v1",
+  "id": "W1-evaluator-v2",
   "status": "Fixed proposed acceptance scenarios for this implementation contract; edits require owner decision after implementation begins.",
   "authority": "Synthetic fault scenarios are engineering acceptance cases, not evidence of general AI correctness.",
   "cases": [
     {
       "id": "W01",
       "name": "happy_path",
-      "expected": "Real worker/check/reviewer/browser/publisher stages finish, remote checks succeed and final status awaits merge approval."
+      "expected": "Real worker/check/reviewer/browser/publisher stages finish, exact published revision push CI succeeds, and a validated branch plus merge-decision report reaches ready_for_merge_approval. Default mode makes zero PR creation/update calls and does not wait for pull_request events."
     },
     {
       "id": "W02",
@@ -56,7 +56,7 @@
     {
       "id": "W11",
       "name": "publication_idempotence",
-      "expected": "Crash after commit/push/PR creation resumes by inspecting exact branch/SHA/PR identity, without duplicate commit/PR or force push."
+      "expected": "Crash after commit/push/report generation resumes by inspecting exact remote branch/SHA and versioned report identity, without duplicate commits, lost reports or force push. A PR URL/ID is not required in default branch_report mode."
     },
     {
       "id": "W12",
@@ -66,7 +66,7 @@
     {
       "id": "W13",
       "name": "remote_failure",
-      "expected": "Remote quality check failure returns its actual log/head SHA to the repair cycle; failed/unknown/pending checks cannot become ready_for_merge_approval."
+      "expected": "Remote required push quality gate failure returns its actual log/head SHA to repair; failed/unknown/pending required gates cannot become ready_for_merge_approval. Absence of a PR/pull_request event is not a failure in default mode; an incompatible PR-only required gate is reported for decision rather than bypassed."
     },
     {
       "id": "W14",
@@ -86,12 +86,13 @@
     {
       "id": "W17",
       "name": "real_pilot",
-      "expected": "A real small CoRA task reaches a Draft PR with fresh checks/browser where required, independent review and successful remote checks without manual stage handoffs; no merge."
+      "expected": "A real small CoRA task reaches a pushed validated branch and merge-decision report with fresh checks/browser, independent review and successful exact-head push CI without manual stage handoffs. Assert no PR is created in default mode and no merge occurs."
     },
     {
       "id": "W18",
       "name": "truthful_status",
-      "expected": "Status distinguishes local acceptance, publication/CI pending, ready for owner merge, incomplete publication and merged; legacy complete states are not silently reclassified."
+      "expected": "Status distinguishes local acceptance, branch publication/CI/report pending, ready for owner merge, incomplete publication and merged; legacy states are not silently reclassified. Owner handoff records exact source/target revision, proposed merge and limitations without requiring a PR URL."
     }
-  ]
+  ],
+  "revision_decision": "Owner-approved change from mandatory Draft PR to default branch_report delivery; prior v1 definition remains in Git history. All other gates remain required."
 }

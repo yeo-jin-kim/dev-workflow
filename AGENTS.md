@@ -16,3 +16,10 @@ Keep unrelated work separate. Use a dedicated branch for incomplete/experimental
 work and record passing checks, failed/missing checks and review status truthfully.
 Commit/push does not mean acceptance, merge or deployment. Never force-push,
 publish private logs/source data, or bypass review to claim completion.
+
+## Solo-development delivery policy
+Owner approved branch/report delivery as the default. Prepare a verified dedicated
+branch, commit/push and a revision-bound merge-decision report. Keep independent
+review, documentation and required push-CI gates. PRs are optional and created
+only when explicitly selected for the project/task; a missing PR is not a failure.
+Actual target merge still requires owner authorization for the concrete revision.

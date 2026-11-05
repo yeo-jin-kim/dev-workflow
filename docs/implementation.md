@@ -154,3 +154,32 @@ W1 contract preparation validation: **15 existing controller tests passed**;
 scenario IDs with criterion coverage, embedded evaluator/hash equality, all
 referenced files/Markdown links and whitespace checks passed. No W1 scenario or
 live pilot was executed; these remain acceptance requirements for implementation.
+
+
+## W1 revision 2: optional PR, branch/report default — 2026-11-05
+
+Owner approved removing mandatory PRs for solo development. Updated W1 contract
+revision 2, evaluator v2, design, README and project guidance. Final delivery is
+now a validated pushed branch and version-bound merge-decision report; required
+push CI, independent review, documentation gates and explicit owner target-merge
+authorization remain. Reports identify repository, exact source/target refs/SHAs,
+diff, all verification evidence/limits and proposed merge. Target movement still
+invalidates affected integration evidence/approval. No PR API capability, URL or
+pull_request event is required by default. Optional PR mode is explicit; PR-only
+required repository gates cause a decision request rather than a bypass or an
+unsolicited PR. The live pilot must demonstrate zero PR creation/update calls.
+
+This owner-authorized contract change revises W01/W11/W13/W17/W18 delivery/recovery
+expectations and associated criteria, retaining all 18 scenario IDs and all
+other checks. The embedded evaluation and external file hash are synchronized;
+v1 remains in Git history, with prior hash/decision recorded in revision 2.
+Earlier W1 preparation notes above describe revision 1. This remains planning:
+no controller/runtime behavior, active project or W1 live execution was changed.
+
+Revision-2 validation: **15 existing controller tests passed**. Confirmed 11 task
+criteria plus preserved injected documentation gate, 18 stable scenario IDs,
+only the five owner-authorized scenario changes, embedded evaluator/file SHA-256
+agreement, prior revision/hash history, default branch_report configuration,
+reference links and whitespace. No runtime, project configuration, schemas,
+existing tests or historical CoRA evaluation definitions changed. The 18 W1
+scenarios and live pilot are still specifications, not executed results.

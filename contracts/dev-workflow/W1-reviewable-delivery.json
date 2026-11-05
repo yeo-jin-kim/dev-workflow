@@ -1,8 +1,8 @@
 {
   "id": "W1-reviewable-delivery",
-  "revision": 1,
+  "revision": 2,
   "status": "ready-for-implementation-planning; this delivery defines the contract only",
-  "goal": "Extend the separate dev-workflow controller so a bounded authorized task proceeds through evidence collection, independent review/repair, task documentation, commit/push, Draft PR and exact-revision remote validation; owner retains design/criteria decisions and merge authority.",
+  "goal": "Extend the separate dev-workflow controller through evidence collection, independent review/repair, task documentation, commit/push and exact-revision push CI, ending in a validated dedicated branch and merge-decision report. PR is optional and disabled by default; owner retains design/criteria decisions and merge authority.",
   "read_first": [
     "AGENTS.md",
     "README.md",
@@ -27,14 +27,14 @@
     "missing": [
       "Generic browser evidence adapter and unattended execution",
       "Unified exact-version evidence and durable cumulative budgets/phase recovery",
-      "Controller-owned publication, Draft PR identity/recovery and remote-CI feedback"
+      "Controller-owned branch publication, delivery-report identity/recovery and remote push-CI feedback"
     ],
     "cora_integration_reference": "PR #1 merged to codex/workflow-foundation at fe4aac50ed07fa7f1bf36a4ec197f20ec2f7df8b; no new F1 development authorized by this contract."
   },
   "allowed_scope": [
     "Project-independent runner/state/evidence/adapter/publication modules, schemas, tests, documentation and opt-in project configuration in dev-workflow.",
     "Declare browser/runtime prerequisites and use existing supported local automation interfaces; core controller remains Python 3.9+ standard library. Optional adapter dependencies are explicitly scoped/tested.",
-    "Isolated synthetic target repositories and local bare remotes for deterministic fault scenarios; one real constrained CoRA pilot branch/Draft PR.",
+    "Isolated synthetic target repositories and local bare remotes for deterministic fault scenarios; one real constrained CoRA pilot branch with merge-decision report. PR integration is optional, not required for W1.",
     "Preserve old run histories and existing CLI compatibility; version new state/evidence formats and define explicit migration or new-run policy."
   ],
   "forbidden_changes": [
@@ -63,19 +63,19 @@
     },
     {
       "id": "durable_budgets",
-      "requirement": "W10/W11/W16: Durable phase checkpoints, target lock, cumulative wall/cycle budgets including restarts, bounded subprocesses, and idempotent commit/push/PR recovery. Reserve time for required review/publication; declare unmeasured monetary usage accurately."
+      "requirement": "W10/W11/W16: Durable phase checkpoints, target lock, cumulative wall/cycle budgets including restarts, bounded subprocesses, and idempotent commit/push/report recovery. Reserve time for required review/publication; declare unmeasured monetary usage accurately."
     },
     {
       "id": "reviewed_publication",
-      "requirement": "W01/W05/W11/W12/W14/W15: Controller publisher, not implementation worker, commits/pushes task-scoped reviewed-safe changes and creates/updates a Draft PR at configured repo/base/head. Completed and incomplete deliveries carry truthful status. No force push, branch deletion or automatic merge."
+      "requirement": "W01/W05/W11/W12/W14/W15: Controller publisher, not implementation worker, commits/pushes task-scoped reviewed-safe changes to configured repository/head with recorded target base, then creates/updates an immutable-version merge-decision report. Default branch_report mode never creates a PR. Completed/incomplete deliveries retain truthful status. No force push, deletion or automatic merge."
     },
     {
       "id": "remote_validation",
-      "requirement": "W13/W14/W18: Associate push/PR checks with exact head and integration/base state, require named quality gates to succeed, propagate logs for repair. Pending/absent checks never count as success unless contract explicitly declares no remote gates."
+      "requirement": "W13/W14/W18: Associate configured push CI gates with exact published head and validated integration/base state; require named gates to succeed and propagate logs for repair. No pull_request event or PR URL is required in branch_report mode. Missing/pending gates never count as success unless the contract explicitly declares no remote gates. A repository requiring PR-only gates yields an actionable configuration/owner decision, never a silent bypass."
     },
     {
       "id": "owner_handoff",
-      "requirement": "W07/W09/W10/W15/W18: Return one actionable decision/capability/budget packet with evidence, options and recommendation; preserve artifacts. Successful final handoff is a concrete Draft PR awaiting explicit merge authorization."
+      "requirement": "W07/W09/W10/W15/W18: Return one actionable decision/capability/budget packet with evidence, options and recommendation. Successful final handoff includes a pushed validated branch and report with repository, target/source refs and SHAs, diff summary/link, tests/browser/independent review/CI evidence and limits, plus proposed merge action awaiting explicit owner authorization. PR is not a prerequisite."
     },
     {
       "id": "regression",
@@ -83,7 +83,7 @@
     },
     {
       "id": "live_pilot",
-      "requirement": "W17: On a dedicated CoRA branch run the constrained pilot below through actual worker/reviewer, checks and GitHub publication/CI. A mock-only demo or parent manually completing a missing stage is partial, not milestone completion."
+      "requirement": "W17: On a dedicated CoRA branch run the constrained pilot through actual worker/reviewer, checks, GitHub push CI and report generation, without creating a PR in default mode. A mock-only demo or parent manually completing a missing stage is partial, not milestone completion."
     },
     {
       "id": "review",
@@ -107,14 +107,14 @@
     ]
   ],
   "acceptance_evaluation": {
-    "id": "W1-evaluator-v1",
+    "id": "W1-evaluator-v2",
     "status": "Fixed proposed acceptance scenarios for this implementation contract; edits require owner decision after implementation begins.",
     "authority": "Synthetic fault scenarios are engineering acceptance cases, not evidence of general AI correctness.",
     "cases": [
       {
         "id": "W01",
         "name": "happy_path",
-        "expected": "Real worker/check/reviewer/browser/publisher stages finish, remote checks succeed and final status awaits merge approval."
+        "expected": "Real worker/check/reviewer/browser/publisher stages finish, exact published revision push CI succeeds, and a validated branch plus merge-decision report reaches ready_for_merge_approval. Default mode makes zero PR creation/update calls and does not wait for pull_request events."
       },
       {
         "id": "W02",
@@ -164,7 +164,7 @@
       {
         "id": "W11",
         "name": "publication_idempotence",
-        "expected": "Crash after commit/push/PR creation resumes by inspecting exact branch/SHA/PR identity, without duplicate commit/PR or force push."
+        "expected": "Crash after commit/push/report generation resumes by inspecting exact remote branch/SHA and versioned report identity, without duplicate commits, lost reports or force push. A PR URL/ID is not required in default branch_report mode."
       },
       {
         "id": "W12",
@@ -174,7 +174,7 @@
       {
         "id": "W13",
         "name": "remote_failure",
-        "expected": "Remote quality check failure returns its actual log/head SHA to the repair cycle; failed/unknown/pending checks cannot become ready_for_merge_approval."
+        "expected": "Remote required push quality gate failure returns its actual log/head SHA to repair; failed/unknown/pending required gates cannot become ready_for_merge_approval. Absence of a PR/pull_request event is not a failure in default mode; an incompatible PR-only required gate is reported for decision rather than bypassed."
       },
       {
         "id": "W14",
@@ -194,20 +194,21 @@
       {
         "id": "W17",
         "name": "real_pilot",
-        "expected": "A real small CoRA task reaches a Draft PR with fresh checks/browser where required, independent review and successful remote checks without manual stage handoffs; no merge."
+        "expected": "A real small CoRA task reaches a pushed validated branch and merge-decision report with fresh checks/browser, independent review and successful exact-head push CI without manual stage handoffs. Assert no PR is created in default mode and no merge occurs."
       },
       {
         "id": "W18",
         "name": "truthful_status",
-        "expected": "Status distinguishes local acceptance, publication/CI pending, ready for owner merge, incomplete publication and merged; legacy complete states are not silently reclassified."
+        "expected": "Status distinguishes local acceptance, branch publication/CI/report pending, ready for owner merge, incomplete publication and merged; legacy states are not silently reclassified. Owner handoff records exact source/target revision, proposed merge and limitations without requiring a PR URL."
       }
-    ]
+    ],
+    "revision_decision": "Owner-approved change from mandatory Draft PR to default branch_report delivery; prior v1 definition remains in Git history. All other gates remain required."
   },
-  "evaluation_file_sha256": "49be79ebb9093996e0387b1635c5565e9cd8dfde94d0fe38836760ac7ebec513",
+  "evaluation_file_sha256": "8500e5beef6519e254452c4f5336c7dbe69b33c0a13c3a92fbfc8df5f6c9d45d",
   "deliverables": [
     "Generic evidence manifest and actual browser adapter with capability probe and immutable result bindings.",
     "Versioned recoverable phase machine and durable limits, with regression/fault-injection tests.",
-    "Controller-owned task publication, Draft PR and remote-check/repair integration.",
+    "Controller-owned branch publication, versioned merge-decision report and remote push-check/repair integration; optional PR mode is not a completion prerequisite.",
     "Updated README, implementation record and related design, with real pilot report and decision handoff."
   ],
   "execution_policy": {
@@ -220,19 +221,31 @@
       "note": "Defaults must be implemented/configured explicitly, persist across resumes and include tests/browser/review/CI waits; this JSON currently does not enforce them. No monetary meter is claimed."
     },
     "phase_time": "Preflight proves browser/GitHub/check capabilities and reserves sufficient time for independent review and finalization before allowing worker execution. Exhaustion stops honestly; no fresh invocation silently replenishes a run.",
-    "completion": "All applicable frozen criteria and injected documentation gate pass for final source/docs; actual pilot ends ready_for_merge_approval with remote required gates successful. Publication alone is not acceptance.",
-    "publication": "Existing owner instruction authorizes per-delivery task-scoped commit/push and reviewable Draft PR. Publisher identity/repo/base/head are explicitly bound in preflight. Incomplete deliveries may publish only safely reviewed task files with failed/missing gates visible. If safe publication cannot be established, report publication_blocked with retained local evidence; do not force unsafe publication.",
+    "completion": "All frozen criteria and injected documentation gate pass for final source/docs. Actual pilot ends ready_for_merge_approval with pushed dedicated branch, current merge-decision report and successful exact-revision required push CI. No PR is required. Publication alone is not acceptance.",
+    "publication": "Owner authorizes per-delivery task-scoped commit/push and merge-decision report. Default branch_report mode does not create/update PRs. Bind repository/target/source identity in preflight. Incomplete deliveries may publish only safely reviewed task files with failed/missing gates visible in the report. Unsafe publication yields publication_blocked with local evidence retained.",
     "owner_decisions": [
       "Core design/criterion/evaluator changes or conflict with project authority.",
       "New paid service, materially expanded permissions or private-data destination, or explicitly configured budget expansion.",
       "Unresolved repeated failure, unavailable required capability after bounded recovery, or exhausted limits.",
-      "Actual merge/deploy always requires explicit authorization for that concrete PR/revision; prior PR #1 merge permission is not reusable."
+      "Actual merge/deploy requires explicit authorization for the concrete source/target branch and revision shown in the report; previous merge authorization cannot be reused."
     ],
     "autonomous_choices": [
       "Routine implementation, test-environment/CI prerequisite fixes within scope, related docs and bounded repair/re-review.",
-      "Configured dedicated-branch commit/push, Draft PR creation/update and read-only remote-check polling."
+      "Configured dedicated-branch commit/push, version-bound merge-decision report generation and read-only push-CI polling. PR creation is optional only when explicitly selected for that project/task."
     ],
-    "notification": "On return report completion, actionable failure or owner decision. No scheduler/notification service is activated by this contract."
+    "notification": "On return report completion, actionable failure or owner decision. No scheduler/notification service is activated by this contract.",
+    "delivery_mode": {
+      "default": "branch_report",
+      "required": [
+        "dedicated pushed branch",
+        "exact-head required push CI",
+        "independent review and documentation gate",
+        "version-bound merge-decision report",
+        "owner authorization before target merge"
+      ],
+      "optional_pr": "Only explicitly opted-in projects/tasks use pull_request mode; no PR capability/URL/event is required by default and the live pilot must demonstrate the default mode.",
+      "required_gate_conflict": "Probe push-gate availability before implementation; PR-only repository requirements cannot be silently waived or cause an unsolicited PR."
+    }
   },
   "live_pilot": {
     "target": "CoRA isolated checkout from recorded current codex/workflow-foundation head; original checkout unchanged.",
@@ -247,9 +260,17 @@
       "No runtime source, evaluation labels or preexisting expectations weakened. Only task-specific meaningful regression and documentation edits.",
       "Preflight freezes exact target/base/head, commands and current suite; existing F1 protected evaluation and relevant full/quality gates still pass.",
       "Use an independent review rejection in a synthetic rehearsal to prove automatic repair; never intentionally break or alter real CoRA acceptance criteria.",
-      "Real pilot creates a Draft PR to the recorded base; owner merge approval remains pending.",
+      "Real pilot pushes the dedicated branch and generates a merge-decision report against recorded base/source revisions; no PR is created in default mode and owner merge approval remains pending.",
       "Exercise actual browser adapter on the existing target-owned F1 harness as workflow evidence; keep kernel-boundary vs full-UI limitations explicit."
     ],
     "expected_human_intervention": "Zero manual implementation/check/browser/result-copy/review/publication handoffs during a successful bounded run; only initial launch and final merge decision. Unsupported capabilities produce an incomplete, actionable outcome."
+  },
+  "revision_decision": {
+    "date": "2026-11-05",
+    "authority": "Owner: 권장대로 하자, approving branch-and-report delivery without mandatory PR.",
+    "previous_revision": 1,
+    "previous_evaluation_id": "W1-evaluator-v1",
+    "previous_evaluation_sha256": "49be79ebb9093996e0387b1635c5565e9cd8dfde94d0fe38836760ac7ebec513",
+    "change": "PR is optional and disabled by default. Completion requires a validated pushed branch, exact-revision push CI and owner merge-decision report. Independent review and explicit merge authorization remain required."
   }
 }
