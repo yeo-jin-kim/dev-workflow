@@ -1,0 +1,97 @@
+{
+  "id": "W1-evaluator-v1",
+  "status": "Fixed proposed acceptance scenarios for this implementation contract; edits require owner decision after implementation begins.",
+  "authority": "Synthetic fault scenarios are engineering acceptance cases, not evidence of general AI correctness.",
+  "cases": [
+    {
+      "id": "W01",
+      "name": "happy_path",
+      "expected": "Real worker/check/reviewer/browser/publisher stages finish, remote checks succeed and final status awaits merge approval."
+    },
+    {
+      "id": "W02",
+      "name": "check_failure_repair",
+      "expected": "A deterministic failed check reaches the worker with original output, correction reruns affected checks and independent review; no failed attempt erased."
+    },
+    {
+      "id": "W03",
+      "name": "review_rejection_repair",
+      "expected": "A reviewer rejects a deliberately inadequate synthetic implementation despite passing tests; correction and independent re-review are required."
+    },
+    {
+      "id": "W04",
+      "name": "stale_source",
+      "expected": "A source, configuration, fixture, dependency-lock or generated browser-runtime change invalidates dependent evidence and publication eligibility."
+    },
+    {
+      "id": "W05",
+      "name": "stale_docs",
+      "expected": "Documentation changes after review require a final documentation review; the implementation worker cannot exempt its own edits."
+    },
+    {
+      "id": "W06",
+      "name": "browser_execution",
+      "expected": "An actual browser runs the generated production harness; raw result, runtime/fixture hashes and browser version are recorded. Node execution or screenshots alone fail this case."
+    },
+    {
+      "id": "W07",
+      "name": "browser_missing",
+      "expected": "No supported browser backend yields capability_blocked and a concrete recovery request; a fabricated or manually relabeled pass never qualifies."
+    },
+    {
+      "id": "W08",
+      "name": "protected_inputs",
+      "expected": "Changing a protected acceptance definition, evaluator, controller policy or contract invalidates the attempt and requires owner decision, never a regenerated baseline."
+    },
+    {
+      "id": "W09",
+      "name": "decision_stop",
+      "expected": "A core design/criterion conflict persists a decision request with alternatives, impacts and recommendation; restart/time passing cannot approve it."
+    },
+    {
+      "id": "W10",
+      "name": "budget_resume",
+      "expected": "Timeout, process crash and resume preserve cumulative elapsed time/cycle usage; child processes terminate and an exhausted run cannot restart its budget."
+    },
+    {
+      "id": "W11",
+      "name": "publication_idempotence",
+      "expected": "Crash after commit/push/PR creation resumes by inspecting exact branch/SHA/PR identity, without duplicate commit/PR or force push."
+    },
+    {
+      "id": "W12",
+      "name": "publication_scope",
+      "expected": "Only reviewed task changes on the configured repository/branch publish. Dirty original checkout, unrelated files and ignored private logs are preserved/excluded."
+    },
+    {
+      "id": "W13",
+      "name": "remote_failure",
+      "expected": "Remote quality check failure returns its actual log/head SHA to the repair cycle; failed/unknown/pending checks cannot become ready_for_merge_approval."
+    },
+    {
+      "id": "W14",
+      "name": "remote_movement",
+      "expected": "Target/head changes before publication or after CI force re-evaluation on the updated integration candidate; checking an older SHA is insufficient."
+    },
+    {
+      "id": "W15",
+      "name": "failure_delivery",
+      "expected": "At budget/capability/decision stop, publication finalization can save a reviewed-safe incomplete branch per owner policy, but it remains incomplete and never ready for merge."
+    },
+    {
+      "id": "W16",
+      "name": "boundary_preservation",
+      "expected": "Controller, protected inputs and evidence remain outside target; target package is not imported by controller; target-level lock and schema/documentation gates remain enforced."
+    },
+    {
+      "id": "W17",
+      "name": "real_pilot",
+      "expected": "A real small CoRA task reaches a Draft PR with fresh checks/browser where required, independent review and successful remote checks without manual stage handoffs; no merge."
+    },
+    {
+      "id": "W18",
+      "name": "truthful_status",
+      "expected": "Status distinguishes local acceptance, publication/CI pending, ready for owner merge, incomplete publication and merged; legacy complete states are not silently reclassified."
+    }
+  ]
+}

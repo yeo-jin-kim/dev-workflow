@@ -1,0 +1,255 @@
+{
+  "id": "W1-reviewable-delivery",
+  "revision": 1,
+  "status": "ready-for-implementation-planning; this delivery defines the contract only",
+  "goal": "Extend the separate dev-workflow controller so a bounded authorized task proceeds through evidence collection, independent review/repair, task documentation, commit/push, Draft PR and exact-revision remote validation; owner retains design/criteria decisions and merge authority.",
+  "read_first": [
+    "AGENTS.md",
+    "README.md",
+    "docs/implementation.md",
+    "docs/01-reviewable-delivery-design.md",
+    "tools/development_loop.py",
+    "tools/evaluate_f1.py",
+    "tests/test_development_loop.py"
+  ],
+  "controller_references": [
+    "contracts/dev-workflow/W1-reviewable-delivery.md",
+    "contracts/dev-workflow/evaluations/W1-reviewable-delivery.json"
+  ],
+  "baseline": {
+    "controller_commit": "e41da0772c5a7c778031565417d19157db622dc2",
+    "observed": "2026-11-05; source inspection",
+    "implemented": [
+      "External controller/target separation, target locks, worker workspace-write and read-only reviewer",
+      "Check/review-driven correction, reserved documentation gate, per-invocation limits",
+      "F1-specific evidence verifier with manual actual-browser evidence input"
+    ],
+    "missing": [
+      "Generic browser evidence adapter and unattended execution",
+      "Unified exact-version evidence and durable cumulative budgets/phase recovery",
+      "Controller-owned publication, Draft PR identity/recovery and remote-CI feedback"
+    ],
+    "cora_integration_reference": "PR #1 merged to codex/workflow-foundation at fe4aac50ed07fa7f1bf36a4ec197f20ec2f7df8b; no new F1 development authorized by this contract."
+  },
+  "allowed_scope": [
+    "Project-independent runner/state/evidence/adapter/publication modules, schemas, tests, documentation and opt-in project configuration in dev-workflow.",
+    "Declare browser/runtime prerequisites and use existing supported local automation interfaces; core controller remains Python 3.9+ standard library. Optional adapter dependencies are explicitly scoped/tested.",
+    "Isolated synthetic target repositories and local bare remotes for deterministic fault scenarios; one real constrained CoRA pilot branch/Draft PR.",
+    "Preserve old run histories and existing CLI compatibility; version new state/evidence formats and define explicit migration or new-run policy."
+  ],
+  "forbidden_changes": [
+    "No CoRA application behavior, foundation concepts, stored data or F1 acceptance/evaluator changes.",
+    "No automatic merge/deploy, background scheduler, autonomous next-goal selection, new paid service/model or private-data upload.",
+    "No worker changes to owning controller, protected inputs, logs or publication credentials. No fake browser results, weakened assertions or undocumented evidence omissions.",
+    "No force push, deleting branches/checkouts, rewriting historical failures, including unrelated/ignored/private files or silently resetting budgets.",
+    "Do not run this contract against dev-workflow itself using the current runner: it explicitly rejects controller-as-target. Do not remove that guard to bootstrap this work."
+  ],
+  "criteria": [
+    {
+      "id": "evidence_binding",
+      "requirement": "W04/W05/W06: Each check/review/browser/CI artifact binds to an immutable input manifest, commands, environment, exit status and raw output. Validate final reviewed/published source and docs; record exact commit SHA and canonical tree/content hash separately."
+    },
+    {
+      "id": "repair_loop",
+      "requirement": "W02/W03/W13: Failed checks and independent review findings drive bounded correction and revalidation. Passing tests alone cannot override a negative semantic review; invalid reviewer output is a failed phase."
+    },
+    {
+      "id": "browser_capability",
+      "requirement": "W06/W07: A real locally available browser backend is exercised by the controller, with a generic adapter and project-owned harness. Probe capabilities before worker time is spent. Manual parent copying of browser results cannot count as unattended pilot success."
+    },
+    {
+      "id": "protected_policy",
+      "requirement": "W08/W09/W16: Preserve fixed criteria/evaluation hashes, external controller ownership, distinct worker/reviewer and documentation gate. Persist actual owner decisions; never treat generated suggestions or silence as approval."
+    },
+    {
+      "id": "durable_budgets",
+      "requirement": "W10/W11/W16: Durable phase checkpoints, target lock, cumulative wall/cycle budgets including restarts, bounded subprocesses, and idempotent commit/push/PR recovery. Reserve time for required review/publication; declare unmeasured monetary usage accurately."
+    },
+    {
+      "id": "reviewed_publication",
+      "requirement": "W01/W05/W11/W12/W14/W15: Controller publisher, not implementation worker, commits/pushes task-scoped reviewed-safe changes and creates/updates a Draft PR at configured repo/base/head. Completed and incomplete deliveries carry truthful status. No force push, branch deletion or automatic merge."
+    },
+    {
+      "id": "remote_validation",
+      "requirement": "W13/W14/W18: Associate push/PR checks with exact head and integration/base state, require named quality gates to succeed, propagate logs for repair. Pending/absent checks never count as success unless contract explicitly declares no remote gates."
+    },
+    {
+      "id": "owner_handoff",
+      "requirement": "W07/W09/W10/W15/W18: Return one actionable decision/capability/budget packet with evidence, options and recommendation; preserve artifacts. Successful final handoff is a concrete Draft PR awaiting explicit merge authorization."
+    },
+    {
+      "id": "regression",
+      "requirement": "All existing 15 controller tests plus meaningful new fault-scenario tests pass. Exercise W01-W18, with real side effects distinguished from mocks. Do not weaken historical F1 definitions or existing assertions."
+    },
+    {
+      "id": "live_pilot",
+      "requirement": "W17: On a dedicated CoRA branch run the constrained pilot below through actual worker/reviewer, checks and GitHub publication/CI. A mock-only demo or parent manually completing a missing stage is partial, not milestone completion."
+    },
+    {
+      "id": "review",
+      "requirement": "Independent final reviewer inspects frozen contract/scenarios, actual diff, failure attempts, source/environment-bound results and publication status. No unresolved blockers. documentation_sync is additionally injected for executable task runs."
+    }
+  ],
+  "checks": [
+    [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-q"
+    ],
+    [
+      "git",
+      "diff",
+      "--check"
+    ]
+  ],
+  "acceptance_evaluation": {
+    "id": "W1-evaluator-v1",
+    "status": "Fixed proposed acceptance scenarios for this implementation contract; edits require owner decision after implementation begins.",
+    "authority": "Synthetic fault scenarios are engineering acceptance cases, not evidence of general AI correctness.",
+    "cases": [
+      {
+        "id": "W01",
+        "name": "happy_path",
+        "expected": "Real worker/check/reviewer/browser/publisher stages finish, remote checks succeed and final status awaits merge approval."
+      },
+      {
+        "id": "W02",
+        "name": "check_failure_repair",
+        "expected": "A deterministic failed check reaches the worker with original output, correction reruns affected checks and independent review; no failed attempt erased."
+      },
+      {
+        "id": "W03",
+        "name": "review_rejection_repair",
+        "expected": "A reviewer rejects a deliberately inadequate synthetic implementation despite passing tests; correction and independent re-review are required."
+      },
+      {
+        "id": "W04",
+        "name": "stale_source",
+        "expected": "A source, configuration, fixture, dependency-lock or generated browser-runtime change invalidates dependent evidence and publication eligibility."
+      },
+      {
+        "id": "W05",
+        "name": "stale_docs",
+        "expected": "Documentation changes after review require a final documentation review; the implementation worker cannot exempt its own edits."
+      },
+      {
+        "id": "W06",
+        "name": "browser_execution",
+        "expected": "An actual browser runs the generated production harness; raw result, runtime/fixture hashes and browser version are recorded. Node execution or screenshots alone fail this case."
+      },
+      {
+        "id": "W07",
+        "name": "browser_missing",
+        "expected": "No supported browser backend yields capability_blocked and a concrete recovery request; a fabricated or manually relabeled pass never qualifies."
+      },
+      {
+        "id": "W08",
+        "name": "protected_inputs",
+        "expected": "Changing a protected acceptance definition, evaluator, controller policy or contract invalidates the attempt and requires owner decision, never a regenerated baseline."
+      },
+      {
+        "id": "W09",
+        "name": "decision_stop",
+        "expected": "A core design/criterion conflict persists a decision request with alternatives, impacts and recommendation; restart/time passing cannot approve it."
+      },
+      {
+        "id": "W10",
+        "name": "budget_resume",
+        "expected": "Timeout, process crash and resume preserve cumulative elapsed time/cycle usage; child processes terminate and an exhausted run cannot restart its budget."
+      },
+      {
+        "id": "W11",
+        "name": "publication_idempotence",
+        "expected": "Crash after commit/push/PR creation resumes by inspecting exact branch/SHA/PR identity, without duplicate commit/PR or force push."
+      },
+      {
+        "id": "W12",
+        "name": "publication_scope",
+        "expected": "Only reviewed task changes on the configured repository/branch publish. Dirty original checkout, unrelated files and ignored private logs are preserved/excluded."
+      },
+      {
+        "id": "W13",
+        "name": "remote_failure",
+        "expected": "Remote quality check failure returns its actual log/head SHA to the repair cycle; failed/unknown/pending checks cannot become ready_for_merge_approval."
+      },
+      {
+        "id": "W14",
+        "name": "remote_movement",
+        "expected": "Target/head changes before publication or after CI force re-evaluation on the updated integration candidate; checking an older SHA is insufficient."
+      },
+      {
+        "id": "W15",
+        "name": "failure_delivery",
+        "expected": "At budget/capability/decision stop, publication finalization can save a reviewed-safe incomplete branch per owner policy, but it remains incomplete and never ready for merge."
+      },
+      {
+        "id": "W16",
+        "name": "boundary_preservation",
+        "expected": "Controller, protected inputs and evidence remain outside target; target package is not imported by controller; target-level lock and schema/documentation gates remain enforced."
+      },
+      {
+        "id": "W17",
+        "name": "real_pilot",
+        "expected": "A real small CoRA task reaches a Draft PR with fresh checks/browser where required, independent review and successful remote checks without manual stage handoffs; no merge."
+      },
+      {
+        "id": "W18",
+        "name": "truthful_status",
+        "expected": "Status distinguishes local acceptance, publication/CI pending, ready for owner merge, incomplete publication and merged; legacy complete states are not silently reclassified."
+      }
+    ]
+  },
+  "evaluation_file_sha256": "49be79ebb9093996e0387b1635c5565e9cd8dfde94d0fe38836760ac7ebec513",
+  "deliverables": [
+    "Generic evidence manifest and actual browser adapter with capability probe and immutable result bindings.",
+    "Versioned recoverable phase machine and durable limits, with regression/fault-injection tests.",
+    "Controller-owned task publication, Draft PR and remote-check/repair integration.",
+    "Updated README, implementation record and related design, with real pilot report and decision handoff."
+  ],
+  "execution_policy": {
+    "contract_only_now": true,
+    "bootstrap": "Implementation is performed by the maintaining parent in an isolated dev-workflow development checkout. Owning contracts/evaluator manifest remain outside worker-controlled checkout and are snapshotted before edits. Existing runner boundary is preserved. Do not create an active project/run config for this contract until bootstrap and capability preflight are concretely implemented.",
+    "default_limits_proposal": {
+      "max_cycles": 3,
+      "max_total_seconds": 3600,
+      "max_infrastructure_retries_per_phase": 1,
+      "note": "Defaults must be implemented/configured explicitly, persist across resumes and include tests/browser/review/CI waits; this JSON currently does not enforce them. No monetary meter is claimed."
+    },
+    "phase_time": "Preflight proves browser/GitHub/check capabilities and reserves sufficient time for independent review and finalization before allowing worker execution. Exhaustion stops honestly; no fresh invocation silently replenishes a run.",
+    "completion": "All applicable frozen criteria and injected documentation gate pass for final source/docs; actual pilot ends ready_for_merge_approval with remote required gates successful. Publication alone is not acceptance.",
+    "publication": "Existing owner instruction authorizes per-delivery task-scoped commit/push and reviewable Draft PR. Publisher identity/repo/base/head are explicitly bound in preflight. Incomplete deliveries may publish only safely reviewed task files with failed/missing gates visible. If safe publication cannot be established, report publication_blocked with retained local evidence; do not force unsafe publication.",
+    "owner_decisions": [
+      "Core design/criterion/evaluator changes or conflict with project authority.",
+      "New paid service, materially expanded permissions or private-data destination, or explicitly configured budget expansion.",
+      "Unresolved repeated failure, unavailable required capability after bounded recovery, or exhausted limits.",
+      "Actual merge/deploy always requires explicit authorization for that concrete PR/revision; prior PR #1 merge permission is not reusable."
+    ],
+    "autonomous_choices": [
+      "Routine implementation, test-environment/CI prerequisite fixes within scope, related docs and bounded repair/re-review.",
+      "Configured dedicated-branch commit/push, Draft PR creation/update and read-only remote-check polling."
+    ],
+    "notification": "On return report completion, actionable failure or owner decision. No scheduler/notification service is activated by this contract."
+  },
+  "live_pilot": {
+    "target": "CoRA isolated checkout from recorded current codex/workflow-foundation head; original checkout unchanged.",
+    "task": "Strengthen F1 metadata-invariance regression to vary actual CognitiveState.state_type as well as depth/layout metadata, preserving expected invariant scores/paths/stopping.",
+    "allowed_paths": [
+      "tests/test_distance_decay_activation.py",
+      "docs/implementation/02-F1-distance-decay.md",
+      "docs/04-abstraction-and-association.md",
+      "docs/00-master-design.md"
+    ],
+    "constraints": [
+      "No runtime source, evaluation labels or preexisting expectations weakened. Only task-specific meaningful regression and documentation edits.",
+      "Preflight freezes exact target/base/head, commands and current suite; existing F1 protected evaluation and relevant full/quality gates still pass.",
+      "Use an independent review rejection in a synthetic rehearsal to prove automatic repair; never intentionally break or alter real CoRA acceptance criteria.",
+      "Real pilot creates a Draft PR to the recorded base; owner merge approval remains pending.",
+      "Exercise actual browser adapter on the existing target-owned F1 harness as workflow evidence; keep kernel-boundary vs full-UI limitations explicit."
+    ],
+    "expected_human_intervention": "Zero manual implementation/check/browser/result-copy/review/publication handoffs during a successful bounded run; only initial launch and final merge decision. Unsupported capabilities produce an incomplete, actionable outcome."
+  }
+}

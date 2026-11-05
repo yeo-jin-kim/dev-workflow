@@ -14,9 +14,9 @@ python3 -m unittest discover -s tests -q
 ```
 
 `run` invokes the installed/authenticated Codex CLI and executes trusted contract
-checks in the target checkout. Default model settings are preserved. The default
-CoRA task is the prepared F1 contract; it has NOT been started by this migration.
-`pilot.json` is historical, not the current default.
+checks in the target checkout. Default model settings are preserved. The project files still point to historical F1; F1 has since completed and merged.
+Select an explicit new authorized contract/isolated target before a new run; the
+example command is not a newly selected goal. `pilot.json` is historical.
 
 ## Layout
 
@@ -55,15 +55,23 @@ No merge/deploy/publish is automatically authorized.
 The preserved archive is historical: original state files contain old absolute
 paths. Do not resume them or rewrite their evidence. See migration.json.
 
-## Prepared CoRA pilot contract
+## CoRA F1 history and current next milestone
 
-The F1 contract revision 2 is documented in
-[the task brief](contracts/cora/F1-distance-decay.md). It contains explicit
-implementation candidates, protected synthetic cases, completion evidence and
-owner-decision boundaries. Synthetic semantic labels are proposed, not certified
-empirical ground truth. The contract is prepared only; before a live run review
-it and prepare an isolated target baseline/test environment. Current project
-configuration has not been switched to an isolated checkout.
+F1 completed synthetic verification and merged in
+[CoRA PR #1](https://github.com/yeo-jin-kim/cora/pull/1) to
+`codex/workflow-foundation` (`fe4aac5`). Parent intervention supplied browser,
+review/publication handoffs and a CI prerequisite fix; this was not a fully
+unattended run. Its contracts and run histories remain preserved.
+
+W1 is the next **specified, not implemented** controller extension:
+[task contract](contracts/dev-workflow/W1-reviewable-delivery.md),
+[machine-readable contract](contracts/dev-workflow/W1-reviewable-delivery.json),
+[design](docs/01-reviewable-delivery-design.md).
+It covers version-bound evidence, actual-browser execution, durable repair/review,
+commit/push, Draft PR and remote-check feedback. Owner decisions and actual merge
+remain explicit. No W1 project configuration, new runner behavior or scheduled
+execution is activated by this documentation delivery. The current runner must
+not be invoked against its own repository to bootstrap W1.
 
 ## Delivery publication policy
 

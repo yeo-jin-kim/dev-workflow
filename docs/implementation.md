@@ -120,3 +120,37 @@ and recomputing the reviewed target digest. CoRA delivery: `6888c55` on
 source/test fingerprints remain those evaluated. This remediation was directed
 by the parent with separate CLI review; historical runner state was not rewritten
 or presented as a fully autonomous browser-capable execution.
+
+
+## F1 integration and W1 contract — 2026-11-05
+
+F1 subsequently passed integration review and merged through CoRA PR #1 into
+`codex/workflow-foundation` at `fe4aac5`. Integration candidate full suite: 484
+passes; fresh browser comparisons: 4; invalid browser inputs: 10. A missing-pytest
+CI prerequisite was repaired without weakening either quality gate; server quality
+21/full484 tests passed. Earlier first-pilot incomplete statements above are
+historical, not the latest F1 status. These steps included manual parent handoffs.
+
+Defined W1 in `contracts/dev-workflow/W1-reviewable-delivery.{md,json}` and
+`docs/01-reviewable-delivery-design.md`, with 18 fixed synthetic acceptance
+scenarios, exact-version evidence, actual-browser adapter capability, bounded
+repair/review, cumulative resume limits, publisher/CI recovery and owner handoff.
+The real pilot is restricted to CoRA's actual state_type invariance regression
+and affected documentation, with no runtime/semantic/evaluator changes. The
+controller-as-target guard stays in place; bootstrap requires an isolated
+implementation checkout and external owning protected inputs. W1 has no active
+project configuration and is not yet implemented or running. The suggested
+3-cycle/60-minute settings are specifications, not newly enforced CLI behavior.
+
+This delivery changes contracts/design/current-status documentation only. No
+controller or CoRA source, acceptance labels from F1, execution state or live
+service changed. Contract JSON/hash/criterion/scenario correspondence, referenced
+files and documentation links are checked; existing controller tests are run to
+confirm compatibility. Implementation work and W1 live/failure-scenario execution
+remain required before any W1 completion claim.
+
+W1 contract preparation validation: **15 existing controller tests passed**;
+11 unique task criteria plus the reserved injected documentation gate, 18 unique
+scenario IDs with criterion coverage, embedded evaluator/hash equality, all
+referenced files/Markdown links and whitespace checks passed. No W1 scenario or
+live pilot was executed; these remain acceptance requirements for implementation.
