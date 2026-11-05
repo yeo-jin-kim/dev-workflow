@@ -72,3 +72,8 @@ performs finalization after checking results. Incomplete milestones are pushed
 to dedicated branches with their failed/missing gates stated, never merged or
 reported accepted merely because they were published. Private .local logs stay
 excluded; implementation workers do not push during their runs.
+
+F1 synthetic evidence verification is available through `tools/evaluate_f1.py`.
+It checks protected definitions, recorded source fingerprints and actual browser
+results; see `docs/implementation.md`. Evidence completion does not bypass the
+independent review gate.

@@ -95,3 +95,28 @@ Preserve incomplete review status on a dedicated target branch; do not merge,
 force-push or include ignored private evidence. Automated workers remain unable
 to redefine task criteria or publish themselves. This is an operating instruction
 for the maintaining parent, not a new unattended Git executor in the loop.
+
+## F1 second verification — 2026-11-05
+
+`tools/evaluate_f1.py` checks the protected definition hash and all 13 case IDs,
+actual browser DOM results, two shared graph queries at both recorded route seed
+boundaries, false/missed activations and target source fingerprints. It imports
+no CoRA packages. Target-owned `tests/f1_evaluation.py` exports synthetic domain
+observations; the controller checks its artifacts. Evidence stays in ignored
+`.local/preflight/F1-round2/`. This is executable synthetic case verification,
+not an independent semantic oracle; the read-only review gate is separate.
+Run the target exporter, serve its output locally, open it in an actual browser,
+save `#results` as `browser-result.json`, then invoke
+`python3 tools/evaluate_f1.py EVIDENCE --target TARGET`.
+No protected case definition or acceptance threshold was changed.
+
+Round-2 delivery result: CoRA 484 tests passed; controller 15 tests passed;
+13 protected synthetic cases, four actual browser kernel comparisons and ten
+browser invalid inputs passed. CoRA also rejects 13 tested invalid API inputs.
+Independent read-only review initially requested three record corrections,
+then passed all 12 acceptance/documentation criteria after rechecking the fixes
+and recomputing the reviewed target digest. CoRA delivery: `6888c55` on
+`codex/f1-distance-decay`. Final status notes record the review outcome only;
+source/test fingerprints remain those evaluated. This remediation was directed
+by the parent with separate CLI review; historical runner state was not rewritten
+or presented as a fully autonomous browser-capable execution.
