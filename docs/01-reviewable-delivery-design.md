@@ -1,7 +1,6 @@
 # Reviewable delivery workflow design
 
-**Status, 2026-11-05:** Planned W1 revision 2; owner approved branch/report delivery with PR optional and disabled by default. No new runtime, browser backend,
-publisher or scheduler is implemented by this document. The contract and frozen
+**Status, 2026-11-05:** W1 revision 2 implementation candidate exists in the separate development checkout. Actual Chrome adapter, durable evidence/state and branch publisher are implemented as a candidate. The real pilot exhausted three cumulative cycles and remains unaccepted; an additional authorized trial is required. PR creation and scheduler are not implemented or activated. The contract and frozen
 acceptance scenarios are in `contracts/dev-workflow/W1-reviewable-delivery.*`.
 
 ## Existing behavior and proposed boundary
@@ -71,6 +70,7 @@ Names below describe W1; existing state formats are not silently migrated.
 | `locally_accepted` | All local required evidence and review correspond to the current candidate. This does not mean published or merge-ready. |
 | `publishing` | Idempotent commit/push and version-bound report; confirm repo/base/head and side-effect receipts. |
 | `remote_checking` | Observe required named gates on exact revision and integration state; failure returns logs to repair. |
+| `reporting` | Atomically create/recover the deterministic versioned report; ready state is persisted only after report receipt succeeds. |
 | `ready_for_merge_approval` | Validated pushed branch, merge-decision report and successful current required push gates; actual merge requires owner authorization. |
 | `decision_required` | Persist question/options/impact/recommendation and explicit authorization requirement. |
 | `capability_blocked` | Required tool/environment unavailable after bounded recovery; include reproducible diagnostic and next action. |
@@ -144,3 +144,114 @@ stage handoffs. The existing CoRA checkout and source behavior remain unchanged.
 Independent review assesses this design, final implementation, actual negative
 runs and documentation. Missing capabilities or manual completion yield partial
 implementation, not a claim of fully automatic delivery.
+
+
+## Implementation candidate anchors — 2026-11-05
+
+- `tools/delivery_evidence.py`: canonical content manifests, external raw command
+  records, cumulative persisted deadline/cycles, actual Chrome headless execution
+  of a loopback project harness, runtime/fixture/result/version bindings.
+- `tools/delivery_loop.py`: explicit schema-version-2 opt-in runner, original
+  self-target guard, preflight probes, worker/check/browser/read-only review,
+  stale-evidence invalidation and safe incomplete-delivery handling.
+- `tools/delivery_publish.py`: exact-path staging, crash-aware commit/push receipts,
+  candidate-only base integration followed by revalidation, exact-head named push
+  CI and append-only external JSON/Markdown merge-decision reports.
+- `schemas/publication.schema.json`: independent incomplete-publication safety
+  review, separate from failed semantic acceptance. Time exhaustion cannot grant
+  extra review budget; if safe publication cannot be established it stays blocked.
+- `projects/cora-w1-pilot.json`, `contracts/cora/W1-state-type-pilot.json`: narrow
+  authorized real trial. Existing W1/F1 protected definitions remain unchanged.
+- `tests/test_delivery_loop.py`: real temporary Git/bare-remote operations,
+  explicit synthetic model/GitHub faults, and actual Chrome execution where
+  available. Synthetic fixtures are not the real-pilot evidence.
+
+Existing legacy CLI/tests are unchanged. Controller core remains Python 3.9+
+standard library; adapters require installed Chrome, Codex CLI, gh and task test
+Python dependencies. Chrome is an actual headless browser, with separate fresh
+profile and loopback harness; no OS/browser sandbox weakening flags are used.
+No app-only computer-use interface is assumed. PR mode is optional in the
+contract but not implemented here; selecting it returns a decision request and
+cannot silently activate PR creation. Automatic target merge stays absent.
+
+Each run pins the complete controller manifest and owning protected files, so
+controller edits require a new linked run rather than silently adopting new
+policy. Reports/command/browser artifacts remain in the explicitly external
+state directory. Final source/docs changes invalidate acceptance; report generation
+itself is external and does not create a source-review feedback loop. Published
+branches are incomplete until required push gates succeed and the exact base/head
+are reconfirmed. Pending remote gates/clock anomalies exhaust or block the run
+honestly, preserving all attempts and any safe incomplete publication receipt.
+
+### Bootstrap corrections and linked validation
+
+The first actual pilot produced an internally inconsistent reviewer output:
+all criteria/verdict passed, but decision_requests contained a statement saying
+there was no new decision. The controller correctly withheld completion, then
+publication-safety review timed out; no pass was fabricated. An independent
+format-only clarification returned the same semantic findings with an empty
+decision list. Original stopped state/logs remain unchanged.
+
+The implementation now treats contradictory pass/blocker/decision output as
+invalid formatting and requests one independent clarification, preserving both
+artifacts. It never retries a valid negative semantic judgment merely to obtain
+pass, removes decisions itself, or treats generated text as owner authorization.
+Malformed result types fail rather than throwing an unhandled acceptance error.
+Browser harness hashes are compared before/after actual execution; mutation
+invalidates results. Read-only remote probes have one durable infrastructure
+retry; writes rely on side-effect identity inspection, not blind retry.
+
+A separate explicitly linked bootstrap revalidation profile preserves the exact
+pilot task contract and copies the original cumulative deadline/cycle usage.
+Linking is allowed only from accepted runs, or a contradictory-pass stop with
+independently corrected review bound to unchanged original reviewed contents.
+Genuine unresolved decisions cannot be bypassed. Both prior state and resolution
+are pinned; old states are not rewritten, budgets not replenished, and the new
+isolated pilot still performs its own full worker/check/browser/review/publication
+chain. `projects/cora-w1-pilot-v2.json` records this concrete linked validation;
+its absolute evidence paths are host-specific, not a portable default.
+
+
+### Source-review fixes and current verification boundary
+
+A separate code reviewer requested stronger environment binding, retention of
+pending CI at timeout and crash-idempotent reports. Command records now contain
+the inherited environment fingerprint (no credential values), resolved executable
+content identity and deterministic project dependency probes. Review/publication
+compare the current environment/dependency binding. Browser failures carry exact
+raw log, execution-record and project-observation paths back to the worker.
+This corrects the missing diagnosis context found in the real trial.
+
+CI saves its last known result on every poll. Report IDs derive from immutable
+run/source/target/review/CI identity; orphan JSON/Markdown receipts are recovered
+without duplicate versions. Reports include change goal, task summaries, all
+verification references, cumulative budget and linked failure history. A failed
+report cannot persist a ready status. Starting new implementation/review clears
+previous acceptance; the publisher independently rejects a current negative
+review even if an old digest survives. Parent-budget allocation also has an
+exclusive sidecar receipt, preventing new state directories from multiplying the
+same allowance; original histories stay untouched.
+
+Latest local evaluation: 58 tests passed, including real Chrome and real temporary
+Git/bare-remotes with explicitly synthetic model/GitHub fault responses. W02-W16
+and W18 currently pass those mapped rehearsals; W01/W17 remain incomplete because
+the actual CoRA task never reached accepted publication/push CI. A new directory
+or fabricated pass cannot resolve that. No PR or target merge was performed.
+
+
+Linked allowance claims use a fully written, atomically linked journal containing
+initial state and source/controller/project/external-policy bindings. A crash
+before child persistence can restore that exact run ID and budget; activation
+occurs only after state persistence. Once active, missing/deleted state is not
+a license to regenerate allowance. Distinct child directories cannot reuse the
+same parent grant. Current acceptance remains incomplete at the exhausted live
+trial; manual parent WIP preservation does not satisfy autonomous publication.
+
+Both sides of child-state persistence use one original journal-binding function.
+Controls are durable and guarded before activation, with a final binding recheck.
+Tests cover unchanged recovery and changed-policy rejection after persistence.
+Latest local verification is 58 passed; live W01/W17 remain incomplete.
+
+Final independent re-review found the corrected source crash/binding paths
+sound under the recorded tests. Overall W1 acceptance is still blocked by the
+missing successful real pilot and explicit owner authorization for further trial.

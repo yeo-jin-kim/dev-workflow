@@ -1,0 +1,52 @@
+{
+  "schema_version": 2,
+  "id": "cora-w1-pilot",
+  "root": "../cora-w1-pilot",
+  "contract": "contracts/cora/W1-state-type-pilot.json",
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json",
+  "execution_authorization": "User: \uc218\uc815\ub41c \uc791\uc5c5 \uacc4\uc57d \uad6c\ud604\ud574\uc918. W1 revision 2 includes this constrained pilot. No PR or target merge.",
+  "protected_files": [
+    "/Users/yeojin/Code/dev-workflow/contracts/dev-workflow/W1-reviewable-delivery.json",
+    "/Users/yeojin/Code/dev-workflow/contracts/dev-workflow/evaluations/W1-reviewable-delivery.json",
+    "/Users/yeojin/Code/dev-workflow-w1/contracts/cora/evaluations/F1-distance-decay.json"
+  ],
+  "environment_commands": [
+    [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "-c",
+      "import sys,pytest,platform,json; print(json.dumps(dict(python=sys.version,executable=sys.executable,pytest=pytest.__version__,platform=platform.platform())))"
+    ]
+  ],
+  "delivery": {
+    "mode": "branch_report",
+    "repository": "yeo-jin-kim/cora",
+    "remote": "origin",
+    "base": "codex/workflow-foundation",
+    "head": "codex/w1-state-type-pilot",
+    "required_gates": [
+      {
+        "workflow": "Test",
+        "job": "test",
+        "event": "push"
+      }
+    ]
+  },
+  "browser": {
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "prepare": [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "tests/f1_evaluation.py",
+      "{evidence}/browser"
+    ],
+    "result_file": "browser-result.json",
+    "validate": [
+      "python3",
+      "/Users/yeojin/Code/dev-workflow-w1/tools/evaluate_f1.py",
+      "{evidence}/browser",
+      "--target",
+      "{target}"
+    ]
+  },
+  "ci_timeout_seconds": 300
+}

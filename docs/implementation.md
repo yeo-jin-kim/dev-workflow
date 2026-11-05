@@ -1,5 +1,7 @@
 # Controller separation implementation record
 
+> Current W1 status: implementation candidate; 58 local tests passed, real W01/W17 acceptance incomplete after three cumulative cycles. Additional live-trial budget requires owner approval. Earlier entries below preserve their stage-specific historical results.
+
 ## 2026-11-05 — independent repository
 
 Migrated the original local runner, schemas, automation tests and CoRA milestone
@@ -183,3 +185,123 @@ agreement, prior revision/hash history, default branch_report configuration,
 reference links and whitespace. No runtime, project configuration, schemas,
 existing tests or historical CoRA evaluation definitions changed. The 18 W1
 scenarios and live pilot are still specifications, not executed results.
+
+
+## W1 implementation candidate — 2026-11-05
+
+User requested implementation of revision 2. Development is isolated in
+`codex/w1-reviewable-delivery`, with owning contract/evaluator/legacy-test hashes
+snapshotted externally before implementation. Existing runner/tests and W1/F1
+acceptance definitions are preserved. New modules and optional pilot config are
+mapped in docs/01-reviewable-delivery-design.md. No target merge or PR is authorized.
+
+Implemented actual headless Chrome harness execution, immutable source/environment
+records, independent review-driven repair, cumulative resume limits, exact-path
+controller publication, push-CI failure feedback and versioned merge reports.
+Incomplete semantic work requires a separate publication-safety review; it never
+becomes accepted just because it was pushed. Missing capabilities, unresolved
+decisions and exhausted budgets preserve actionable state. New state version 2
+is opt-in; legacy complete states are not retroactively certified or migrated.
+
+Validation is in progress: synthetic fault rehearsals use fake model/GitHub
+responses explicitly, real temporary bare remotes and actual Chrome. The real
+CoRA pilot will run actual model worker/reviewer, project checks, Chrome, GitHub
+push/CI and report collection without parent stage handoffs. Neither code presence
+nor synthetic fixtures alone establish W1 milestone completion. Results and final
+independent review must be recorded below after actual execution.
+
+Bootstrap fault/recovery verification: existing plus new tests initially reached
+41 passes. The first live CoRA trial passed 31 focused / 21 quality / 484 full
+checks and actual Chrome 4 comparisons / 10 invalid inputs / protected13 cases.
+It then stopped on a contradictory pass/nonempty-decision reviewer response;
+publication safety timed out, so nothing was relabeled accepted or forcibly
+published. A separate independent clarification confirmed no owner choice was
+needed. New bounded format clarification, before/after generated-harness binding,
+read-only probe retries and linked cumulative-budget revalidation are tested.
+The revised live trial uses a new isolated CoRA checkout/branch with the same
+frozen task, carrying all original deadline/cycle use; original failure remains
+under external w1-live-pilot evidence. Results below must distinguish both trials.
+
+
+## Current W1 delivery: implementation candidate, real acceptance incomplete
+
+The actual trials consumed the fixed three cumulative cycles. Trial 1 passed
+checks/browser but produced a contradictory pass/no-decision review; the original
+stop is preserved, with independent format clarification recorded separately.
+Linked trial 2 retained the same original deadline/cycle usage and started from
+a fresh CoRA baseline. Its worker renamed K01, breaking the protected exporter's
+public function lookup. Regular 31/21/484 tests passed but protected validation
+failed. The next worker received only a generic browser-failure message and did
+not repair that compatibility error. The controller stopped at cycle3; it did
+not discard the failure, relax labels, create PRs, merge or restart the budget.
+Publication-safety review timed out, so no autonomous branch push was claimed.
+The original CoRA checkout/target branch remain unchanged.
+
+Fixed the controller diagnosis gap: browser failure feedback now provides exact
+logs/records/project observations and explicitly asks workers to inspect them
+before editing public test/helper names. Also addressed independent source-review
+findings: effective environment/executable/dependency identities, current binding
+checks, per-poll CI-state persistence, deterministic orphan-report recovery, and
+ready-after-report ordering. Added negative-review acceptance invalidation and
+single-allocation parent-budget receipts. No frozen W1/F1 acceptance definition,
+legacy runner or original 15 tests changed. Code/design details are synchronized
+in docs/01-reviewable-delivery-design.md.
+
+Actual final local validation: **54 tests passed in 51.348 seconds** using
+`python3 tools/evaluate_delivery.py --pilot-state .../w1-live-pilot-v2/state.json
+--output .../w1-bootstrap/evaluation-reviewed.json`. All model/GitHub fault
+fixtures are explicitly synthetic; temporary Git/bare-remote operations and
+installed Chrome execution are real. The evaluator reports **INCOMPLETE**:
+16 mapped scenarios pass, W01/W17 fail due missing successful real end-to-end
+publication/CI. Source/input/environment evidence is preserved outside targets.
+An independent follow-up review of the source fixes is required before delivery.
+
+Remaining owner decision: authorize an additional bounded real trial after these
+controller fixes. This is a budget expansion under the W1 contract, not permission
+to weaken tests or merge anything. No further actual pilot has been launched.
+Contract creation metadata is preserved historically; the implementation record
+and design above describe current progress. The W1 milestone is not complete.
+
+
+### Final source-review correction and delivery boundary
+
+The follow-up reviewer found one further linked-allocation crash window. Fixed
+it with an atomically exposed allocation journal containing the original initial
+state, input bindings, run ID and inherited budget. State persistence precedes
+activation; a crash recovers the same child rather than losing or replenishing
+its allowance. Changed external protected inputs block recovery. Two new fault
+cases verify crash recovery and refusal to adopt changed external policy.
+
+Current exact-source local evaluation: **56 tests passed in 54.131 seconds**,
+with `evaluation-final-source.json` reporting 16 mapped cases passed and W01/W17
+still INCOMPLETE. No additional real trial was launched. Final source re-review
+checks this last correction; actual end-to-end acceptance still requires an
+explicit new trial budget, not a different state directory or renamed test label.
+
+Per-delivery preservation: the parent inspected the stopped CoRA candidate's
+four-file scope and saved/pushed it as explicitly incomplete WIP `efb5740` on
+`codex/w1-state-type-pilot-v2`. Only stop-status documentation was added after
+the failed trial; src/tests hashes match the actual failed exporter observations.
+This was manual parent finalization, NOT autonomous publication, CI acceptance,
+or W1 success. No PR or target merge occurred. All original failed states and
+raw records remain unchanged; `manual-incomplete-publication.json` records the
+separate receipt. A green ordinary CI cannot replace the failed protected gate.
+
+Final journal-window verification: both pre-state and post-state/pre-activation
+recovery now compare the same original bindings. Controls are persisted and
+verified before activation, and bindings are checked again immediately before
+activation. Injected crashes prove unchanged recovery preserves controls and
+budget; changed external policy is rejected without activating the journal.
+
+Latest exact-code evaluation: 58 tests passed in 58.669 seconds.
+The external evaluation-durable-final.json remains INCOMPLETE: W01/W17 false,
+16 mapped scenarios true. No further real CoRA trial ran. Only documentation
+was updated after testing; implementation/test/contract inputs are unchanged.
+Final narrow source re-review checks this fix; new trial budget is an owner decision.
+
+Final independent narrow re-review confirmed the source-level allocation/policy
+crash defects closed and documentation accurate. Its overall verdict remains
+changes_requested solely because W01/W17 lack successful post-fix real execution
+and the required additional trial budget is not yet authorized. Do not describe
+this as full W1 acceptance or merge readiness. The next request is an explicit
+bounded trial allowance, not permission to alter criteria or merge branches.

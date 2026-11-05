@@ -1,0 +1,1 @@
+{"type":"object","properties":{"safe":{"type":"boolean"},"files":{"type":"array","items":{"type":"string"}},"blocking_findings":{"type":"array","items":{"type":"string"}},"decision_requests":{"type":"array","items":{"type":"string"}},"evidence":{"type":"string"}},"required":["safe","files","blocking_findings","decision_requests","evidence"],"additionalProperties":false}

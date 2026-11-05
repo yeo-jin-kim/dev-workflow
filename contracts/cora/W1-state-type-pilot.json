@@ -1,0 +1,63 @@
+{
+  "id": "W1-CoRA-state-type-pilot",
+  "revision": 1,
+  "authorization": "User requested implementation of W1 revision 2, including its constrained real pilot.",
+  "goal": "Strengthen existing K01 to vary actual CognitiveState.state_type as well as metadata, while preserving expected activation IDs/scores/paths/stopping. No runtime behavior changes.",
+  "allowed_paths": [
+    "tests/test_distance_decay_activation.py",
+    "docs/implementation/02-F1-distance-decay.md",
+    "docs/04-abstraction-and-association.md",
+    "docs/00-master-design.md"
+  ],
+  "criteria": [
+    {
+      "id": "state_type_invariance",
+      "requirement": "K01 changes actual state_type in the varied model (not merely metadata node_type), proves those values differ from the plain model, and preserves existing score/eligible-ID/stop assertions while adding path equality. Existing expected behavior is not weakened."
+    },
+    {
+      "id": "runtime_unchanged",
+      "requirement": "No src/, private source, stored data, acceptance labels or evaluator changes. Only allowed task test and affected docs change."
+    },
+    {
+      "id": "verification",
+      "requirement": "Recorded focused/full/quality checks, real Chrome production F1 browser harness and frozen evaluator pass for this exact candidate. Browser-boundary vs full-UI limits remain explicit."
+    },
+    {
+      "id": "review",
+      "requirement": "Inspect actual diff and observed logs, meaningful state-type regression and documentation. No unresolved blockers; do not require PR or merging for local acceptance."
+    }
+  ],
+  "checks": [
+    [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_distance_decay_activation.py"
+    ],
+    [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_natural_language_recall_quality.py"
+    ],
+    [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    [
+      "git",
+      "diff",
+      "--check"
+    ]
+  ],
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json",
+  "limits": [
+    "Synthetic invariance and kernel parity only, not general semantic or full UI certification.",
+    "Do not create PRs or merge target; controller publishes dedicated branch and decision report."
+  ]
+}

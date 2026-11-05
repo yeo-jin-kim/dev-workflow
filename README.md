@@ -48,9 +48,11 @@ OS-level isolation. Local checks execute with the controller user's permissions;
 use trusted checks. Protect the controller from target scripts, symlink attacks,
 and arbitrary external commands with stronger OS/CI isolation before unattended
 operation. Target code cannot legitimately edit contracts, controller or logs.
-Per-invocation time/cycle limits exist; monetary budgets, background scheduling,
+The legacy runner has per-invocation limits; the opt-in W1 runner persists
+cumulative deadlines/cycles. Monetary budgets, background scheduling,
 notifications, next-goal selection and a dedicated approval UI are not implemented.
-No merge/deploy/publish is automatically authorized.
+No target merge/deploy is automatically authorized. W1 publication is limited
+to the explicitly configured task repository/branch and reviewed task files.
 
 The preserved archive is historical: original state files contain old absolute
 paths. Do not resume them or rewrite their evidence. See migration.json.
@@ -63,16 +65,31 @@ F1 completed synthetic verification and merged in
 review/publication handoffs and a CI prerequisite fix; this was not a fully
 unattended run. Its contracts and run histories remain preserved.
 
-W1 is the next **specified, not implemented** controller extension:
+W1 revision 2 has an **opt-in implementation candidate; live acceptance is incomplete**:
 [task contract](contracts/dev-workflow/W1-reviewable-delivery.md),
-[machine-readable contract](contracts/dev-workflow/W1-reviewable-delivery.json),
-[design](docs/01-reviewable-delivery-design.md).
-It covers version-bound evidence, actual-browser execution, durable repair/review,
-commit/push, validated-branch/merge-decision reports and push-CI feedback. PR is
-optional and disabled by default. Owner decisions and actual merge
-remain explicit. No W1 project configuration, new runner behavior or scheduled
-execution is activated by this documentation delivery. The current runner must
-not be invoked against its own repository to bootstrap W1.
+[design and status](docs/01-reviewable-delivery-design.md).
+`tools/delivery_loop.py` adds actual Chrome execution, version-bound evidence,
+durable repair/review, dedicated-branch commit/push, exact-head push CI and a
+versioned merge-decision report. No PR is created and target merge remains an
+explicit owner action. The legacy runner and its historical states are unchanged.
+
+```sh
+python3 tools/delivery_loop.py run --project projects/cora-w1-pilot-v2.json --state-dir /ABSOLUTE/EXTERNAL/RUN --max-cycles 3 --total-seconds 3600
+python3 tools/delivery_loop.py status --project projects/cora-w1-pilot-v2.json --state-dir /ABSOLUTE/EXTERNAL/RUN
+```
+
+The shown invocation is historical: its three-cycle allowance is exhausted.
+Do not use another state directory to replenish it. A further real pilot needs
+explicit owner budget authorization. The linked v2 pilot config preserves the
+original failed trial and its cumulative budget (see the implementation record). It is opt-in and host-specific (existing Chrome and CoRA Python
+test environment). Use the implementation checkout described in the design.
+Do not run against the original/dirty checkout or the controller itself. `status`
+reports a historical snapshot; `run` rechecks current inputs/remote state, honors
+persisted cumulative limits and refuses pending decisions. Browser, reviewer or
+GitHub capability failures remain incomplete with actionable evidence; no manual
+result-copy shortcut qualifies as unattended success. New dependencies are not
+installed by the runner. Live-pilot/final-review results are recorded in
+`docs/implementation.md`; do not infer completion from code presence.
 
 ## Delivery publication policy
 
