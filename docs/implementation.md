@@ -1,6 +1,6 @@
 # Controller separation implementation record
 
-> Current W1 status: implementation candidate; 58 local tests passed, real W01/W17 acceptance incomplete after three cumulative cycles. Additional live-trial budget requires owner approval. Earlier entries below preserve their stage-specific historical results.
+> Current W1 status: implementation candidate; the owner-authorized additional 30-minute/three-cycle trial also stopped incomplete. All three candidates passed 31 focused, 21 quality, 484 full tests and real Chrome/frozen F1 validation, but independent review rejected documentation provenance. Six actual cycles are preserved in total. W01/W17 remain incomplete; no PR or target merge. Earlier entries below are historical.
 
 ## 2026-11-05 — independent repository
 
@@ -305,3 +305,52 @@ changes_requested solely because W01/W17 lack successful post-fix real execution
 and the required additional trial budget is not yet authorized. Do not describe
 this as full W1 acceptance or merge readiness. The next request is an explicit
 bounded trial allowance, not permission to alter criteria or merge branches.
+
+
+### Owner-authorized additional trial and documentation provenance correction
+
+Owner explicitly approved an additional maximum 1800 seconds / three repair
+cycles, keeping the same completion criteria and preserving previous failures.
+`projects/cora-w1-approved-trial.json` records this new allowance, prior run paths,
+and the exact K01 caller failure. It is not an automatic budget renewal.
+Historical configurations above retain their exhausted allowances.
+
+The actual run at `.local/w1-approved-trial/state.json` consumed three cycles
+and stopped `budget_exhausted`. Every candidate passed focused 31, quality 21,
+full 484 tests, diff check, real Chrome, and frozen F1 evaluation (13 protected
+cases, four browser boundary comparisons, ten invalid inputs). The worker
+restored the original public K01 name without weakening state_type/path checks.
+Independent reviewers rejected documentation: first pending results, then references
+to prior attempt digests. Thus no accepted candidate, autonomous publication,
+exact-head push CI, or successful W01/W17 report was produced. Publication-safety
+review timed out; the final incomplete report and all raw failures are preserved.
+The prior three cycles plus the new three cycles remain visible, not reset.
+
+This exposed a circular protocol: embedding a candidate digest/current results in
+its own documents changes that candidate and prompts another review demanding
+another document update. The controller now supplies stable run/attempt/report
+locations and explicitly separates historical observations in target documentation
+from final exact-candidate results in external evidence/report. Workers must not
+claim prior digests certify current source; reviewers must still independently
+validate current manifests/checks/browser evidence and reject misleading claims,
+missing documentation, and semantic blockers. A clearly historical citation alone
+must not cause another self-referential rewrite. The reserved documentation
+criterion, protected contracts/evaluators, acceptance labels and legacy runner
+remain unchanged. This is a prompt/provenance correction, not proof the AI will
+always interpret it correctly. No fourth actual cycle is authorized or launched.
+
+Regression evaluation and independent correction review are recorded externally;
+current W1 remains incomplete until a separately authorized actual run passes.
+
+Post-correction regression: **58 tests passed in 60.262 seconds**; frozen W1
+evaluation remains INCOMPLETE (16 mapped scenarios pass, W01/W17 false).
+`evaluation-approved-trial.json` binds tested source; only reporting documentation
+is finalized afterward. The parent separately inspected and saved CoRA's four-file
+candidate as **0d28c04**, explicitly incomplete WIP; this manual preservation does
+not satisfy autonomous publication or current exact-candidate acceptance. The
+external `manual-approved-trial-preservation.json` distinguishes that receipt.
+
+Independent narrow correction review (`provenance-review.json`) passed all four
+criteria: correction integrity, historical truth, explicit budget authorization,
+and documentation synchronization, with no blockers/decisions. Its scope is the
+source/provenance fix, not W1 acceptance; actual W01/W17 remain incomplete.

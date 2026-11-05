@@ -255,3 +255,22 @@ Latest local verification is 58 passed; live W01/W17 remain incomplete.
 Final independent re-review found the corrected source crash/binding paths
 sound under the recorded tests. Overall W1 acceptance is still blocked by the
 missing successful real pilot and explicit owner authorization for further trial.
+
+
+### Additional trial: provenance loop remains a live acceptance failure
+
+The owner authorized a fresh bounded 1800-second/three-cycle trial, with prior
+failures linked in `projects/cora-w1-approved-trial.json`. It consumed all three
+cycles: checks and real Chrome/frozen F1 validation passed each time, while
+independent documentation review rejected stale provenance. W01/W17 remain
+incomplete. The cumulative actual history is six cycles; no PR/target merge.
+
+Document updates precede verification, so final exact-source check results belong
+in external run evidence and the final report. Target documents describe current
+behavior/progress/limits and may cite explicitly historical observations. They
+must link stable run evidence rather than embed a self-referential final digest.
+Current acceptance always uses current manifests and executed evidence; earlier
+passes never replace current verification. Reviewer guidance now makes this
+separation explicit without removing documentation or semantic gates. This
+correction has no successful post-fix actual trial yet. Earlier status entries
+above are chronological evidence, not current acceptance.

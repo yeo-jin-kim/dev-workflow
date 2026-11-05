@@ -65,7 +65,7 @@ F1 completed synthetic verification and merged in
 review/publication handoffs and a CI prerequisite fix; this was not a fully
 unattended run. Its contracts and run histories remain preserved.
 
-W1 revision 2 has an **opt-in implementation candidate; live acceptance is incomplete**:
+W1 revision 2 has an **opt-in implementation candidate; live acceptance remains incomplete after the additional authorized trial**:
 [task contract](contracts/dev-workflow/W1-reviewable-delivery.md),
 [design and status](docs/01-reviewable-delivery-design.md).
 `tools/delivery_loop.py` adds actual Chrome execution, version-bound evidence,
@@ -79,8 +79,9 @@ python3 tools/delivery_loop.py status --project projects/cora-w1-pilot-v2.json -
 ```
 
 The shown invocation is historical: its three-cycle allowance is exhausted.
-Do not use another state directory to replenish it. A further real pilot needs
-explicit owner budget authorization. The linked v2 pilot config preserves the
+Do not use another state directory to replenish it. The owner subsequently authorized one additional 30-minute/three-cycle trial;
+that allowance is also exhausted without live acceptance. A further real pilot
+needs explicit owner budget authorization. The linked v2 pilot config preserves the
 original failed trial and its cumulative budget (see the implementation record). It is opt-in and host-specific (existing Chrome and CoRA Python
 test environment). Use the implementation checkout described in the design.
 Do not run against the original/dirty checkout or the controller itself. `status`

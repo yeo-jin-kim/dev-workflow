@@ -234,6 +234,9 @@ class Delivery:
 
     def phase_context(self):
         return json.dumps({'contract': self.contract, 'project_context': self.project,
+                           'run_evidence': {'state_file': str(self.state_file),
+                                            'attempt_directory': str(self.recorder.folder),
+                                            'reports_directory': str(self.dir / 'reports')},
                            'baseline_head': self.state['baseline_head'], 'source_digest': manifest(self.root)['digest']}, ensure_ascii=False)
 
     def implement(self, feedback):
@@ -246,6 +249,11 @@ class Delivery:
                   'Do not edit controller, contracts, protected tests/evaluator, original private data or evidence. '
                   'Do not commit/push/merge/create PR. Record genuine owner decisions; do not decide them yourself. '
                   'Update implementation record and related design status, with precise scope and limitations. '
+                  'Documentation is written before controller verification: describe current behavior and limits, '
+                  'label earlier check results as historical observations of their exact earlier candidate, and link '
+                  'the stable run evidence location for current verification and final report. Never claim an earlier '
+                  'digest certifies this candidate. Do not embed a claimed final digest of documents that contain it: '
+                  'editing such a digest changes the digest again. The external report binds final source and results. '
                   'If previous failures exist, first inspect their exact logs and project observations. '
                   'Fix the failing condition, not only documentation. Inspect callers before renaming public test/helper names used by fixed evaluators. '
                   'The controller will run verification and record final results externally; do not invent test outcomes.\n'
@@ -313,6 +321,13 @@ class Delivery:
                   'Do not modify files or run other agents. Missing/ambiguous evidence must fail. Check meaningful negative cases, '
                   'scope, conceptual drift and weakening of protected expectations. Passing tests never override semantic findings. '
                   'Review documentation changes and actual evidence, not worker claims. Return all criterion IDs once with evidence; '
+                  'Documentation is authored before these checks. Require accurate behavior/progress/limits and clear '
+                  'provenance, not a self-referential final source digest or current check outcome inside the checked '
+                  'documents. Clearly labeled historical checks may remain historical; they never establish current '
+                  'acceptance. Verify this exact candidate using this attempt input manifests, checks and browser bindings; '
+                  'the external final report binds current outcomes after review. Reject misleading claims that historical '
+                  'results certify current source, missing documentation, or actual contradictions. Do not demand edits '
+                  'solely to replace a clearly historical attempt number with the latest attempt number. '
                   'report actual owner decisions separately. Inspect only task-related files and concise logs; do not read the whole repository. '
                   'Evidence directory: ' + str(self.recorder.folder) + '\n' + self.phase_context())
         prompt += '\nFormatting: decision_requests must be [] when no actual human choice is necessary. Never put sentences such as no decisions into that array. A pass verdict must have zero blockers and zero decision requests.'
