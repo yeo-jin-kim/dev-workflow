@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "id": "cora-w1-approved-trial-60m",
+  "root": "../cora-w1-pilot-v2",
+  "contract": "contracts/cora/W1-state-type-pilot.json",
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json",
+  "execution_authorization": "User explicitly approved additional actual trial maximum 60 minutes / 5 repair cycles (3600 seconds / 5 cycles), same completion criteria. Preserve all six previously consumed actual cycles. No PR or merge. New bounded owner allowance; never renew automatically.",
+  "protected_files": [
+    "/Users/yeojin/Code/dev-workflow/contracts/dev-workflow/W1-reviewable-delivery.json",
+    "/Users/yeojin/Code/dev-workflow/contracts/dev-workflow/evaluations/W1-reviewable-delivery.json",
+    "/Users/yeojin/Code/dev-workflow-w1/contracts/cora/evaluations/F1-distance-decay.json"
+  ],
+  "environment_commands": [
+    [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "-c",
+      "import sys,pytest,platform,json; print(json.dumps(dict(python=sys.version,executable=sys.executable,pytest=pytest.__version__,platform=platform.platform())))"
+    ]
+  ],
+  "delivery": {
+    "mode": "branch_report",
+    "repository": "yeo-jin-kim/cora",
+    "remote": "origin",
+    "base": "codex/workflow-foundation",
+    "head": "codex/w1-state-type-pilot-v2",
+    "required_gates": [
+      {
+        "workflow": "Test",
+        "job": "test",
+        "event": "push"
+      }
+    ]
+  },
+  "browser": {
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "prepare": [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "tests/f1_evaluation.py",
+      "{evidence}/browser"
+    ],
+    "result_file": "browser-result.json",
+    "validate": [
+      "python3",
+      "/Users/yeojin/Code/dev-workflow-w1/tools/evaluate_f1.py",
+      "{evidence}/browser",
+      "--target",
+      "{target}"
+    ]
+  },
+  "ci_timeout_seconds": 300,
+  "prior_runs": [
+    "/Users/yeojin/Code/dev-workflow/.local/w1-live-pilot/state.json",
+    "/Users/yeojin/Code/dev-workflow/.local/w1-live-pilot-v2/state.json",
+    "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial/state.json"
+  ],
+  "prior_failure_diagnostics": {
+    "required_first_action": "Read current allowed docs and previous attempt-003 review. Preserve K01 public name and actual state_type/path assertions. Synchronize current status using stable run evidence location, marking prior attempt citations historical. Final exact-source outcomes belong in external report, not self-referential document digests.",
+    "cause": "Original K01 caller error repaired. Additional trial passed all checks but documentation was rejected for stale attempt/digest claims. Controller now distinguishes historical documentation observations from current externally bound verification. Remove misleading current-certification wording and retain historical failures. Do not weaken criteria or evaluator.",
+    "review": "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial/attempt-003/review.json",
+    "state": "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial/state.json",
+    "implementation_baseline": "0d28c04; parent preserved incomplete WIP only, no prior acceptance."
+  },
+  "authorized_limits": {
+    "seconds": 3600,
+    "cycles": 5,
+    "previous_cycles_consumed": 6
+  }
+}

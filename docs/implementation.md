@@ -354,3 +354,45 @@ Independent narrow correction review (`provenance-review.json`) passed all four
 criteria: correction integrity, historical truth, explicit budget authorization,
 and documentation synchronization, with no blockers/decisions. Its scope is the
 source/provenance fix, not W1 acceptance; actual W01/W17 remain incomplete.
+
+
+### Approved 60-minute/five-cycle trial: phase-timeout recovery
+
+Owner authorized a new bounded maximum 3600 seconds / five cycles. The new
+`cora-w1-approved-trial-60m` profile preserves all six prior cycles separately.
+Its first candidate passed actual checks and Chrome, but the independent review
+hit the old 240-second per-command cap without a final result. This was wrongly
+classified as total budget exhaustion despite time and cycles remaining. The
+publication-safety review also timed out; source was manually preserved unchanged
+as incomplete WIP a037b1b. No semantic acceptance or target merge occurred.
+
+Review now has a 600-second cap within the original cumulative deadline. A review
+phase timeout yields missing-review feedback for another bounded repair cycle;
+actual total expiry still stops. Narrow linked recovery of the historical timeout
+requires no final review or owner decisions, protected timeout/input records,
+unchanged source, and remaining original time/cycles. Existing exclusive durable
+allocation journals prevent fan-out or renewed allowances. The recovery profile
+copies the original deadline and consumed cycle; it never grants another hour or
+five additional cycles. Genuine negative decisions and completed reviews cannot
+use this missing-review recovery path. Four regression cases cover these
+boundaries, cumulative linkage, fan-out rejection and total expiry.
+
+Status during correction: first cycle incomplete; recovery source is independently
+reviewed before resuming within the owner's original 3600-second/five-cycle grant.
+
+Timeout-recovery regression: **62 tests passed in 62.248 seconds**. The frozen
+W1 evaluator still reports 16 passing mapped scenarios and incomplete W01/W17;
+a missing review is never a successful actual pilot.
+
+The first narrow recovery review rejected path-only historical evidence checks.
+Recovery now pins the exact parent-state and raw timeout/input SHA-256 values in
+the independently reviewed recovery profile before allocation; changed or omitted
+hashes reject recovery. The historical parent did not capture hashes at timeout,
+so this is explicitly a maintaining-controller recovery attestation of inspected
+original records, not a retrospective parent signature. The durable journal binds
+that profile and original parent bytes; subsequent mutation is rejected. A fifth
+regression case covers rewritten and unpinned raw evidence.
+
+Pinned-evidence recovery re-review passed all five criteria with no blockers or
+decisions; 63 regression tests passed. This authorizes no new allowance and makes
+no live acceptance claim. Recovery resumes only under the original fixed deadline.

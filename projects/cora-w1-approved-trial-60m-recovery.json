@@ -1,0 +1,80 @@
+{
+  "schema_version": 2,
+  "id": "cora-w1-approved-trial-60m-recovery",
+  "root": "../cora-w1-pilot-v2",
+  "contract": "contracts/cora/W1-state-type-pilot.json",
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json",
+  "execution_authorization": "User explicitly approved additional actual trial maximum 60 minutes / 5 repair cycles (3600 seconds / 5 cycles), same completion criteria. Preserve all six previously consumed actual cycles. No PR or merge. New bounded owner allowance; never renew automatically.",
+  "protected_files": [
+    "/Users/yeojin/Code/dev-workflow/contracts/dev-workflow/W1-reviewable-delivery.json",
+    "/Users/yeojin/Code/dev-workflow/contracts/dev-workflow/evaluations/W1-reviewable-delivery.json",
+    "/Users/yeojin/Code/dev-workflow-w1/contracts/cora/evaluations/F1-distance-decay.json",
+    "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial-60m/attempt-001/review-execution.json",
+    "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial-60m/attempt-001/review.input.json"
+  ],
+  "environment_commands": [
+    [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "-c",
+      "import sys,pytest,platform,json; print(json.dumps(dict(python=sys.version,executable=sys.executable,pytest=pytest.__version__,platform=platform.platform())))"
+    ]
+  ],
+  "delivery": {
+    "mode": "branch_report",
+    "repository": "yeo-jin-kim/cora",
+    "remote": "origin",
+    "base": "codex/workflow-foundation",
+    "head": "codex/w1-state-type-pilot-v2",
+    "required_gates": [
+      {
+        "workflow": "Test",
+        "job": "test",
+        "event": "push"
+      }
+    ]
+  },
+  "browser": {
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "prepare": [
+      "/Users/yeojin/Code/cora-f1/.local/workflow-test-env/bin/python",
+      "tests/f1_evaluation.py",
+      "{evidence}/browser"
+    ],
+    "result_file": "browser-result.json",
+    "validate": [
+      "python3",
+      "/Users/yeojin/Code/dev-workflow-w1/tools/evaluate_f1.py",
+      "{evidence}/browser",
+      "--target",
+      "{target}"
+    ]
+  },
+  "ci_timeout_seconds": 300,
+  "prior_runs": [
+    "/Users/yeojin/Code/dev-workflow/.local/w1-live-pilot/state.json",
+    "/Users/yeojin/Code/dev-workflow/.local/w1-live-pilot-v2/state.json",
+    "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial/state.json"
+  ],
+  "prior_failure_diagnostics": {
+    "cause": "Previous 60-minute run consumed one cycle, passed actual checks and Chrome, then reviewer timed out at old 240-second phase cap with no final review. Parent source is preserved unchanged by WIP commit. Recovery copies original deadline/max_cycles/cycles; no fresh allowance.",
+    "required_first_action": "Inspect current docs and no-result timeout. Preserve accurate historical/current provenance. Implement only necessary allowed-path changes, current outcome authoritative in external evidence.",
+    "state": "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial-60m/state.json"
+  },
+  "authorized_limits": {
+    "seconds": 3600,
+    "cycles": 5,
+    "previous_cycles_consumed": 6
+  },
+  "parent_budget": {
+    "state_file": "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial-60m/state.json",
+    "reason": "Controller incorrectly stopped on review phase cap after one cycle. Recover missing timed-out read-only review with original deadline and cycle count, no new authorization or allowance.",
+    "review_timeout_recovery": true,
+    "parent_state_sha256": "392cfb03630bf559f64825964ef2a95a0d115aec5455b6d41c6a9ab6fd22d403",
+    "timeout_evidence_sha256": {
+      "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial-60m/attempt-001/review-execution.json": "0005a65fb00c1df78b61ac77610b510eae3d0d687de8919a61ebc7fbb890bd66",
+      "/Users/yeojin/Code/dev-workflow/.local/w1-approved-trial-60m/attempt-001/review.input.json": "c1fea189a4e220b82695e9788001445762b3428490aa283923d736c6b589b858"
+    },
+    "attestation": "Maintaining controller inspected original no-result review timeout and unchanged target. These exact parent/raw hashes are fixed in this independently reviewed recovery profile before allocation. Historical parent lacks capture-time hashes; this is an explicit recovery attestation, not a claim of retrospective parent-side signatures."
+  }
+}

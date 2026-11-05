@@ -104,3 +104,10 @@ F1 synthetic evidence verification is available through `tools/evaluate_f1.py`.
 It checks protected definitions, recorded source fingerprints and actual browser
 results; see `docs/implementation.md`. Evidence completion does not bypass the
 independent review gate.
+
+
+The owner approved a further bounded 60-minute/five-cycle actual trial, recorded
+in `projects/cora-w1-approved-trial-60m.json`. Its first review hit a phase cap;
+the recovery profile preserves the same deadline/consumed cycles and guarded
+missing-review evidence. This does not automatically renew either trial's budget.
+Current actual outcome is recorded in the implementation record.

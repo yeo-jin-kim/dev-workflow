@@ -35,6 +35,27 @@ def decision_packet(reason, status):
             'recommendation': 'Keep acceptance criteria fixed; repair the concrete environment/implementation before resuming.'}
 
 
+def recoverable_review_timeout(parent, target, protected, expected_hashes=None):
+    """A missing review after a recorded timeout grants no acceptance or new budget."""
+    if (parent.get('status') != 'budget_exhausted' or parent.get('last_review')
+            or parent.get('decision_requests')
+            or parent.get('handoff', {}).get('reason') != 'Phase timeout: review'
+            or not parent.get('attempts')):
+        return False
+    folder = Path(parent['attempts'][-1]['folder']).resolve()
+    paths = [folder / 'review-execution.json', folder / 'review.input.json']
+    if not all(str(p) in protected and p.is_file() for p in paths) or (folder / 'review.json').exists():
+        return False
+    if not expected_hashes or fingerprint(paths) != expected_hashes:
+        return False
+    record, inputs = [json.loads(p.read_text()) for p in paths]
+    b = parent['budget']
+    return (record.get('exit_code') == 'timeout' and record.get('input_digest') == inputs.get('digest')
+            and inputs.get('digest') == manifest(target)['digest']
+            and b['deadline'] > max(time.time(), b.get('last_seen', b['started_at']))
+            and b['cycles'] < b['max_cycles'])
+
+
 class Delivery:
     def __init__(self, project_path, state_dir, seconds=3600, cycles=3, codex='codex'):
         self.project_path, self.dir = project_path.resolve(), state_dir.resolve()
@@ -72,7 +93,11 @@ class Delivery:
                 parent = json.loads(parent_path.read_text())
                 if parent.get('schema_version') != 2 or not link.get('reason'):
                     raise ValueError('Linked revalidation needs explicit reason and version-2 parent budget.')
-                if parent.get('status') != 'ready_for_merge_approval':
+                timeout_recovery = (link.get('review_timeout_recovery') is True
+                                    and link.get('parent_state_sha256') == hashlib.sha256(parent_path.read_bytes()).hexdigest()
+                                    and recoverable_review_timeout(parent, self.root,
+                                        self.project.get('protected_files', []), link.get('timeout_evidence_sha256')))
+                if parent.get('status') != 'ready_for_merge_approval' and not timeout_recovery:
                     prior = parent.get('last_review', {})
                     resolution_path = Path(link.get('format_resolution', '/missing')).resolve()
                     resolution = json.loads(resolution_path.read_text()) if resolution_path.is_file() else {}
@@ -334,10 +359,16 @@ class Delivery:
         for formatting_attempt in range(2):
             label = 'review' if formatting_attempt == 0 else 'review-format'
             result = self.recorder.folder / (label + '.json')
-            code = self.recorder.command([self.codex, 'exec', '-C', str(self.root), '-s', 'read-only',
+            try:
+                code = self.recorder.command([self.codex, 'exec', '-C', str(self.root), '-s', 'read-only',
                                           '--output-schema', str(ROOT / 'schemas/review.schema.json'),
                                           '-o', str(result), '-'], label, prompt=prompt,
-                                         cap=240 if formatting_attempt == 0 else 60, reserve=60)
+                                         cap=600 if formatting_attempt == 0 else 60, reserve=60)
+            except Halt as error:
+                if error.status != 'budget_exhausted' or error.message != 'Phase timeout: ' + label:
+                    raise
+                self.budget.remaining(reserve=60)
+                return {'invalid_review': 'Independent review timed out; no acceptance. Retry within existing cumulative limits.'}
             if code or not result.is_file():
                 return {'invalid_review': 'Independent review unavailable; no acceptance.'}
             data = json.loads(result.read_text())

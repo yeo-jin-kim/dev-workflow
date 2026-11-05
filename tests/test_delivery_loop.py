@@ -17,8 +17,8 @@ from unittest.mock import patch
 
 TOOLS = Path(__file__).resolve().parents[1] / 'tools'
 sys.path.insert(0, str(TOOLS))
-from delivery_loop import Delivery, decision_packet
-from delivery_evidence import Budget, Halt, Recorder, browser_run, git, manifest
+from delivery_loop import Delivery, decision_packet, recoverable_review_timeout
+from delivery_evidence import Budget, Halt, Recorder, browser_run, git, manifest, fingerprint
 from development_loop import save
 
 FAKE = r'''#!/usr/bin/env python3
@@ -154,6 +154,58 @@ class DeliveryTests(unittest.TestCase):
         self.assertEqual(d.state['budget']['deadline'],old_budget['deadline'])
         self.assertEqual(d.state['budget']['cycles'],1)
         s=d.run();self.assertEqual(s['status'],'ready_for_merge_approval');self.assertEqual(s['budget']['cycles'],2)
+
+    def timeout_parent(self):
+        folder=self.base/'timed-out-review';folder.mkdir()
+        inputs=manifest(self.repo)
+        save(folder/'review.input.json',inputs)
+        save(folder/'review-execution.json',{'exit_code':'timeout','input_digest':inputs['digest']})
+        parent={'status':'budget_exhausted','handoff':{'reason':'Phase timeout: review'},
+                'attempts':[{'folder':str(folder)}],
+                'budget':{'started_at':time.time()-30,'deadline':time.time()+120,'cycles':1,'max_cycles':5}}
+        return parent,[str(folder/'review.input.json'),str(folder/'review-execution.json')]
+
+    def test_review_timeout_link_carries_limits_and_cannot_fan_out(self):
+        d=self.delivery();parent,protected=self.timeout_parent()
+        d.state.update(parent);d.persist();old=dict(d.state['budget'])
+        cfg=json.loads(self.project.read_text());cfg['protected_files']=protected
+        cfg['parent_budget']={'state_file':str(d.state_file),'reason':'Repair phase timeout classification; original allowance only.','review_timeout_recovery':True,'parent_state_sha256':__import__('hashlib').sha256(d.state_file.read_bytes()).hexdigest(),'timeout_evidence_sha256':fingerprint([Path(x) for x in protected])}
+        project=self.base/'recovery.json';save(project,cfg)
+        child=Delivery(project,self.base/'recovered',9999,99,str(self.bindir/'codex'))
+        self.assertEqual(child.state['budget']['deadline'],old['deadline'])
+        self.assertEqual(child.state['budget']['cycles'],1)
+        self.assertEqual(child.state['budget']['max_cycles'],5)
+        with self.assertRaises(ValueError):Delivery(project,self.base/'fanout',9999,99,str(self.bindir/'codex'))
+
+    def test_review_timeout_recovery_rejects_decision_or_finished_review(self):
+        parent,protected=self.timeout_parent();self.assertTrue(recoverable_review_timeout(parent,self.repo,protected,fingerprint([Path(x) for x in protected])))
+        parent['decision_requests']=['Choose semantics'];self.assertFalse(recoverable_review_timeout(parent,self.repo,protected,fingerprint([Path(x) for x in protected])))
+        parent.pop('decision_requests');save(Path(parent['attempts'][0]['folder'])/'review.json',{'verdict':'changes_requested'})
+        self.assertFalse(recoverable_review_timeout(parent,self.repo,protected,fingerprint([Path(x) for x in protected])))
+
+    def test_review_timeout_recovery_rejects_mutation_expiry_and_unprotected_records(self):
+        parent,protected=self.timeout_parent()
+        self.assertFalse(recoverable_review_timeout(parent,self.repo,[]))
+        (self.repo/'task.txt').write_text('mutated');self.assertFalse(recoverable_review_timeout(parent,self.repo,protected,fingerprint([Path(x) for x in protected])))
+        (self.repo/'task.txt').write_text('baseline');parent['budget']['deadline']=time.time()-1
+        self.assertFalse(recoverable_review_timeout(parent,self.repo,protected,fingerprint([Path(x) for x in protected])))
+
+    def test_review_timeout_recovery_rejects_rewritten_or_unpinned_evidence(self):
+        parent,protected=self.timeout_parent();expected=fingerprint([Path(x) for x in protected])
+        self.assertFalse(recoverable_review_timeout(parent,self.repo,protected))
+        self.assertTrue(recoverable_review_timeout(parent,self.repo,protected,expected))
+        p=Path(protected[1]);record=json.loads(p.read_text());record['fabricated']=True;save(p,record)
+        self.assertFalse(recoverable_review_timeout(parent,self.repo,protected,expected))
+
+    def test_review_phase_timeout_retries_only_with_remaining_total_budget(self):
+        d=self.delivery();before=dict(d.state['budget'])
+        with patch.object(d.recorder,'command',side_effect=Halt('budget_exhausted','Phase timeout: review')):
+            self.assertIn('invalid_review',d.review())
+            self.assertNotIn('accepted_digest',d.state)
+            self.assertEqual(d.state['budget']['deadline'],before['deadline'])
+            d.state['budget']['deadline']=time.time()-1
+            with self.assertRaises(Halt) as caught:d.review()
+            self.assertEqual(caught.exception.status,'budget_exhausted')
 
     def test_link_allocation_crash_recovers_original_state_without_new_allowance(self):
         first=self.delivery().run();budget=dict(first['budget'])

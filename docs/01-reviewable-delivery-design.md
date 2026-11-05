@@ -274,3 +274,12 @@ passes never replace current verification. Reviewer guidance now makes this
 separation explicit without removing documentation or semantic gates. This
 correction has no successful post-fix actual trial yet. Earlier status entries
 above are chronological evidence, not current acceptance.
+
+
+Review phase caps are separate from total allowance. Missing review after a phase
+cap is retried only within the same persistent deadline/cycle counter. Historical
+misclassified review timeouts may link once through protected raw timeout/input
+records, unchanged source, no final review/decisions and remaining budget. This
+uses the existing crash-safe exclusive journal; recovery never resets limits.
+The owner-approved 60-minute/five-cycle profile and its recovery profile record
+this bounded case. A completed negative review cannot use timeout recovery.
