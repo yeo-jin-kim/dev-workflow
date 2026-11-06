@@ -571,6 +571,37 @@ result note was added after review/testing; runtime code is unchanged.
 
 ---
 
+
+## Review JSON intake — 2026-11-06
+
+Implemented `tools/review_intake.py`, disabled policy/project examples and a trusted
+repair template. The adapter freezes original/selected evidence, binds exact
+reviewed source/authority, generates one W2 task with existing W1 gates and a
+trusted replay check, preserves duplicate/dispatch history and returns
+`awaiting_human_retest`. Policy/model ambiguity and stale/missing inputs stop.
+Existing W1 incomplete branch publication may still preserve WIP; it is not acceptance.
+No scheduler, CoRA dependency, live policy or actual new CoRA repair was activated.
+Actual supplied-review read-only preflight detected `911127c` vs `cc820de` and
+refused dispatch. Tests use real Git/W2/W1 with synthetic AI/browser/CI/replay.
+Final regression: **123 tests passed in 91.014 seconds**; the new intake/replay
+subset passed **28 tests in 12.673 seconds**. Tests include the real W2/W1/Git
+handoff with synthetic AI/browser/CI/replay observations. Initial independent
+source review identified an authority-capture race and insufficient replay
+evidence binding. Both were fixed: prepared inputs must agree with original
+authority, dispatch rechecks that original authority, and the replay gate requires
+a fresh observation bound to the actual question/settings, source, review,
+snapshot and graph version. Regression tests cover both findings and do not
+weaken existing gates. An early mock fixture missed production's __pycache__
+ignore rule after importing the gate helper; it was corrected and the final
+suite passed. Historical logs remain private under ignored .local/.
+Final independent read-only review passed all five criteria with no blocking
+findings or owner decision requests (review-intake-final-review.json). It inspected
+actual source/tests/documents and the recorded tests; this is not a live CoRA
+repair or general semantic proof. After review, only these final observations
+were added; implementation/checks were unchanged. Commit/push publishes a branch
+candidate; policy activation, owner retest and merge remain separate.
+See [design and operations](03-review-json-intake.md) for scope and limits.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1028,3 +1059,27 @@ W1 단계 맥락도 사용자가 승인한 언어 정책을 이후 작업자와 
 독립 두 언어 검토는 번역 충실성·전체 범위·렌더러 정합성·후속 정책·문서 동기화의 5개
 기준을 차단 지적/사용자 결정 없이 통과했다(`bilingual-review.json`). 검토/검사 후에는
 이 두 언어 결과 기록만 추가했으며 런타임 코드는 유지했다.
+
+## 검토 JSON 접수 — 2026-11-06
+
+`tools/review_intake.py`·비활성 정책/프로젝트 예제·신뢰할 수정 템플릿을 구현했다.
+원본/선택 증거를 고정하고 정확한 검토 소스/승인 설정을 연결하며 기존 W1 게이트와
+신뢰할 재실행 검사를 유지한 단일 W2 작업을 생성한다. 중복/실행 이력을 보존하며
+`awaiting_human_retest`로 반환한다. 정책/모델 모호성과 오래되거나 누락된 입력은
+중단한다. 기존 W1은 미완료 브랜치 WIP를 보존할 수 있지만 수용은 아니다.
+일정·CoRA 의존성·활성 정책·새 실제 CoRA 수정은 시작하지 않았다. 실제 제공 검토의
+읽기 전용 사전 검사는 `911127c`와 `cc820de`의 차이를 감지해 실행을 거부했다.
+실제 Git/W2/W1과 합성 AI/브라우저/CI/재실행을 사용해 검사한다. 최종 전체 회귀 **123개가 91.014초**, 새 접수/재실행 집중 **28개가 12.673초**에
+통과했다. 실제 W2/W1/Git 인계와 합성 AI/브라우저/CI/재실행 관찰을 사용했다.
+첫 독립 소스 검토가 승인 설정 캡처 경쟁과 재실행 증거 연결 부족을 발견했다.
+준비 입력과 원래 승인의 일치 검사·실행 시 원래 승인 재검사·실제 질문/설정·소스·
+검토·스냅샷·그래프 버전에 연결된 새로운 관찰 파일 검사를 추가해 모두 수정했다.
+두 발견의 회귀를 추가했고 기존 게이트를 약화하지 않았다. 초기 모의 컨트롤러가
+새 게이트를 불러올 때 실제 환경의 __pycache__ 무시 규칙을 빠뜨린 문제도 수정해
+최종 전체 검사를 통과했다. 과거 로그는 무시된 .local/에 비공개로 보존한다.
+최종 독립 읽기 전용 검토(review-intake-final-review.json)는 차단/소유자 결정 요청
+없이 5개 기준을 통과했다. 실제 소스/검사/문서와 실행 기록을 확인했으며 실제
+CoRA 수정이나 일반 의미 정확성 증명은 아니다. 검토 후에는 이 최종 관찰 기록만
+추가했고 구현/검사는 변경하지 않았다. commit/push는 브랜치 후보 게시이며 정책
+활성화·소유자 재검토·병합은 별도다. 범위와 한계는 [설계/운영](03-review-json-intake.md)을
+참조한다.

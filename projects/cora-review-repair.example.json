@@ -1,0 +1,24 @@
+{
+  "schema_version": 2,
+  "id": "cora-review-repair",
+  "root": "../cora-review-repair",
+  "contract": "contracts/cora/review-repair-template.json",
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json",
+  "protected_files": ["contracts/cora/evaluations/F1-distance-decay.json"],
+  "delivery": {
+    "mode": "branch_report",
+    "repository": "yeo-jin-kim/cora",
+    "remote": "origin",
+    "base": "codex/workflow-foundation",
+    "head": "codex/review-repair",
+    "required_gates": [{"workflow": "Test", "job": "test", "event": "push"}]
+  },
+  "browser": {
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "prepare": ["python3", "tests/f1_evaluation.py", "{evidence}/browser"],
+    "result_file": "browser-result.json",
+    "validate": ["python3", "/ABSOLUTE/PATH/TO/dev-workflow/tools/evaluate_f1.py", "{evidence}/browser", "--target", "{target}"]
+  },
+  "ci_timeout_seconds": 300
+}

@@ -1,0 +1,21 @@
+{
+  "id": "cora-recall-review-repair-template",
+  "review_repair_template": true,
+  "revision": 1,
+  "goal": "Template only; activation requires an explicit enabled policy and current reviewed baseline.",
+  "allowed_paths": [
+    "src/cora/recall/natural_language.py",
+    "src/cora/visualization/model_recall.py",
+    "tests/test_review_repair_regression.py",
+    "docs/implementation/04-real-data-recall-review.md",
+    "docs/design/11-natural-language-recall.md",
+    "docs/00-master-design.md"
+  ],
+  "criteria": [{"id": "repair_scope", "requirement": "Repair a reproducible Recall regression within accepted concepts. No name blacklists, weakened checks, private-source mutations or conceptual changes. Preserve relevant neighboring behavior."}],
+  "checks": [
+    ["python3", "-m", "pytest", "-q", "tests/test_review_repair_regression.py"],
+    ["python3", "-m", "pytest", "-q", "tests/test_natural_language_recall_quality.py"],
+    ["python3", "-m", "pytest", "-q"],
+    ["git", "diff", "--check"]
+  ]
+}

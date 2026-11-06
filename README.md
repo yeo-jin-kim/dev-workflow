@@ -155,6 +155,17 @@ order and quote original machine fields explicitly as evidence.
 
 ---
 
+
+## Review-file repair intake
+
+`tools/review_intake.py` accepts one explicitly selected private review export and
+uses a trusted enabled policy to prepare/start one bounded W2→W1 repair. It pins
+reviewed commit/source, preserves original bytes, refuses duplicates/drift/state
+loss and ends at human retest. Existing independent review/browser/CI gates stay.
+Examples are disabled; a project-specific trusted real-data replay check is required.
+No watcher, active policy or new CoRA repair was installed. See
+[guide](docs/03-review-json-intake.md).
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -300,3 +311,12 @@ W2 구현 검증: **검사 94개 통과**, 그중 대기열 사례 31개를 포�
 JSON 계약/스키마와 변경 불가인 과거 실행 자료는 복제하거나 다시 쓰지 않는다.
 앞으로 생성하는 병합 결정 Markdown 보고서도 같은 언어 순서를 따르고 원래 기계 필드는
 증거임을 명시해 인용한다.
+
+## 검토 파일 기반 수정 접수
+
+`tools/review_intake.py`는 명시적으로 선택한 비공개 검토 파일 하나를 받아 신뢰할
+활성 정책으로 제한된 W2→W1 수정 하나를 준비/실행한다. 검토 커밋/소스를 고정하고
+원본 바이트를 보존하며 중복·변경·상태 유실을 거부하고 사람 재검토에서 멈춘다.
+기존 독립 검토/브라우저/CI 게이트는 유지한다. 예제는 비활성이며 프로젝트별로
+신뢰할 실데이터 재실행 검사가 필요하다. 감시기·활성 정책·새 CoRA 수정은 설치하지
+않았다. [가이드](docs/03-review-json-intake.md)를 참조한다.
