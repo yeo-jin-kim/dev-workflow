@@ -259,6 +259,11 @@ class Delivery:
 
     def phase_context(self):
         return json.dumps({'contract': self.contract, 'project_context': self.project,
+                           'documentation_language_policy': (
+                               'Human-readable documentation must have the complete English version first, '
+                               'then the complete Korean translation. Update both versions together within '
+                               'allowed_paths. Preserve commands, identifiers and raw machine evidence; '
+                               'do not duplicate JSON schemas/contracts or rewrite immutable past run artifacts.'),
                            'run_evidence': {'state_file': str(self.state_file),
                                             'attempt_directory': str(self.recorder.folder),
                                             'reports_directory': str(self.dir / 'reports')},

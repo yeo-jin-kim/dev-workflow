@@ -15,6 +15,86 @@ def repository_identity(url):
     return value.removeprefix('https://github.com/') if value.startswith('https://github.com/') else value
 
 
+def render_report(report, path):
+    """Bilingual prose; quote machine evidence verbatim in both language blocks."""
+    review = '; '.join('%s=%s' % (r.get('id'), r.get('passed'))
+                       for r in (report.get('review') or {}).get('criteria', []))
+    raw = json.dumps({key: report.get(key) for key in [
+        'message', 'change_summary', 'implementation_summaries', 'findings',
+        'proposed_action', 'limits']}, ensure_ascii=False, indent=2)
+    values = dict(status=report['status'], source_branch=report['source_branch'], source_sha=report['source_sha'],
+                  target_branch=report['target_branch'], target_sha=report['target_sha'], compare=report['compare_url'],
+                  diff=report['diff_summary'], review=review or 'unavailable',
+                  ci=(report.get('ci') or {}).get('status', 'unavailable'), path=str(path), raw=raw)
+    english = """<!-- document-language: en -->
+# Merge decision report
+
+Status: **{status}**
+
+Source: `{source_branch}` (`{source_sha}`)
+Target: `{target_branch}` (`{target_sha}`)
+
+[Compare]({compare})
+
+```text
+{diff}
+```
+
+Independent review: {review}
+
+Push CI: {ci}
+
+Evidence: `{path}`
+
+Original task, diagnostic and policy fields are quoted below as machine evidence.
+Their values are preserved verbatim; they are not a newly translated or revised contract.
+
+```json
+{raw}
+```
+
+The owner must authorize merging the exact source revision into the recorded target.
+Revalidate if either revision moves. This report does not authorize a merge.
+There is no monetary meter or OS-level isolation claim. Browser harness coverage
+is project-defined, not a complete UI audit. No PR or automatic target merge is created.
+""".format(**values)
+    korean = """<!-- document-language: ko -->
+# 한국어 번역
+
+# 병합 결정 보고서
+
+상태: **{status}**
+
+소스: `{source_branch}` (`{source_sha}`)
+대상: `{target_branch}` (`{target_sha}`)
+
+[변경 비교]({compare})
+
+```text
+{diff}
+```
+
+독립 검토: {review}
+
+Push CI: {ci}
+
+증거: `{path}`
+
+아래 작업·진단·정책 필드는 기계 판독 증거의 원문 인용이다.
+값을 그대로 보존하며 새로 번역하거나 개정한 계약이 아니다.
+
+```json
+{raw}
+```
+
+기록된 대상에 정확한 소스 버전을 병합하려면 사용자 승인이 필요하다.
+어느 버전이든 이동하면 재검증한다. 이 보고서가 병합을 승인하지는 않는다.
+금액 계측이나 운영체제 수준 격리를 주장하지 않는다. 브라우저 하네스 검증 범위는
+프로젝트가 정의하며 전체 UI 감사가 아니다. PR이나 자동 대상 병합은 만들지 않는다.
+""".format(**values)
+    return english + '\n---\n\n' + korean
+
+
 class Publisher:
     def __init__(self, recorder, config, contract, state, persist):
         self.r, self.config, self.contract = recorder, config, contract
@@ -261,12 +341,7 @@ class Publisher:
             save(path, report)
         markdown = path.with_suffix('.md')
         if not markdown.exists():
-            review_summary = '; '.join('%s=%s' % (r.get('id'), r.get('passed')) for r in (report.get('review') or {}).get('criteria', []))
-            text = '# Merge decision report\n\nStatus: **%s**\n\n%s\n\nChange: %s\n\nSource: `%s` (`%s`)\nTarget: `%s` (`%s`)\n\n[Compare](%s)\n\n```text\n%s\n```\n\nIndependent review: %s\n\nPush CI: %s\n\nEvidence: `%s`\n\n%s\n\nLimits: %s\n' % (
-                report['status'], report['message'], report['change_summary'], report['source_branch'], report['source_sha'],
-                report['target_branch'], report['target_sha'], report['compare_url'], report['diff_summary'],
-                review_summary or 'Not accepted / unavailable', (report.get('ci') or {}).get('status', 'Not accepted / unavailable'),
-                str(path), report['proposed_action'], ' '.join(report['limits']))
+            text = render_report(report, path)
             temporary = markdown.with_suffix('.md.tmp')
             temporary.write_text(text)
             temporary.replace(markdown)

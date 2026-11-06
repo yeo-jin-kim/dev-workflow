@@ -1,3 +1,97 @@
+<!-- document-language: en -->
+# F1 task contract — distance-decay associative activation
+
+**2026-11-05 / revision 2 / contract ready, before execution**
+The executable contract is [JSON](F1-distance-decay.json); evaluation cases are in
+[the evaluator](evaluations/F1-distance-decay.json). Cases are also embedded in the
+contract so implementers and reviewers receive the same definitions. Semantic
+labels are agent-proposed synthetic cases, not owner-certified empirical gold.
+They are subject to review before the first pilot.
+
+## Goal and scope
+
+Activate topic-relevant paths regardless of abstraction level or absolute node
+depth, with activation weakening and stopping as distance from the center grows.
+Do not treat the original v0 default two-hop limit as the definition of cognition.
+Check Python, SQLite-backed natural-language Recall and the browser offline fallback.
+
+Do not change persistent weights, source texts, Knowledge approval, evidence/owner
+path policy or automatic-merge policy. Do not delete or revert existing work to
+manufacture a clean baseline.
+
+## First implementation candidate
+
+- Distance: the number of empirical relations traversed from the center, independent of hierarchical depth or screen coordinates.
+- Path score: `seed × ∏(alpha × normalized relation strength × topic relevance)`.
+- Multiple paths: take the highest score; do not sum repeated paths and amplify cycles.
+- Reference experiment: `alpha=.65`, `epsilon=.05`, each factor in 0–1. An actual zero stays zero.
+- A length-d path is bounded by `alpha^d` and therefore converges to zero. Exclude scores below epsilon from results and propagation; include exact equality.
+- Relevance: design a local deterministic policy using existing experience, support and query context, and record its rationale. Do not rely only on word matches or proximity.
+
+This formula and defaults are experimental candidates, not the settled theory.
+Implementation choices and optimizations preserving the criteria are autonomous.
+Topic relevance cannot be completed using tests that only inject numbers into a
+kernel; evaluate the actual production calculation path.
+
+## Fixed evaluation cases
+
+| Category | Required result |
+| --- | --- |
+| K01 level/layout invariance | Changing only depth, abstraction level or layout leaves scores and activated nodes unchanged. |
+| K02 long paths | Unit-factor chains follow .65^d, reach beyond two hops, and exclude seven hops below .05. |
+| K03 threshold | Include exact equality and exclude values below the boundary. |
+| K04 barriers | Zero weight or relevance blocks propagation. |
+| K05–06 cycles/multiple paths/resources | No amplification or infinite loop; select the best path and respect the state limit including seeds. |
+| K07–08 inputs/explanations | Reject invalid numbers/configuration; expose stopping reason, truncation, policy/paths and preserve old trace compatibility. |
+| I01 topic selection | An agency query suppresses a nearby logo document but activates indirect decision ownership without word overlap. |
+| I02 opposite topic | A brand query does not indiscriminately spread logo context into decision ownership. |
+| I03 route agreement | Compare actually executed JS with Python/SQLite kernel results; preserve display/evidence policy separately. |
+| I04–05 regression/read-only behavior | Do not mistake associations for observed relations/evidence or modify the canonical graph. |
+
+I01–02 fixtures contain ordinary experiential context. Injecting answer labels or
+gold relevance into production code, or hard-coding particular words, does not count as passing.
+
+## Completion criteria and deliverables
+
+The new dedicated `tests/test_distance_decay_activation.py`, full CoRA suite,
+format checks and separate review must pass on final code. Do not weaken existing
+expectations to obtain passes. Parity remains incomplete without actual browser JS execution.
+
+Leave implementation, regression tests and `docs/implementation/02-F1-distance-decay.md`
+in CoRA. Record baseline/final versions, candidate rationale, per-case outputs,
+commands/environment, convergence rationale, performance, truncation and remaining
+limits. Update related design, technical specifications and master status too.
+The runner injects mandatory criterion `documentation_sync`.
+
+## Autonomy and owner decisions
+
+Autonomous: data structures, queues, relevance/normalization candidates, local
+optimization, related tests/docs and bounded retries within fixed criteria.
+Preserve candidate changes and failure history.
+
+Owner decisions: concept/success-criteria/evaluation-label changes, evidence policy,
+new models/external services/private-data dependencies and material quality/cost
+tradeoffs. Report missing capabilities or exhausted budgets as technical stops, never success.
+
+The recommended execution limit is three cycles/30 minutes. Contract prose does
+not enforce it; specify CLI options during execution. Monetary budget metering is
+absent. Leave parity/full verification incomplete if they cannot finish within the limit.
+
+## Preparation before execution
+
+This task only concretizes the contract. The project currently points to the
+original CoRA checkout, so do not start development directly. After contract
+review, prepare an isolated workspace preserving uncommitted changes, a baseline
+version/digest and Python/JS execution environments. Workers do not commit/push
+during execution. Following the later owner instruction, the parent commits/pushes
+each delivery with its validation status. Preserve incomplete implementation on a
+separate experimental branch; merge/deploy/scheduled execution are not authorized.
+
+---
+
+<!-- document-language: ko -->
+# 한국어 번역
+
 # F1 작업 계약 — 거리 감쇠 연상 활성화
 
 **2026-11-05 / revision 2 / 계약 준비 완료, 실행 전**

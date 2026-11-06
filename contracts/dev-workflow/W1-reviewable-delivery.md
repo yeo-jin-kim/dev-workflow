@@ -1,3 +1,121 @@
+<!-- document-language: en -->
+# W1 task contract: verified branch and merge-decision material
+
+**Revision:** revision 2 — owner-approved default operation without PRs.
+**Status:** contract preparation complete. This change defines documentation/evaluation and starts no implementation or automatic execution.
+**Implementation target:** dev-workflow, separate from CoRA. The machine-readable contract is [JSON](W1-reviewable-delivery.json); fixed cases are [W1-evaluator-v2](evaluations/W1-reviewable-delivery.json).
+
+## Goal and completed outcome
+
+Starting one task should progress within predefined scope through implementation →
+checks/browser verification → independent review → required repairs/reverification →
+documentation updates → commit/push → branch-push server checks → merge-decision
+material. Success means **a verified task branch and merge-decision material bound
+to that revision**. Actual merging remains the owner's decision.
+
+Do not create PRs by default. They are optional only when explicitly selected for
+a project/task. Missing PR URLs, creation permissions or pull_request events do
+not fail default delivery. Required server checks on branch push remain mandatory.
+If the repository enforces PR-only checks, request a configuration decision rather
+than bypassing them or creating a PR unilaterally.
+
+Merge material includes repository, source/target branches and exact commits,
+change summary/comparison link, checks/browser/independent-review/server results
+and evidence, remaining issues and the proposed merge action. Target changes
+require refreshed integration verification; never merge using approval for an old revision.
+
+The existing runner already provides check/review-driven repair loops. This work
+adds source-version-bound evidence, browser execution, interruption recovery and
+publication/server-check linkage. Do not report existing features as newly built
+or count manually connected stages as autonomous execution success.
+
+## Scope
+
+| Area | Implementation and verification required |
+| --- | --- |
+| Verification records | Fingerprints of source/docs/config/protected evaluation; actual commands, environment, exit codes and raw output. |
+| Browser | Probe an available backend, execute the target verification page in a real browser and collect results automatically. |
+| Repair loop | Convey test/review findings; rerun necessary checks and independent review after repairs. |
+| Recovery and limits | Phase checkpoints, cumulative time/cycles across restarts, no duplicate commits or missing reports. |
+| Publication | Commit/push only reviewed task changes to the configured repository/dedicated branch; create/update verification and merge-decision reports. |
+| Server checks | Observe required checks for the actual published revision; return failures to the same repair loop. |
+| Decision requests | One packet with reason, evidence, options, impact and recommendation; wait for an explicit answer. |
+
+Implementers cannot change their own completion criteria or omit read-only
+independent/documentation review. Editing docs after review requires final doc
+review. Changed published source cannot reuse previous passes unchanged. Record
+which checks were rerun or reused and the impact-based rationale.
+
+The browser backend is not yet implemented at this contract stage. Do not assume
+the CLI can access app tools; verify supported interfaces/environment first.
+If no browser exists, report the issue before execution. Do not describe Node
+execution or screenshots as actual browser execution.
+
+## Decisions reserved for the owner
+
+- Concept/core-design conflicts and completion/evaluation-answer changes.
+- New paid services, wider permissions/private-data sharing and budget expansion.
+- Capabilities still unavailable after bounded recovery, repeated failures or exceeded limits.
+- Actual merge/deployment of the source/target branches and commits specified in the report.
+
+Do not repeatedly request permission for routine implementation, missing test/CI
+dependency repairs, related documentation, in-scope repair/review, dedicated-branch
+publication or merge-decision material. Past merge authorization does not authorize
+another task branch/revision.
+
+## Stop and publication policy
+
+Recommended defaults are three repair cycles/60 minutes, enforced as actual
+configuration and cumulative limits during implementation. Include browser,
+review/server waits and restart time. Existing limits are per invocation and must
+be improved here. Do not claim monetary usage metering under this contract.
+
+Even when work ends failed or awaiting a decision, existing instructions allow
+safely reviewed changes to be committed/pushed to a dedicated branch. Keep failed
+checks visible and mark work incomplete. If safe scope is uncertain, preserve
+local output and report the publication blocker. Published does not mean accepted.
+
+## Implementation order
+
+1. Build evidence/state formats and browser/publication preflight capabilities.
+2. Connect limits, recovery, review and revalidation; test fixed failure cases.
+3. Connect commit/push, merge-decision material, push checks and interruption recovery.
+4. Run a small actual CoRA task through verified branch and merge material without manual stage handoffs.
+
+The runner rejects targeting its own repository. A maintainer implements W1 in a
+separate dev-workflow checkout, with protected contract/evaluation fixed outside
+that workspace. Preserve this boundary so implementers cannot change their own
+protections. No execution project is added at this stage; do not claim the current
+runner can execute this contract directly.
+
+## Pilot task and completion conditions
+
+Restrict the actual pilot to **strengthening CoRA's F1 metadata invariance test**.
+The existing test changes metadata node_type; also change actual
+`CognitiveState.state_type` and verify scores, paths and stopping remain unchanged.
+Preserve expectations and do not modify CoRA runtime code. Allowed paths are
+fixed in JSON. Keep the original checkout; use a dedicated branch and merge-decision
+report. Do not create a PR in the default pilot.
+
+Demonstrate automatic repair using deliberate faults in a separate synthetic
+repository. Do not alter actual CoRA completion criteria or manufacture its
+failures. Automatically execute the existing F1 browser page in the real pilot
+to demonstrate evidence collection without manual result copying.
+
+Completion requires preserving the existing 15 controller tests and passing
+[18 fixed cases](evaluations/W1-reviewable-delivery.json), the actual pilot,
+independent review and documentation review. Mock-only passes or parent-provided
+browser/publication stages mean partial implementation. Separate observed results
+from unverified scope in reporting.
+
+Background scheduling, automatic next-goal selection, automatic merging and CoRA
+concept/runtime changes are outside scope.
+
+---
+
+<!-- document-language: ko -->
+# 한국어 번역
+
 # W1 작업 계약: 검증된 브랜치와 병합 결정 자료까지
 
 **개정:** revision 2 — 사용자 승인에 따라 PR 없는 기본 운영으로 변경.
