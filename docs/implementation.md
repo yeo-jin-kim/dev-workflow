@@ -439,3 +439,97 @@ OS isolation and monetary measurement are not established. CoRA **81b1e21** and
 controller implementation remain on dedicated branches awaiting owner merge
 authorization; neither main nor CoRA foundation moved. No further live cycles
 were used or allowance renewed after cycle two completed.
+
+
+## W2 approved sequential queue
+
+Current W2 status: implementation and final 94-test regression passed; independent
+review outcomes are recorded chronologically below. Branch `codex/w2-approved-queue`, based on
+verified W1 without merging either source/target branch. User authorized W2
+implementation; live CoRA goal selection, new approvals, scheduling and merges
+are not inferred from that instruction.
+
+New `tools/approved_queue.py` records operator-supplied approvals of exact queue
+and authority hashes, validates DAG/worktree/head boundaries, reserves persistent
+queue/repository/task time/cycle budgets, and dispatches the existing W1 engine.
+W1 publication, checks, browser, semantic/doc review and remote gates remain
+unchanged. Completed receipts are checked against current source, report identity,
+checks/browser/review/CI and remote head/base before delivered status. Dependencies
+order verified deliveries and do not imply merged/integrated code.
+
+Durable dispatch precedes engine execution; an interrupted parent reconciles a
+complete receipt, while ambiguous/missing child evidence stops without replay.
+Target locks and a queue-identity allocation lock block duplicate/fan-out runs;
+deleted allocated state does not renew allowance. No refund of unused reservations
+or automatic new window. Clock rollback/expired windows stop new dispatch.
+
+The example is intentionally unconfigured, with no real owner approval receipt.
+No W2 live Codex/GitHub/CoRA trial was launched. New fault tests use real temporary
+Git/bare remotes and W1 engine, with clearly synthetic model/CI/browser responses;
+existing W1 actual Chrome tests remain separate. Operator approval receipts are
+a local trust convention, not identity authentication or OS isolation. A foreground
+queue drain is implemented; scheduler installation, notifications, automatic goal
+selection/contract generation, integration and money metering remain future work.
+
+W2 final regression: **24 queue tests passed; all 87 controller tests passed in
+68.607 seconds**, including original W1/legacy coverage and the existing actual
+Chrome check. Additional queue cases cover CLI allocation/deleted state, concurrent
+queue locks, changed reapproved inputs vs stale loaded tasks, damaged bindings,
+remote probe failure and remote movement. Evidence is external (`w2-verification.json`,
+`w2-regression-final.log`); independent source review remains separate. A successful
+fixture is not a live AI/GitHub queue operation.
+
+
+### W2 independent audit corrections
+
+Initial independent review requested changes; the original verdict is preserved
+in external `w2-review.json`. Corrections: reject unsafe state locations before
+creating directories; never initialize from empty/partial started state; pin
+initial run/binding/deadline in the exclusive CLI allocation; reject existing
+state without that allocation. Preapproval attention is separate and grants no
+budget. Approval also pins clean target HEAD/content/branch and remote base SHA.
+Pending tasks recheck them while locked before dispatch.
+
+Queue now holds ordered target locks through dispatch, dependency verification,
+receipt checking and persistence, and revalidates all delivered jobs before final
+handoff. Remote refs cannot be atomically locked: timestamps and explicit freshness
+limits require revalidation at actual owner-authorized merge. No guarantee against
+uncooperative external Git/filesystem writers or future remote changes is made.
+Browser acceptance now verifies engine/version, generated-harness hashes, raw DOM
+result, result hash, prepare/version/DOM/validator execution records and report
+verification observations. Trusted-local-record consistency is not a signed
+execution attestation or proof against filesystem adversaries.
+
+Historical intermediate verification: thirty revised queue tests passed
+(18.753 seconds). At that point a final additional deleted-
+allocation case is included in the full rerun; final observed result and independent
+re-review follow below. Previous 21/24 and 84/87 test results above are historical.
+
+
+### W2 final observed regression and source-review boundary
+
+Final source regression **94 tests passed in 91.071 seconds**, including all
+**31 W2 cases**, 63 existing cases and the original 15 legacy tests. Observed
+terminal lines are in `w2-release-tests.log` (Ran 94 / OK), not inferred from
+partial test progress. The preceding `w2-final-regression.log` also terminated
+with 94 passed in 77.037 seconds. These supersede earlier stage counts/pending
+notes above. The final source adds strict object/version rejection for malformed
+state; the existing corrupt-state test covers those cases.
+
+The independent re-review accepted all seven source/behavior criteria after the
+six corrections, but withheld documentation_sync/overall approval because it read
+an earlier incomplete regression snapshot and the design header still named 87.
+`w2-rereview.json` preserves that verdict. Current design/header now names the
+observed final 94-test result; this final evidence/docs correction is independently
+checked next. Source code/tests are unchanged after the final 94-test execution.
+No live W2 model/GitHub/CoRA operation, scheduler installation or merge is claimed.
+
+
+Final independent W2 review (`w2-final-review.json`) passed all **8 criteria**,
+with no blockers or owner decisions. It accepted the seven corrected source/
+behavior criteria and the fresh 94-test terminal result/documentation update.
+Earlier negative reviews are preserved. Final validation is **31 W2 tests + 63
+existing tests = 94 passed in 91.071 seconds**. Only reporting documentation was
+finalized after that run; source/tests match `w2-final-observations.json` hashes.
+W2 implementation is complete on its dedicated branch; an actual owner-approved
+live queue and any scheduler/merge remain separate, unperformed operations.

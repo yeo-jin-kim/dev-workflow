@@ -49,8 +49,9 @@ use trusted checks. Protect the controller from target scripts, symlink attacks,
 and arbitrary external commands with stronger OS/CI isolation before unattended
 operation. Target code cannot legitimately edit contracts, controller or logs.
 The legacy runner has per-invocation limits; the opt-in W1 runner persists
-cumulative deadlines/cycles. Monetary budgets, background scheduling,
-notifications, next-goal selection and a dedicated approval UI are not implemented.
+cumulative deadlines/cycles. Monetary budgets, installed background scheduling, notifications, next-goal
+selection and a dedicated approval UI are not implemented. W2 adds bounded
+owner-approved queue dispatch; its workflow and limits are described below.
 No target merge/deploy is automatically authorized. W1 publication is limited
 to the explicitly configured task repository/branch and reviewed task files.
 
@@ -115,3 +116,28 @@ The recovery reached `ready_for_merge_approval` at CoRA `81b1e21`, using two cum
 The bounded recovery milestone passed final W1 evaluation and independent audit.
 It remains a constrained browser/kernel pilot, not general semantic or full UI
 certification. Dedicated branches are pushed; actual merging is owner-gated.
+
+## W2 approved task queue
+
+`tools/approved_queue.py` drains an explicitly owner-approved W1 task queue in
+order, with dependency checks, separate worktrees/heads, durable queue/repository
+reservation caps and a fixed execution window. It keeps W1 checks, independent
+review, actual browser, exact-head push CI and branch/report delivery. Each merge
+still needs owner authorization. See [design and operator workflow](docs/02-approved-queue-design.md)
+and the deliberately unconfigured [example](queues/example.json).
+
+Approval receipts bind exact queue/project/contract/authority files and clean
+target HEAD/content/branch plus observed remote base. `run` never
+automatically approves a proposal. Repeat runs reconcile complete receipts but
+stop ambiguous interrupted dispatch instead of replaying it. Reservations are
+conservative, never refunded; separately approved queues do not share a monetary
+or rolling daily meter. This is a foreground bounded drain, not an installed
+background scheduler. No new CoRA work is selected or authorized by the example.
+
+W2 handoff freshness is a timestamped remote observation. Cooperative local locks
+cover engine/verification/checkpoints; external writers and future remote changes
+are not locked. Revalidate exact refs before any owner-authorized merge.
+
+W2 implementation validation: **94 tests passed**, including 31 queue cases;
+independent final source review passed all eight criteria. No live queue approval,
+background scheduler or merge was created as part of implementation.

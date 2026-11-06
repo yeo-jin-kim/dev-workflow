@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "id": "replace-with-owner-approved-window-id",
+  "limits": {
+    "window_seconds": 7200,
+    "max_tasks": 2,
+    "max_reserved_seconds": 7200,
+    "max_reserved_cycles": 6
+  },
+  "project_limits": {
+    "OWNER/REPOSITORY": {
+      "max_tasks": 2,
+      "max_reserved_seconds": 7200,
+      "max_reserved_cycles": 6
+    }
+  },
+  "tasks": [
+    {
+      "id": "first-approved-task",
+      "project": "projects/REPLACE-with-approved-isolated-W1-project.json",
+      "depends_on": [],
+      "total_seconds": 3600,
+      "max_cycles": 3
+    },
+    {
+      "id": "second-approved-task",
+      "project": "projects/REPLACE-with-second-isolated-W1-project.json",
+      "depends_on": ["first-approved-task"],
+      "total_seconds": 3600,
+      "max_cycles": 3
+    }
+  ]
+}

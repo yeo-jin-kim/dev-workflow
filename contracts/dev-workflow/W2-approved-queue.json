@@ -1,0 +1,17 @@
+{
+  "id": "W2-approved-queue",
+  "revision": 1,
+  "goal": "Execute only owner-approved immutable W1 task inputs in deterministic dependency order, under durable queue/project/task budgets, with safe crash reconciliation and owner-gated merging.",
+  "authorization": "User: 구현해줘, in response to proposed W2 approved sequential queue. No target merge or live CoRA task selection authorized.",
+  "criteria": [
+    "Exact approval binds queue and all task authority inputs; absence/drift blocks dispatch.",
+    "Validate DAG, unique task identities, separate target worktrees/branches, branch_report only, no linked child grants.",
+    "Reuse W1 worker/check/browser/reviewer/publication/CI/report gates without implementing merge or goal selection.",
+    "Persist original deadline and conservative reservation ledger for queue and repository budgets before dispatch.",
+    "Serialize queue and target execution; reconcile terminal receipts after crash, never replay ambiguous dispatch.",
+    "Validate actual ready receipts before marking delivered; dependent tasks cannot bypass failed/pending predecessors.",
+    "Actionable handoff for approval, drift, exhaustion, failure and ambiguous crash; never infer owner permission.",
+    "Document implementation, tests and limits; preserve W1, historical tests and protected evaluators."
+  ],
+  "limits": ["Operator-recorded approval is a local trust boundary, not authenticated human identity or OS isolation.", "Time/cycle reservations are conservative and never refunded; monetary usage is not metered.", "Dependency edges order verified deliveries, not merged code. Tasks needing integration wait for separately approved updated inputs.", "No installed scheduler, background daemon, notification transport, automatic merge, contract generation or new live CoRA work in this implementation."]
+}
