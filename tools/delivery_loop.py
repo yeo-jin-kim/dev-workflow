@@ -235,12 +235,12 @@ class Delivery:
         result = browser_run(self.recorder, browser['executable'], probe, 'probe')
         if result.get('status') != 'PASS' or 'HeadlessChrome' not in result.get('userAgent', ''):
             raise Halt('capability_blocked', 'Actual Chrome preflight did not execute JavaScript.')
-        self.environment_probes()
+        self.environment_probes(revalidate=True)
         if self.recorder.command([self.codex, '--version'], 'worker-capability', cap=20):
             raise Halt('capability_blocked', 'Codex CLI unavailable.')
         self.publisher.scope()
 
-    def environment_probes(self):
+    def environment_probes(self, *, revalidate=False):
         probes = []
         for i, argv in enumerate(self.project.get('environment_commands', [])):
             label = 'environment-%d-%d' % (i, len(list(self.recorder.folder.glob('environment-*.log'))))
@@ -252,9 +252,13 @@ class Delivery:
         self.state['environment_binding'] = binding
         self.persist()
         if previous is not None and previous != binding:
-            self.state.pop('accepted_digest', None)
+            for key in ['accepted_digest', 'accepted_parent', 'accepted_environment', 'accepted_dependency_binding']:
+                self.state.pop(key, None)
+            self.state.setdefault('environment_invalidations', []).append({'previous':previous, 'current':binding})
+            self.state['needs_revalidation'] = True
             self.persist()
-            raise Halt('changes_requested', 'Environment/dependency identity changed; prior review is stale.')
+            if not revalidate:
+                raise Halt('changes_requested', 'Environment/dependency identity changed; prior review is stale.')
         return binding
 
     def phase_context(self):
@@ -278,6 +282,9 @@ class Delivery:
         prompt = ('Read target AGENTS.md and supplied documentation policy. Implement only allowed_paths and fixed criteria. '
                   'Do not edit controller, contracts, protected tests/evaluator, original private data or evidence. '
                   'Do not commit/push/merge/create PR. Record genuine owner decisions; do not decide them yourself. '
+                  'Verification is already authorized: do not ask whether to run checks or proceed to validation. '
+                  'If a partial fix exists, finish remaining requirements without inventing a patch. '
+                  'Keep explicit contract decision boundaries for a wholly stale/already-fixed report. '
                   'Update implementation record and related design status, with precise scope and limitations. '
                   'Documentation is written before controller verification: describe current behavior and limits, '
                   'label earlier check results as historical observations of their exact earlier candidate, and link '
@@ -341,6 +348,33 @@ class Delivery:
             raise Halt('changes_requested', 'Source/docs changed during browser execution; repeat all required verification.')
         return {}
 
+    def publish_unaccepted_candidate(self):
+        """Safety-reviewed WIP only; exact-head CI precedes semantic review."""
+        before = manifest(self.root)['digest']
+        paths = self.publisher.scope()
+        result = self.recorder.folder / 'candidate-publication-safety.json'
+        prompt = ('Independent read-only publication-safety audit ONLY. This candidate is NOT accepted. '
+                  'Inspect actual allowed-path diff for unrelated changes, private source/export data and symlinks. '
+                  'No edits or agents. Return safe, exact changed paths, blockers, actual owner decisions and evidence. '
+                  'No semantic acceptance or merge is granted.\n' + self.phase_context())
+        code = self.recorder.command([self.codex, 'exec', '-C', str(self.root), '-s', 'read-only',
+            '--output-schema', str(ROOT/'schemas/publication.schema.json'), '-o', str(result), '-'],
+            'candidate-publication-safety', prompt=prompt, cap=300, reserve=180)
+        data = json.loads(result.read_text()) if result.exists() else {}
+        if (code or data.get('safe') is not True or data.get('blocking_findings') != []
+                or data.get('decision_requests') != [] or not data.get('evidence')
+                or set(data.get('files', [])) != set(paths) or manifest(self.root)['digest'] != before):
+            raise Halt('publication_blocked', 'Unaccepted candidate publication safety was not established.')
+        self.state.update(publication_safety_digest=before, publication_parent=git(self.root,'rev-parse','HEAD'),
+                          publication_safety_environment=environment_identity())
+        self.persist()
+        head = self.publisher.publish(incomplete=True)
+        self.checkpoint('candidate_ci')
+        ci = self.publisher.ci(head, cap=self.project.get('ci_timeout_seconds',300))
+        if ci['status'] != 'success':
+            return {'remote_failure':ci, 'log_directory':str(self.recorder.folder)}
+        return {}
+
     def review(self):
         for key in ['accepted_digest', 'accepted_parent', 'accepted_environment', 'accepted_dependency_binding']:
             self.state.pop(key, None)
@@ -361,6 +395,7 @@ class Delivery:
                   'report actual owner decisions separately. Inspect only task-related files and concise logs; do not read the whole repository. '
                   'Evidence directory: ' + str(self.recorder.folder) + '\n' + self.phase_context())
         prompt += '\nFormatting: decision_requests must be [] when no actual human choice is necessary. Never put sentences such as no decisions into that array. A pass verdict must have zero blockers and zero decision requests.'
+        prompt += '\nThis is post-CI source review. The branch was published as UNACCEPTED WIP after independent publication-safety review. Inspect the exact-head CI evidence in this directory. Replay binding labels do not replace your semantic judgment. Historical check counts certify only their recorded source; current outcomes are in external evidence.'
         for formatting_attempt in range(2):
             label = 'review' if formatting_attempt == 0 else 'review-format'
             result = self.recorder.folder / (label + '.json')
@@ -403,6 +438,7 @@ class Delivery:
             return {'review': data}
         self.state.update(accepted_digest=before['digest'], accepted_parent=git(self.root, 'rev-parse', 'HEAD'),
                           accepted_environment=environment_identity(), accepted_dependency_binding=self.state.get('environment_binding'))
+        self.state.pop('needs_revalidation', None)
         self.persist()
         return {}
 
@@ -436,7 +472,10 @@ class Delivery:
         # promoting a failed semantic review to accepted.
         try:
             if not self.publisher.scope() or not git(self.root, 'status', '--porcelain'):
-                self.publisher.report(origin, error.message, self.state.get('last_ci'))
+                if (self.state.get('published_sha') == git(self.root,'rev-parse','HEAD')
+                        and self.state.get('publication_safety_digest') == manifest(self.root)['digest']):
+                    self.checkpoint('incomplete_published')
+                self.publisher.report(self.state['status'], error.message, self.state.get('last_ci'))
                 return
             if origin == 'decision_required' and 'inputs changed' in error.message:
                 raise Halt('publication_blocked', 'Protected inputs changed; no trusted safety review can be started.')
@@ -477,6 +516,18 @@ class Delivery:
         try:
             self.preflight()
             feedback = self.state.get('feedback', {})
+            if self.state.get('needs_revalidation'):
+                self.recorder_at(self.dir / ('revalidation-' + uuid.uuid4().hex[:12]))
+                feedback = self.checks_and_browser()
+                if not feedback:
+                    feedback = self.publish_unaccepted_candidate()
+                if not feedback:
+                    feedback = self.review()
+                if not feedback:
+                    self.state.pop('needs_revalidation', None)
+                    feedback = self.publish_and_check()
+                    if feedback is None:
+                        return self.state
             if self.state.get('accepted_digest') == manifest(self.root)['digest']:
                 feedback = self.publish_and_check()
                 if feedback is None:
@@ -491,6 +542,8 @@ class Delivery:
                 try:
                     self.implement(feedback)
                     feedback = self.checks_and_browser()
+                    if not feedback:
+                        feedback = self.publish_unaccepted_candidate()
                     if not feedback:
                         feedback = self.review()
                     if not feedback:

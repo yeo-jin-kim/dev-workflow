@@ -86,11 +86,18 @@ class Budget:
 
 _EXECUTABLES = {}
 
+# Ignore only documented launch bookkeeping. Unknown variables, credentials,
+# paths, model and permission settings stay bound; values are never emitted.
+_LAUNCH_ENV = frozenset({
+    '_', 'SHLVL', 'PWD', 'OLDPWD', 'CODEX_TOOL_CALL_ID', 'LaunchInstanceID',
+    'TERM_SESSION_ID', 'ITERM_SESSION_ID',
+})
+
 
 def environment_identity():
     # Bind effective inherited environment without recording credential values.
-    encoded = json.dumps(dict(os.environ), sort_keys=True).encode()
-    return {'inherited_sha256': hashlib.sha256(encoded).hexdigest(),
+    encoded = json.dumps({k:v for k,v in os.environ.items() if k not in _LAUNCH_ENV}, sort_keys=True).encode()
+    return {'identity_version': 2, 'inherited_sha256': hashlib.sha256(encoded).hexdigest(),
             'python': sys.version, 'python_executable': str(Path(sys.executable).resolve()),
             'platform': platform.platform(),
             'locale': {key: os.environ.get(key) for key in ['LANG', 'LC_ALL', 'TZ']}}

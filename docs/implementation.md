@@ -602,6 +602,10 @@ were added; implementation/checks were unchanged. Commit/push publishes a branch
 candidate; policy activation, owner retest and merge remain separate.
 See [design and operations](03-review-json-intake.md) for scope and limits.
 
+## Data quality trials — 2026-11-12
+
+Implemented tools/quality_workflow.py and [data-quality workflow](data-quality-workflow.md). W1 unaccepted safety publication/push CI now precede semantic review; transport changes do not invalidate runtime evidence, while genuine runtime changes trigger bounded revalidation. Current tests and limits are recorded in the guide; no new live nested-agent success is claimed.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1083,3 +1087,7 @@ CoRA 수정이나 일반 의미 정확성 증명은 아니다. 검토 후에는 
 추가했고 구현/검사는 변경하지 않았다. commit/push는 브랜치 후보 게시이며 정책
 활성화·소유자 재검토·병합은 별도다. 범위와 한계는 [설계/운영](03-review-json-intake.md)을
 참조한다.
+
+## 데이터 품질 시험 — 2026-11-12
+
+tools/quality_workflow.py와 [데이터 품질 워크플로](data-quality-workflow.md)를 구현했다. W1 미승인 안전 게시·push CI를 의미 검토 전에 수행한다. 전송 환경 변경은 실행 증거를 무효화하지 않고 실제 실행 환경 변경은 한도 내 재검증을 수행한다. 현재 테스트와 한계는 가이드에 기록하며 새로운 실제 중첩 에이전트 성공을 주장하지 않는다.

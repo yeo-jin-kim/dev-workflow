@@ -166,6 +166,10 @@ Examples are disabled; a project-specific trusted real-data replay check is requ
 No watcher, active policy or new CoRA repair was installed. See
 [guide](docs/03-review-json-intake.md).
 
+## Data quality trials — 2026-11-12
+
+An explicit copy-only data quality pipeline is available; see [the guide](docs/data-quality-workflow.md). It detects, optionally invokes fixed-scope W1 code repair, tests isolated graph changes and stops for owner review; source ambiguity blocks repair. No scheduler or original graph application is enabled.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -320,3 +324,7 @@ JSON 계약/스키마와 변경 불가인 과거 실행 자료는 복제하거�
 기존 독립 검토/브라우저/CI 게이트는 유지한다. 예제는 비활성이며 프로젝트별로
 신뢰할 실데이터 재실행 검사가 필요하다. 감시기·활성 정책·새 CoRA 수정은 설치하지
 않았다. [가이드](docs/03-review-json-intake.md)를 참조한다.
+
+## 데이터 품질 시험 — 2026-11-12
+
+명시적으로 실행하는 복사본 전용 데이터 품질 파이프라인을 제공한다. [가이드](docs/data-quality-workflow.md)를 참고한다. 탐지, 선택적인 고정 범위 W1 코드 수정, 격리 그래프 시험 후 소유자 검토에서 멈춘다. 원본이 모호하면 복구를 차단하며 예약 실행이나 원본 그래프 적용은 활성화하지 않는다.

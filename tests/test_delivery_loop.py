@@ -22,7 +22,7 @@ from delivery_evidence import Budget, Halt, Recorder, browser_run, git, manifest
 from development_loop import save
 
 FAKE = r'''#!/usr/bin/env python3
-import json,os,sys
+import json,os,sys,re,subprocess
 from pathlib import Path
 a=sys.argv[1:];root=Path(os.environ['FIXTURE_TARGET']);fault=os.environ.get('FIXTURE_FAULT','');state=Path(os.environ['FIXTURE_STATE']);state.mkdir(exist_ok=True)
 if Path(sys.argv[0]).name=='codex':
@@ -37,9 +37,12 @@ if Path(sys.argv[0]).name=='codex':
   (root/'task.txt').write_text(value);(root/'impl.md').write_text('Behavior, checks and limits documented.')
   result={'summary':'synthetic worker','decision_requests':['Choose core semantics'] if fault=='decision' else []}
  elif schema=='publication.schema.json':
-  result={'safe':True,'files':['impl.md','task.txt'],'blocking_findings':[],'decision_requests':[],'evidence':'Synthetic publication-safety review of exact allowed task files.'}
+  baseline=re.search(r'"baseline_head":\s*"([^"]+)"',prompt).group(1)
+  paths=subprocess.check_output(['git','diff','--name-only',baseline],cwd=root,text=True).splitlines()
+  result={'safe':True,'files':paths,'blocking_findings':[],'decision_requests':[],'evidence':'Synthetic publication-safety review of exact allowed task files.'}
  else:
   passed=(root/'task.txt').read_text().startswith('good') and not (state/'reject_review').exists()
+  if fault=='ci_before_review' and not (state/'cihead').exists():passed=False
   result={'verdict':'pass' if passed else 'changes_requested','blocking_findings':[] if passed else ['Plausible text violates independent quality criterion.'],'decision_requests':[],'criteria':[{'id':i,'passed':passed,'evidence':'Synthetic independent judgment for '+i} for i in ['quality','documentation_sync']]}
   if fault=='mutate_review':(root/'impl.md').write_text('Changed after tests during review')
   if fault=='invalid_review':result={}
