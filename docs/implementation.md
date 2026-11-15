@@ -606,6 +606,50 @@ See [design and operations](03-review-json-intake.md) for scope and limits.
 
 Implemented tools/quality_workflow.py and [data-quality workflow](data-quality-workflow.md). W1 unaccepted safety publication/push CI now precede semantic review; transport changes do not invalidate runtime evidence, while genuine runtime changes trigger bounded revalidation. Current tests and limits are recorded in the guide; no new live nested-agent success is claimed.
 
+## Review request intake — 2026-11-15
+
+An opt-in same-origin review-note intake is implemented in tools/quality_intake.py.
+Serve an existing review with `--policy projects/.local/quality-intake.json`.
+The policy must enable intake, reference contracts/cora/data-quality-removal.json,
+declare its exact repair_mode in the trial command, and have no repair_project.
+This first intake executes a fixed domain repair; arbitrary code editing from
+browser notes is deliberately unsupported. Existing optional W1 CLI repair is
+unchanged. See projects/cora-quality-intake.example.json (disabled by default).
+
+GET /api/session provides an ephemeral token. POST /api/requests requires that
+token, exact loopback Host and Origin, JSON content type and a bounded body. Only
+schemaVersion=1 / changes_requested / matching planDigest / a nonempty reason are
+accepted. Unknown command/path/budget fields confer no authority. Cross-site
+requests are rejected; no permissive CORS is enabled. The service binds 127.0.0.1.
+The token is not OS-user authentication and local processes are not isolated.
+
+Before allocation the saved plan digest, selected node, graph audit binding,
+snapshot hash, target manifest and policy/contract are checked. Execution checks
+the graph again before any trial. A durable per-plan/policy/contract key prevents
+repeated or edited notes from dispatching again. A single queue worker records
+queued/running/final state and the original cumulative deadline (at most 3600s).
+Interrupted running requests become decision_required on service restart; expired
+queued work does not gain a fresh allowance. Pending requests resume only within
+the preserved deadline. Multiple service instances are rejected by a service lock.
+
+GET /api/requests/ID (token required) exposes progress and a result link; the page
+polls it and retains the request ID across reload in sessionStorage. Result routes
+serve only HTML, plan, checks and comparison; source DBs, quarantine archives and
+logs are never exposed. HTML adds controls at request time without rewriting the
+old archived review. Export notes remains a local file action. approve_proposal
+cannot trigger execution or application. A failed comparison is shown as failure,
+not acceptance. Notes and request histories remain private under .local/.
+
+The owner-selected removal contract preserves every evidence reference, splits
+confirmed threads, hides unavailable-source evidence and verifies rollback on
+copies. Strict domain mode still blocks all missing sources. Original graph
+installation, merge, scheduled monitoring, general/local-LLM semantic acceptance
+and broad browser-to-code repair intake are deferred. Tests exercise real HTTP
+CSRF/rebinding/token/content guards, stale graph/snapshot/plan rejection, durable
+deduplication, fixed-policy dispatch, no deadline reset, restart handling and file
+allowlists; domain tests cover deletion/quarantine/evidence/rollback and owner conflicts.
+
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1091,3 +1135,44 @@ CoRA 수정이나 일반 의미 정확성 증명은 아니다. 검토 후에는 
 ## 데이터 품질 시험 — 2026-11-12
 
 tools/quality_workflow.py와 [데이터 품질 워크플로](data-quality-workflow.md)를 구현했다. W1 미승인 안전 게시·push CI를 의미 검토 전에 수행한다. 전송 환경 변경은 실행 증거를 무효화하지 않고 실제 실행 환경 변경은 한도 내 재검증을 수행한다. 현재 테스트와 한계는 가이드에 기록하며 새로운 실제 중첩 에이전트 성공을 주장하지 않는다.
+
+## 검토 요청 접수 — 2026-11-15
+
+tools/quality_intake.py에 선택적으로 활성화하는 동일 출처 검토 메모 접수를 구현했다.
+기존 검토 화면을 `--policy projects/.local/quality-intake.json`과 함께 제공한다.
+정책은 intake를 활성화하고 contracts/cora/data-quality-removal.json을 참조하며
+trial 명령에 정확한 repair_mode를 지정하고 repair_project가 없어야 한다.
+이번 접수는 고정 도메인 복구를 실행하며 브라우저 메모로 임의 코드 편집을 시키는
+것은 지원하지 않는다. 기존 선택적 W1 CLI 수정은 유지한다. 기본 비활성인
+projects/cora-quality-intake.example.json을 참고한다.
+
+GET /api/session은 일시적인 토큰을 제공한다. POST /api/requests에는 토큰,
+정확한 loopback Host·Origin, JSON 형식과 크기가 제한된 본문이 필요하다.
+schemaVersion=1 / changes_requested / 일치하는 planDigest / 비어 있지 않은
+이유만 받는다. 추가 명령·경로·예산 필드는 권한이 되지 않는다. 다른 사이트의
+요청을 거부하고 허용적인 CORS는 켜지 않는다. 서버는 127.0.0.1에 연결한다.
+토큰은 OS 사용자 인증이 아니며 로컬 프로세스 간 격리는 제공하지 않는다.
+
+할당 전에 저장된 계획 digest·선택 노드·그래프 감사 바인딩·스냅샷 해시·대상
+manifest·정책·계약을 검사한다. 실행 시에도 시험 전에 그래프를 다시 확인한다.
+계획·정책·계약별 지속 기록 키로 재전송이나 메모 수정에 따른 재실행을 방지한다.
+단일 큐 작업자는 queued/running/최종 상태와 원래 누적 마감(최대 3600초)을
+기록한다. 서비스 재시작 시 실행 중이던 요청은 decision_required로 바꾸고 만료된
+대기 작업에는 새 한도를 주지 않는다. 대기 작업은 보존한 마감 안에서만 이어 간다.
+서비스 잠금으로 여러 인스턴스가 동시에 실행되는 것을 거부한다.
+
+GET /api/requests/ID는 토큰을 요구하며 진행과 결과 링크를 제공한다. 화면은
+이를 조회하고 sessionStorage의 요청 ID로 새로고침 후에도 이어서 표시한다.
+결과 경로에는 HTML·계획·검사·비교만 제공하고 원본 DB·격리 보관 파일·로그는
+공개하지 않는다. 과거 검토 파일을 덮어쓰지 않고 응답 시 HTML에 제어를 추가한다.
+Export notes는 로컬 파일 저장으로 유지한다. approve_proposal로 실행·반영을
+시작할 수 없다. 비교 실패는 승인이 아닌 실패로 표시한다. 메모와 요청 이력은
+.local/에 비공개로 보존한다.
+
+소유자가 선택한 제거 계약은 모든 근거 참조를 보존하고 확인된 스레드를 나누며
+조회 불가 원본 근거를 숨겨 보관하고 복사본에서 되돌리기를 검증한다. 도메인
+strict 모드는 원본 누락을 계속 차단한다. 원본 그래프 반영·병합·예약 모니터링·
+일반적/로컬 LLM 의미 승인·범용 브라우저 코드 수정 접수는 후속 작업이다.
+실제 HTTP로 CSRF·Host 재바인딩·토큰·본문 검사, 오래된 그래프·스냅샷·계획 거부,
+지속 중복 방지, 고정 정책 실행, 한도 초기화 방지, 재시작 처리와 파일 허용 목록을
+검사한다. 도메인 테스트는 삭제·격리 보존·근거·되돌리기·소유자 충돌을 다룬다.

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "authorization_reference": "REPLACE with owner-approved repair scope",
+  "target": "/absolute/path/to/cora",
+  "total_seconds": 3600,
+  "graph": "/absolute/path/to/graph.db",
+  "snapshot": "/absolute/path/to/snapshot.json",
+  "content": "/absolute/path/to/content.db",
+  "profile": "/absolute/path/to/trusted-recall-cases.json",
+  "node_id": "REPLACE",
+  "commands": {
+    "audit": [
+      "env",
+      "PYTHONPATH=src",
+      "python3",
+      "-m",
+      "cora.quality",
+      "audit",
+      "--graph-db",
+      "{graph}",
+      "--output",
+      "{run}/audit.json"
+    ],
+    "trial": [
+      "env",
+      "PYTHONPATH=src",
+      "python3",
+      "-m",
+      "cora.quality",
+      "trial",
+      "--graph-db",
+      "{graph}",
+      "--snapshot",
+      "{snapshot}",
+      "--content-db",
+      "{content}",
+      "--node-id",
+      "{node}",
+      "--output",
+      "{run}/trial",
+      "--repair-mode",
+      "remove_mixed_preserve_unresolved",
+      "--expected-review",
+      "{run}/review-binding.json"
+    ],
+    "compare": [
+      "env",
+      "PYTHONPATH=src",
+      "python3",
+      "-m",
+      "cora.quality",
+      "compare",
+      "--graph-db",
+      "{graph}",
+      "--snapshot",
+      "{snapshot}",
+      "--profile",
+      "{profile}",
+      "--output",
+      "{run}/trial"
+    ]
+  },
+  "intake": {
+    "enabled": false,
+    "contract": "contracts/cora/data-quality-removal.json",
+    "repair_mode": "remove_mixed_preserve_unresolved"
+  }
+}

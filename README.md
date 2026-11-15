@@ -170,6 +170,10 @@ No watcher, active policy or new CoRA repair was installed. See
 
 An explicit copy-only data quality pipeline is available; see [the guide](docs/data-quality-workflow.md). It detects, optionally invokes fixed-scope W1 code repair, tests isolated graph changes and stops for owner review; source ambiguity blocks repair. No scheduler or original graph application is enabled.
 
+## Review request intake — 2026-11-15
+
+Review pages can submit changes_requested directly to an opt-in local intake with session token, Host/Origin checks, durable deduplication, status/result links and fixed copy-only repair contracts. See [the guide](docs/data-quality-workflow.md); generic code editing and production application are not enabled by browser notes.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -328,3 +332,7 @@ JSON 계약/스키마와 변경 불가인 과거 실행 자료는 복제하거�
 ## 데이터 품질 시험 — 2026-11-12
 
 명시적으로 실행하는 복사본 전용 데이터 품질 파이프라인을 제공한다. [가이드](docs/data-quality-workflow.md)를 참고한다. 탐지, 선택적인 고정 범위 W1 코드 수정, 격리 그래프 시험 후 소유자 검토에서 멈춘다. 원본이 모호하면 복구를 차단하며 예약 실행이나 원본 그래프 적용은 활성화하지 않는다.
+
+## 검토 요청 접수 — 2026-11-15
+
+검토 화면에서 changes_requested를 선택적 로컬 접수로 직접 전송할 수 있다. 세션 토큰·Host/Origin 검사·지속 중복 방지·상태/결과 링크·고정 복사본 복구 계약을 제공한다. [가이드](docs/data-quality-workflow.md)를 참고한다. 브라우저 메모로 범용 코드 편집이나 원본 반영을 허용하지 않는다.

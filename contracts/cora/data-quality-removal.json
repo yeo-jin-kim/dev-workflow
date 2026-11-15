@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "id": "cora-mixed-interaction-removal-v1",
+  "repair_mode": "remove_mixed_preserve_unresolved",
+  "production_apply_authorized": false,
+  "scope": "Copy-only removal of one reviewed mixed interaction. Reconnect source-confirmed evidence by authoritative thread; preserve unavailable source events in hidden quarantine excluded from active Recall.",
+  "limits": {"total_seconds_max": 3600, "worker_cycles_max": 5},
+  "checks": ["original_mixed_node_deleted", "all_original_evidence_preserved", "quarantine_hidden_and_unconnected_to_active_recall", "source_owner_mismatch_blocks", "identity_collisions_block", "unrelated_structure_preserved", "versioned_rollback_semantically_equal", "original_source_graph_unchanged", "trusted_deterministic_recall_profile"],
+  "decision_boundaries": ["No source deletion", "No original graph installation", "No merge", "No arbitrary code edits or commands from review notes", "No unbounded restart", "No conceptual or evaluation changes"]
+}
