@@ -86,7 +86,7 @@ class IntakeTests(unittest.TestCase):
         r,_=self.intake.accept(self.notes);out=self.intake.queue/r['id'];(out/'trial').mkdir(parents=True);(out/'trial/candidate.db').write_bytes(b'private')
         for path in ['/candidate.db','/trial/candidate.db','/results/'+r['id']+'/candidate.db','/api/requests/../x']:
             with self.subTest(path=path):self.assertEqual(self.http('GET',path)[0],404)
-        self.assertIn(b'/intake.js',self.http('GET','/')[1])
+        self.assertNotIn(b'send-repair',self.http('GET','/')[1])
 
     def test_queued_restart_preserves_deadline_and_runs_once(self):
         r,_=self.intake.accept(self.notes);restarted=m.Intake(self.folder,self.policy)
@@ -105,3 +105,19 @@ class IntakeTests(unittest.TestCase):
     def test_policy_cannot_exceed_fixed_contract_deadline(self):
         path=self.root/'contracts/removal.json';contract=q.read(path);contract['limits']={'total_seconds_max':1};q.save(path,contract)
         with self.assertRaisesRegex(ValueError,'deadline'):m.Intake(self.folder,self.policy)
+
+    def completed_record(self):
+        return {'id':'review-1','context':{'snapshotSha256':self.plan['snapshot_sha256'],'graphSequence':1},'request':{'query':'Who worked on the paper?'},'response':{'retrieval':{'graphSequence':1},'answer':{'summary':'Recorded actual response'}},'review':{'decision':'changes_requested','reason':self.notes['reason'],'issues':['unsupported']}}
+
+    def test_answer_feedback_is_recorded_for_scope_decision_without_running_removal(self):
+        status,r=self.http('POST','/api/requests',{**self.notes,'repairScope':'recall_answer','reviewRecord':self.completed_record()})
+        self.assertEqual(status,202);record=self.intake.get(r['id'])
+        self.assertEqual(record['status'],'decision_required')
+        _,state=self.http('GET','/api/requests/'+r['id']);status,receipt=self.http('GET',state['resultUrl'])
+        self.assertEqual(status,200);self.assertIn(b'Who worked on the paper?',receipt);self.assertIn(b'Recorded actual response',receipt)
+        with patch.object(q,'run') as runner:self.intake.process(r['id'])
+        runner.assert_not_called();self.assertEqual(record['notes']['reviewRecord']['response']['answer']['summary'],'Recorded actual response')
+
+    def test_stale_recall_response_cannot_start_a_repair(self):
+        record=self.completed_record();record['response']['retrieval']['graphSequence']=2
+        self.assertEqual(self.http('POST','/api/requests',{**self.notes,'repairScope':'mixed_node','reviewRecord':record})[0],409)

@@ -65,19 +65,35 @@ class Intake:
         if notes.get('planDigest')!=self.plan['plan_digest']:raise ValueError('Stale or wrong plan digest; refresh the review.')
         reason=notes.get('reason')
         if not isinstance(reason,str) or not 1<=len(reason.strip())<=8000:raise ValueError('A reason of 1–8000 characters is required.')
-        # Explicit fields only; no caller-supplied command/path/budget authority.
+        record=notes.get('reviewRecord');scope=notes.get('repairScope','mixed_node')
+        if scope not in {'mixed_node','recall_answer'}:raise ValueError('Unsupported request scope.')
+        if 'repairScope' in notes and not isinstance(record,dict):raise ValueError('A completed Recall review is required.')
+        if record is not None:
+            context=record.get('context',{});response=record.get('response',{});request=record.get('request',{});review=record.get('review',{})
+            if not all(isinstance(x,dict) for x in [context,response,request,review]):raise ValueError('Review context/request/response/judgment must be objects.')
+            if context.get('snapshotSha256')!=self.plan['snapshot_sha256'] or context.get('graphSequence')!=self.plan['binding']['graph_sequence'] or response.get('retrieval',{}).get('graphSequence')!=self.plan['binding']['graph_sequence']:raise ValueError('Recall review uses a different graph/snapshot version; refresh and rerun it.')
+            if not isinstance(request.get('query'),str) or not 1<=len(request['query'])<=4000 or not isinstance(response.get('answer'),dict) or review.get('decision')!='changes_requested' or review.get('reason')!=reason:raise ValueError('Completed question, answer and matching review required.')
+        # Notes/response are data, never commands, scope expansion or approval.
         notes={k:notes[k] for k in ('schemaVersion','planDigest','decision','reason')}
+        if record is not None:notes.update(reviewRecord=record,repairScope=scope)
         with self.mutex,lock(self.queue/'intake.lock'):
             self.guard()
             key=q.sha({'plan':self.plan['plan_digest'],'policy':self.policy_hash,'contract':self.contract_hash})
+            if scope=='recall_answer':key=q.sha({'fixed_key':key,'request':record['request'],'record_id':record.get('id')})
             path=self.queue/(key+'.json')
-            if path.exists():return q.read(path),True
+            if path.exists():
+                if record is not None:
+                    attachments=self.queue/'review-context';attachments.mkdir(exist_ok=True);attachments.chmod(0o700)
+                    attachment=attachments/(key+'-'+q.sha(record)+'.json')
+                    if not attachment.exists():save(attachment,record);attachment.chmod(0o600)
+                return q.read(path),True
             now=time.time()
             with tempfile.TemporaryDirectory(prefix='audit-',dir=self.queue) as td:
                 output=Path(td)/'audit.json';args=[a.replace('{graph}',str(self.cfg['graph'])).replace('{run}',str(td)) for a in self.cfg['commands']['audit']]
                 if execute(args,Path(self.cfg['target']),Path(td)/'audit.log',min(20,self.cfg.get('total_seconds',3600))) or q.read(output)['binding']!=self.plan['binding']:raise ValueError('Graph changed since review; regenerate review before submitting.')
             self.guard()
             r={'schema_version':1,'id':key,'status':'queued','created_at':now,'deadline':now+self.cfg.get('total_seconds',3600),'policy':str(self.policy),'policy_hash':self.policy_hash,'contract_hash':self.contract_hash,'source_digest':self.source,'binding':self.plan['binding'],'notes':notes,'production_apply_authorized':False,'review_folder':str(self.folder)}
+            if scope=='recall_answer':r.update(status='decision_required',reason='답변·검색 수정 요청을 기록했습니다. 현재 자동 계약은 혼합 노드 제거만 허용하므로 별도 작업 범위 검토가 필요합니다.')
             save(path,r);path.chmod(0o600);self.wake.set();return r,False
 
     def get(self,key):
@@ -122,23 +138,6 @@ class Intake:
                 r.update(status='decision_required',reason='Service interrupted during execution; preserved artifacts require review.');save(path,r)
 
 
-JS=r'''
-(async()=>{
-const host=document.createElement('section');host.innerHTML='<h2>Repair request / 수정 요청</h2><p>Fixed contract: remove mixed node, preserve and isolate unresolved evidence. Copies only. / 고정 계약: 혼합 노드 제거, 미확인 근거 격리 보존. 복사본만 수정합니다.</p><button id="send-repair">Send repair request / 수정 요청 보내기</button><p id="request-status" role="status"></p><a id="request-result" hidden>View results / 결과 보기</a>';
-document.querySelector('h1').after(host);
-const decision=document.getElementById('decision'),reason=document.getElementById('reason');
-const label=document.createElement('p');label.textContent='Decision and reason / 검토 결정과 수정 요청 내용';host.insertBefore(label,host.querySelector('button'));
-for(const element of [decision,reason])host.insertBefore(element,host.querySelector('button'));
-decision.value='changes_requested';reason.style.cssText='display:block;width:95%;min-height:100px;margin:12px 0';
-const state=host.querySelector('#request-status'),button=host.querySelector('button'),link=host.querySelector('a');let token;
-const labels={queued:'접수됨',running:'실행 중',auditing:'그래프 확인 중',trial:'복사본 수정·검증 중',compare:'Recall 비교 중',awaiting_owner_review:'검증 완료 · 사용자 검토 대기',blocked:'보류 · 근거 확인 필요',failed:'검증 실패',failed_recall_comparison:'Recall 비교 실패',decision_required:'사용자 결정 필요',duplicate_not_dispatched:'중복 요청 · 기존 결과 확인'};
-async function session(){const r=await fetch('/api/session',{cache:'no-store'});if(!r.ok)throw Error('Session unavailable / 접수 연결 실패');token=(await r.json()).token;}
-async function poll(id){const r=await fetch('/api/requests/'+id,{headers:{'X-Review-Token':token},cache:'no-store'});const x=await r.json();if(!r.ok)throw Error(x.error);sessionStorage.setItem('quality-request:'+document.getElementById('plan').value,id);const phase=x.phase||x.status;state.textContent=(labels[phase]||phase)+' · '+id.slice(0,12)+(x.reason?' · '+x.reason:'');if(x.resultUrl){link.href=x.resultUrl;link.hidden=false;}if(['queued','running'].includes(x.status)){setTimeout(()=>poll(id).catch(show),1200);}else button.disabled=false;}
-function show(e){state.textContent=String(e.message||e);button.disabled=false;}
-button.onclick=async()=>{button.disabled=true;try{await session();const r=await fetch('/api/requests',{method:'POST',headers:{'Content-Type':'application/json','X-Review-Token':token},body:JSON.stringify({schemaVersion:1,planDigest:document.getElementById('plan').value,decision:document.getElementById('decision').value,reason:document.getElementById('reason').value})});const x=await r.json();if(!r.ok)throw Error(x.error);sessionStorage.setItem('quality-request:'+document.getElementById('plan').value,x.id);await poll(x.id);}catch(e){show(e);}};
-try{await session();const id=sessionStorage.getItem('quality-request:'+document.getElementById('plan').value)||sessionStorage.getItem('quality-request:'+location.pathname);if(id)await poll(id);}catch(e){show(e);}
-})();
-'''
 
 
 def make_server(intake,port):
@@ -164,7 +163,7 @@ def make_server(intake,port):
                 if self.headers.get('Content-Type')!='application/json':raise ValueError('JSON content type required.')
                 if self.headers.get('Transfer-Encoding'):raise ValueError('Chunked requests unsupported.')
                 size=int(self.headers.get('Content-Length','0'))
-                if not 0<size<=32768:raise ValueError('Request must be 1–32768 bytes.')
+                if not 0<size<=262144:raise ValueError('Request must be 1–262144 bytes.')
                 r,duplicate=intake.accept(json.loads(self.rfile.read(size)))
                 self.send_body(200 if duplicate else 202,{'id':r['id'],'status':r['status'],'duplicate':duplicate})
             except PermissionError as e:self.send_body(403,{'error':str(e)})
@@ -172,7 +171,18 @@ def make_server(intake,port):
         def do_GET(self):
             try:
                 self.secure()
-                if self.path=='/api/session':self.send_body(200,{'token':intake.token});return
+                if self.path=='/':
+                    matching=[q.read(p) for p in intake.queue.glob('*.json') if q.read(p).get('policy_hash')==intake.policy_hash and q.read(p).get('review_folder')==str(intake.folder)]
+                    if matching:
+                        latest=max(matching,key=lambda r:r.get('created_at',0));target=None
+                        if latest.get('run') and (Path(latest['run'])/'trial/index.html').is_file():target='/results/'+latest['id']+'/'
+                        elif latest['notes'].get('reviewRecord'):target='/feedback/'+latest['id']+'/'
+                        if target:
+                            self.send_response(302);self.send_header('Location',target);self.send_header('Cache-Control','no-store');self.send_header('Content-Length','0');self.end_headers();return
+                if self.path=='/api/session':
+                    matching=[q.read(p) for p in intake.queue.glob('*.json') if q.read(p).get('policy_hash')==intake.policy_hash and q.read(p).get('review_folder')==str(intake.folder)]
+                    latest=max(matching,key=lambda r:r.get('created_at',0))['id'] if matching else None
+                    self.send_body(200,{'token':intake.token,'planDigest':intake.plan['plan_digest'],'latestRequestId':latest});return
                 if self.path.startswith('/api/requests/'):
                     r=intake.get(self.path.removeprefix('/api/requests/'));body={k:r[k] for k in ['id','status','deadline','production_apply_authorized']}
                     if 'reason' in r:body['reason']=r['reason']
@@ -181,8 +191,18 @@ def make_server(intake,port):
                         receipt=q.read(run/'receipt.json');body['phase']=receipt['status'] if receipt['status'] not in {'auditing'} else 'auditing'
                     if r['status'] not in {'queued','running'}:body.pop('phase',None)
                     if (run/'trial/index.html').is_file():body['resultUrl']='/results/'+r['id']+'/'
+                    elif r['notes'].get('reviewRecord'):body['resultUrl']='/feedback/'+r['id']+'/'
                     self.send_body(200,body);return
-                if self.path=='/intake.js':self.send_body(200,JS.encode(),'text/javascript; charset=utf-8');return
+                if self.path.startswith('/feedback/'):
+                    from html import escape
+                    parts=self.path.split('/')
+                    if len(parts)!=4 or parts[3]:raise ValueError('Invalid receipt path.')
+                    r=intake.get(parts[2]);record=r['notes'].get('reviewRecord')
+                    if not record:raise ValueError('No Recall review attached.')
+                    html='<meta charset="utf-8"><title>Recall review request</title><main style="max-width:960px;margin:30px auto;font:16px system-ui;line-height:1.7"><h1>Recall 수정 요청 접수 내역</h1><h2>검토한 질문</h2><p>'+escape(record['request']['query'])+'</p><h2>검토 당시 답변</h2><p>'+escape(record['response']['answer'].get('summary',''))+'</p><h2>요청한 수정</h2><p>'+escape(r['notes']['reason'])+'</p><h2>다음 판단</h2><p>'+escape(r.get('reason','작업 범위를 검토 중입니다.'))+'</p><p>아직 변경 후 답변이 없습니다. 원본 그래프는 변경하지 않았습니다.</p></main>'
+                    review_url=getattr(intake,'review_url',None)
+                    if review_url:html+='<a href="'+escape(review_url,quote=True)+'">Recall 검토 화면으로 돌아가기</a>'
+                    self.send_body(200,html.encode(),'text/html; charset=utf-8');return
                 if self.path=='/receipt.json':path=intake.folder/'receipt.json'
                 elif self.path.startswith('/results/'):
                     parts=self.path.split('/')
@@ -198,7 +218,16 @@ def make_server(intake,port):
                 body=path.read_bytes();mime='application/json'
                 if path.suffix=='.html':
                     mime='text/html; charset=utf-8'
-                    if path==intake.folder/'trial/index.html':body+=b'<script src="/intake.js"></script>'
+                    view=intake.queue.parent/'quality-views'/q.sha(str(path.parent))
+                    if (view/'index.html').is_file() and q.read(view/'view-binding.json').get('plan_digest')==q.read(path.parent/'plan.json')['plan_digest']:body=(view/'index.html').read_bytes()
+                    from html import escape
+                    if self.path.startswith('/results/'):
+                        record=r['notes'].get('reviewRecord')
+                        if record:
+                            body=('<section><h2>Submitted question / 제출한 질문</h2><p>'+escape(record['request']['query'])+'</p><h3>Answer at review / 검토 당시 답변</h3><p>'+escape(record['response']['answer'].get('summary',''))+'</p><p>'+escape(r['notes']['reason'])+'</p></section>').encode()+body
+                        else:body='<p>This request predates question capture; no original-question replay is claimed. / 질문 연결 이전에 접수된 요청이므로, 당시 질문의 전후 비교를 제공할 수 없습니다.</p>'.encode()+body
+                    review_url=getattr(intake,'review_url',None) or intake.cfg.get('intake',{}).get('review_url')
+                    if review_url:body=('<nav><a href="'+escape(review_url,quote=True)+'">Back to Recall review / Recall 검토로 돌아가기</a></nav>').encode()+body
                 self.send_body(200,body,mime)
             except PermissionError as e:self.send_body(403,{'error':str(e)})
             except (ValueError,OSError,KeyError) as e:self.send_body(404,{'error':str(e)})
@@ -206,8 +235,12 @@ def make_server(intake,port):
     return ThreadingHTTPServer(('127.0.0.1',port),Handler)
 
 
-def serve_intake(folder,port,policy):
+def serve_intake(folder,port,policy,review_url=None):
     intake=Intake(folder,policy)
+    if review_url:
+        u=urlsplit(review_url)
+        if u.scheme!='http' or u.hostname!='127.0.0.1' or not u.port or u.username or u.password or u.query or u.fragment:raise ValueError('Review URL must be a loopback page.')
+    intake.review_url=review_url
     # One service owns the queue; another server cannot recover a live worker.
     with lock(intake.queue/'service.lock'):
         intake.recover();server=make_server(intake,port)

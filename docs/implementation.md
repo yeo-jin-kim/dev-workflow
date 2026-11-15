@@ -650,6 +650,36 @@ deduplication, fixed-policy dispatch, no deadline reset, restart handling and fi
 allowlists; domain tests cover deletion/quarantine/evidence/rollback and owner conflicts.
 
 
+## Recall-centered repair review — 2026-11-15
+
+Request controls moved out of the data-quality diagnostic page into CoRA's
+existing Real-data Recall review. The generic optional CoRA loopback relay forwards
+JSON to this controller without importing it. The controller still enforces token,
+Host/Origin, fixed policy, deadline and duplicate rules. Intake now accepts a bounded
+reviewRecord with matching snapshot/graph sequence and stores its actual question,
+answer, options, issue labels and reason privately. Explicit mixed_node scope uses
+the removal contract; recall_answer feedback is durably recorded for scope review
+with no worker execution. Duplicate mixed-node requests attach fresh review context
+without restarting the old repair or resetting its deadline.
+
+Session/status responses provide the plan digest and latest request ID. Pending
+scope feedback has a readable receipt, while actual trial results have their own
+links. Exports remain usable offline. Bare legacy notes remain supported by the
+API but the diagnostic page no longer injects request controls. Body limit is
+256 KiB; oversized records must use private export rather than silent truncation.
+Serve with `--review-url http://127.0.0.1:8773/` for a return link. The optional
+presentation cache `.local/quality-views/HASH` uses SHA-256 of the JSON-encoded
+absolute trial directory, with matching view-binding.json plan digest. It shows
+new read-only CoRA explanations without replacing immutable archived HTML/JSON.
+
+For new configured domain comparisons add `--review-request {run}/repair-request.json`
+to the trusted compare argv. This adds the submitted question as human review data,
+not an acceptance oracle; it cannot change fixed checks or request LLM generation.
+Historical requests that predate question capture explicitly have no original-query
+replay. None of these changes enables generic code editing, identity-conflict
+resolution, production application or merge. Live user judgments remain necessary.
+
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1176,3 +1206,28 @@ strict 모드는 원본 누락을 계속 차단한다. 원본 그래프 반영·
 실제 HTTP로 CSRF·Host 재바인딩·토큰·본문 검사, 오래된 그래프·스냅샷·계획 거부,
 지속 중복 방지, 고정 정책 실행, 한도 초기화 방지, 재시작 처리와 파일 허용 목록을
 검사한다. 도메인 테스트는 삭제·격리 보존·근거·되돌리기·소유자 충돌을 다룬다.
+
+## Recall 중심 수정 검토 — 2026-11-15
+
+요청 기능을 데이터 품질 진단 화면에서 기존 CoRA 실데이터 Recall 검토로 옮겼다.
+선택적인 CoRA loopback JSON 전달은 컨트롤러를 import하지 않고 요청을 보낸다.
+컨트롤러의 토큰·Host/Origin·고정 정책·마감·중복 규칙은 유지한다. 일치하는 스냅샷·
+그래프 순서를 가진 크기 제한 reviewRecord를 받아 실제 질문·답변·옵션·문제 분류·
+이유를 비공개로 저장한다. 명시적인 mixed_node만 제거 계약으로 실행하고
+recall_answer는 작업자 실행 없이 범위 검토로 지속 기록한다. 중복 혼합 노드 요청은
+새 검토 문맥을 첨부하되 과거 복구를 재시작하거나 마감을 초기화하지 않는다.
+
+세션·상태 응답은 계획 digest와 최근 요청 ID를 제공한다. 범위 검토 대기 의견은
+읽기 쉬운 접수 내역을, 실제 시험은 별도 결과 링크를 제공한다. 오프라인 내보내기는
+유지한다. 이전 형식 메모는 API에서 지원하지만 진단 화면에 전송 기능을 주입하지
+않는다. 본문 한도는 256 KiB이며 큰 기록은 조용히 줄이지 않고 비공개 내보내기를
+사용해야 한다. `--review-url http://127.0.0.1:8773/`로 돌아가기 링크를 설정한다.
+선택적인 `.local/quality-views/HASH` 표현 캐시는 절대 trial 경로를 JSON 문자열로
+인코딩한 SHA-256을 사용하며 view-binding.json의 계획 digest가 일치해야 한다.
+변경 불가인 과거 HTML/JSON을 대체하지 않고 CoRA의 새 읽기 전용 설명을 표시한다.
+
+새 도메인 비교 설정에는 신뢰하는 compare argv에
+`--review-request {run}/repair-request.json`을 추가한다. 제출한 질문은 승인 정답이
+아닌 사람 검토 자료로 추가되며 고정 검사를 바꾸거나 LLM 생성을 요구할 수 없다.
+질문 캡처 이전의 과거 요청에는 원래 질문 재실행이 없음을 명시한다. 범용 코드 편집,
+식별자 충돌 해결, 원본 반영이나 병합을 허용하지 않는다. 실제 사용자 판단은 여전히 필요하다.

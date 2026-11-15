@@ -58,7 +58,9 @@
       "--profile",
       "{profile}",
       "--output",
-      "{run}/trial"
+      "{run}/trial",
+      "--review-request",
+      "{run}/repair-request.json"
     ]
   },
   "intake": {

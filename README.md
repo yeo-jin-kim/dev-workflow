@@ -174,6 +174,10 @@ An explicit copy-only data quality pipeline is available; see [the guide](docs/d
 
 Review pages can submit changes_requested directly to an opt-in local intake with session token, Host/Origin checks, durable deduplication, status/result links and fixed copy-only repair contracts. See [the guide](docs/data-quality-workflow.md); generic code editing and production application are not enabled by browser notes.
 
+## Recall-centered repair review — 2026-11-15
+
+Submit review feedback from the existing CoRA Real-data Recall page. The quality page is a readable result/diagnostic view; source-thread IDs are details. Answer issues outside the configured removal contract are saved for scope review, never executed as removals. See docs/data-quality-workflow.md.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -336,3 +340,7 @@ JSON 계약/스키마와 변경 불가인 과거 실행 자료는 복제하거�
 ## 검토 요청 접수 — 2026-11-15
 
 검토 화면에서 changes_requested를 선택적 로컬 접수로 직접 전송할 수 있다. 세션 토큰·Host/Origin 검사·지속 중복 방지·상태/결과 링크·고정 복사본 복구 계약을 제공한다. [가이드](docs/data-quality-workflow.md)를 참고한다. 브라우저 메모로 범용 코드 편집이나 원본 반영을 허용하지 않는다.
+
+## Recall 중심 수정 검토 — 2026-11-15
+
+기존 CoRA 실데이터 Recall 화면에서 검토 의견을 전송한다. 품질 화면은 읽기 쉬운 결과·진단용이며 원본 스레드 ID는 상세에 둔다. 설정된 제거 계약 밖의 답변 문제는 범위 검토로 저장하고 제거 작업으로 실행하지 않는다. docs/data-quality-workflow.md를 참고한다.
