@@ -11,6 +11,7 @@ import sys
 import tempfile
 import time
 
+from contract_limits import validate_contract_limits
 import approved_queue as queue
 from development_loop import lock
 from delivery_evidence import fingerprint, git
@@ -147,6 +148,7 @@ def policy_inputs(path):
     contract = strict_read(contract_path)
     if not isinstance(project, dict) or not isinstance(contract, dict):
         raise ValueError('Project and repair template must be objects.')
+    validate_contract_limits(contract, policy['total_seconds'], policy['max_cycles'])
     replay = policy.get('replay_check')
     if not isinstance(replay, list) or not replay or not all(isinstance(a, str) for a in replay) or not all(any(token in a for a in replay) for token in ('{review}', '{evidence}')):
         raise ValueError('Trusted real-data replay argv must bind {review} and {evidence}.')

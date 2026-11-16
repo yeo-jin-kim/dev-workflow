@@ -61,6 +61,12 @@ class ReplayGateTests(unittest.TestCase):
                 with self.assertRaises(ValueError):self.invoke(obs)
                 (self.output/'review-replay.json').unlink()
 
+    def test_conversation_context_cannot_be_silently_dropped(self):
+        self.record['request']['conversation']={'mode':'follow_up','parentRequestId':'prior-turn'}
+        self.review.write_text(json.dumps(self.record))
+        self.observation['selected_review_sha256']=hashlib.sha256(self.review.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError,'different question/settings'):self.invoke()
+
     def test_replay_cannot_mutate_tested_source(self):
         with self.assertRaises(ValueError):self.invoke(mutate=True)
 

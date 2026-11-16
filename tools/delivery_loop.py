@@ -10,6 +10,7 @@ import sys
 import time
 import uuid
 
+from contract_limits import validate_contract_limits
 from development_loop import effective_contract, lock, save, valid_review
 from delivery_evidence import Budget, Halt, Recorder, browser_run, fingerprint, git, manifest, environment_identity
 from delivery_publish import Publisher
@@ -64,6 +65,7 @@ class Delivery:
         self.contract_path = (ROOT / self.project['contract']).resolve()
         self.contract = effective_contract(json.loads(self.contract_path.read_text()))
         self.codex, self.seconds, self.cycles = codex, seconds, cycles
+        validate_contract_limits(self.contract, seconds, cycles)
         if (ROOT == self.root or ROOT in self.root.parents or self.root in ROOT.parents
                 or self.dir == self.root or self.root in self.dir.parents):
             raise ValueError('Controller/target/evidence must be disjoint; controller cannot target itself.')

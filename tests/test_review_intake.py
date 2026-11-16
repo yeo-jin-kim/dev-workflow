@@ -105,6 +105,17 @@ class IntakeTests(unittest.TestCase):
         doc['schemaVersion']=True
         with self.assertRaises(ValueError):intake.select_record(doc)
 
+    def test_frozen_contract_budget_rejected_before_preparation(self):
+        contract=json.loads(self.f.contract.read_text())
+        contract['execution_limits']={'total_seconds_max':3600,'max_cycles_max':5}
+        save(self.f.contract,contract)
+        for seconds,cycles in [(3601,5),(3600,6)]:
+            policy=json.loads(self.policy.read_text());policy.update(total_seconds=seconds,max_cycles=cycles);save(self.policy,policy)
+            with self.assertRaisesRegex(ValueError,'frozen contract limit'):self.prepare()
+            self.assertFalse((self.control/'.local/review-journal').exists())
+        policy.update(total_seconds=3600,max_cycles=5);save(self.policy,policy)
+        self.assertEqual(self.prepare()['phase'],'prepared')
+
     def test_disabled_policy_and_missing_replay_have_no_authority(self):
         policy=json.loads(self.policy.read_text());policy['enabled']=False;save(self.policy,policy)
         with self.assertRaises(ValueError):self.prepare()

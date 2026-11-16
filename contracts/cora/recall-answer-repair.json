@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "cora-recall-answer-repair-v1",
+  "revision": 1,
+  "review_repair_template": true,
+  "goal": "Reproduce and repair a human-reported answer or retrieval regression using the exact captured question, settings and graph. Deliver a reviewed candidate and private before/after evidence for human retest.",
+  "production_apply_authorized": false,
+  "merge_authorized": false,
+  "execution_limits": {
+    "total_seconds_max": 3600,
+    "max_cycles_max": 5
+  },
+  "allowed_paths": [
+    "src/cora/recall/natural_language.py",
+    "src/cora/recall/grounded_recall.py",
+    "src/cora/recall/structural_recall.py",
+    "src/cora/recall/associative_recall.py",
+    "src/cora/recall/answer_generation.py",
+    "src/cora/visualization/model_recall.py",
+    "tests/test_review_repair_regression.py",
+    "docs/implementation/04-real-data-recall-review.md",
+    "docs/design/11-natural-language-recall.md",
+    "docs/00-master-design.md"
+  ],
+  "criteria": [
+    {
+      "id": "baseline_reproduction",
+      "requirement": "Reproduce the reported failure on the exact clean reviewed source and private graph/snapshot version before editing. Keep captured and newly reproduced responses separately with request, options, scope, conversation, provider/model identity and trace. A stale, already-fixed, ambiguous or unreproducible report requires decision, never a fabricated failing result."
+    },
+    {
+      "id": "root_cause_and_expected_behavior",
+      "requirement": "Locate the error in query interpretation, retrieval/traversal, participant selection, answer construction, LLM verification or presentation. Justify expected behavior from accepted CoRA design and actual source evidence. An activated node is not automatically a supported answer. For the initial Me omission report distinguish owner/scope anchor from evidenced participant; do not add Me merely because it appears in a trace. Escalate a missing or conflicting semantic rule."
+    },
+    {
+      "id": "bounded_implementation",
+      "requirement": "Modify only allowed files. No personal-name/project blacklists, query-specific hardcoding, private strings in tracked tests, broad inclusion of every active node, weakening of LLM grounding verification, altered foundations, graph schema, provider credentials or original source/graph writes. If the fix needs another subsystem or conceptual rule, request a scoped decision."
+    },
+    {
+      "id": "regression_and_neighbor_behavior",
+      "requirement": "Add a synthetic regression justified independently from the implementation and show it fails on baseline and passes on candidate. Include relevant negative/neighbor cases (e.g. owner only as scope, evidenced owner participant, unrelated active entity, unsupported generated claim). Preserve all frozen quality expectations and existing tests. Do not turn the submitted complaint into unquestioned gold."
+    },
+    {
+      "id": "real_data_comparison",
+      "requirement": "Replay the original real-data question on the candidate using the same graph/snapshot, query, options, working-memory scope and required conversation context. Preserve complete private before/after responses, evidence paths, source references, provider/model settings and exact source identities. Do not silently disable LLM or compare against an old running API. Missing context, data, provider or backend provenance blocks semantic completion. A traced replay proves observation, not correction."
+    },
+    {
+      "id": "independent_review_and_handoff",
+      "requirement": "A separate read-only review must inspect the diff, reproduced failure, synthetic failure-to-pass evidence, trusted regression logs, real-data before/after and documentation. Require no unresolved semantic blockers; automated test success alone is insufficient. Deliver revision-bound branch/report with question, reason, diagnosed cause, changed answer/evidence, remaining limits and human retest instructions. Missing UI capability remains explicit. Human retest and merge are separate owner decisions."
+    }
+  ],
+  "checks": [
+    [
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_review_repair_regression.py"
+    ],
+    [
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_natural_language_recall_quality.py"
+    ],
+    [
+      "python3",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    [
+      "git",
+      "diff",
+      "--check"
+    ]
+  ],
+  "decision_boundaries": [
+    "Conceptual/model or participant-role policy change",
+    "Expected result cannot be established from source evidence",
+    "Original graph/source/schema mutation or data migration",
+    "Any change outside allowed_paths or to protected evaluators/authority",
+    "Unavailable original graph, conversation, provider or backend identity",
+    "Cumulative 3600-second or five-cycle exhaustion; duplicate submission cannot renew",
+    "Merge, production installation or broadening authorization"
+  ],
+  "documentation_policy": "docs/implementation/00-documentation-maintenance.md",
+  "decision_record": "docs/implementation/decisions.json"
+}

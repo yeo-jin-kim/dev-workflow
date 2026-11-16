@@ -41,7 +41,7 @@ def replay(target, review, evidence, command):
     if response.get('error') or not isinstance(response['answer'].get('summary'), str) or any(not isinstance(trace.get(k), dict) for k in ('activationScores','activationPaths')):
         raise ValueError('Replay did not return a usable activation trace.')
     submitted = result.get('replayed_request')
-    if not isinstance(submitted, dict) or any(submitted.get(k) != selected['request'].get(k) for k in ('query','options','scope')) or response.get('request', {}).get('query') != selected['request']['query']:
+    if not isinstance(submitted, dict) or any(submitted.get(k) != selected['request'].get(k) for k in ('query','options','scope','conversation')) or response.get('request', {}).get('query') != selected['request']['query']:
         raise ValueError('Replay observation belongs to a different question/settings.')
     before = selected['response']['retrieval'].get('graphSequence')
     after = response.get('retrieval', {}).get('graphSequence')

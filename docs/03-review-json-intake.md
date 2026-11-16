@@ -137,6 +137,13 @@ performed no dispatch. Final counts and independent review are recorded in
 
 ---
 
+
+## Answer/retrieval development contract — 2026-11-15
+
+Added `contracts/cora/recall-answer-repair.json` with its bilingual guide and disabled `projects/cora-recall-answer-{repair,intake}.example.json` configuration templates. It uses the existing private review intake and W2/W1 code-development pipeline, distinct from fixed graph removal. Criteria require exact-baseline reproduction, justified expected behavior, synthetic baseline failure/candidate pass, negative neighbors, original-case before/after replay, independent review, documentation, human retest and exact-head CI. The Me omission report does not itself establish that Me belongs in the answer.
+
+`execution_limits` freeze 3600 seconds/five cycles; both review-policy loading and direct W1 initialization reject excess before new state. Historical contracts without these fields retain prior behavior. Replay binding now includes conversation metadata. This delivery adds a contract and executable guard behavior, not a live CoRA repair: web answer reports still stage for scope review, disabled examples do not dispatch, and a concrete pinned real-data replay adapter remains required. Existing requests, mixed-node policy, prior budgets and original graphs are untouched. See `contracts/cora/recall-answer-repair.md`.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -264,3 +271,9 @@ AI/브라우저/CI/재실행 응답을 사용했다. 무인 실제 CoRA 수정�
 입증하지 않는다. 제공한 실제 CoRA 검토는 읽기 전용으로 확인했다. 검토 커밋
 `911127c`가 현재 `cc820de`와 달라 사전 검사에서 결정을 요구하고 실행하지 않았다.
 최종 검사 수와 독립 검토는 `docs/implementation.md`에 기록한다.
+
+## 답변·검색 개발 계약 — 2026-11-15
+
+`contracts/cora/recall-answer-repair.json`과 영문/한글 지침, 비활성 `projects/cora-recall-answer-{repair,intake}.example.json` 설정 템플릿을 추가했다. 고정 그래프 제거와 구분하여 기존 비공개 검토 접수 및 W2/W1 코드 개발 흐름을 사용한다. 기준 버전 재현·타당한 기대 동작·합성 사례의 기준 실패/후보 통과·부정 인접 사례·원래 질문 전후 재실행·별도 검토·문서·휴먼 재검토·정확한 커밋의 CI를 요구한다. Me 누락 보고만으로 Me가 답변에 포함되어야 한다고 정하지 않는다.
+
+`execution_limits`는 3600초/5회를 고정하며 검토 정책 로딩과 직접 W1 초기화 모두 새 상태 생성 전에 초과를 거절한다. 이 필드가 없는 과거 계약은 기존 동작을 유지한다. 재실행 연결 검사는 이제 대화 메타데이터도 포함한다. 이번 전달은 계약과 실행 가능한 제한 검사 추가이며 실제 CoRA 수정 실행은 아니다. 웹의 답변 보고는 계속 범위 검토로 접수되고 비활성 예제는 실행하지 않으며, 구체적으로 고정된 실제 데이터 재실행 어댑터가 필요하다. 기존 요청·혼합 노드 정책·이전 예산·원본 그래프는 유지한다. `contracts/cora/recall-answer-repair.md`를 참고한다.

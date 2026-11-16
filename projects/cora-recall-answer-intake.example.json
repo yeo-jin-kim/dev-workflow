@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "authorization_reference": "REPLACE_WITH_ACTUAL_OWNER_AUTHORIZATION",
+  "project": "projects/cora-recall-answer-repair.example.json",
+  "total_seconds": 3600,
+  "max_cycles": 5,
+  "source_patterns": [
+    "src/**/*.py",
+    "src/cora/visualization/real_recall_review.html"
+  ],
+  "replay_check": [
+    "python3",
+    "/ABSOLUTE/PATH/TO/OWNER_APPROVED_REPLAY.py",
+    "--review",
+    "{review}",
+    "--evidence",
+    "{evidence}"
+  ]
+}
