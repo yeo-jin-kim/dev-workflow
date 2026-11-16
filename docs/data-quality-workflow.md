@@ -127,6 +127,11 @@ replay. None of these changes enables generic code editing, identity-conflict
 resolution, production application or merge. Live user judgments remain necessary.
 
 
+
+## Review transport correction — 2026-11-15
+
+Real Recall traces can exceed the previous 256 KiB intake limit. Both optional relay and external intake now accept bounded JSON requests up to 8 MiB, preserving the complete review record. Relay failures return JSON; the UI reports non-JSON service responses without discarding the current judgment. Scope, authorization and original-graph restrictions are unchanged. Regression checks cover a 300 KB synthetic review and JSON relay rejection; these do not establish model answer accuracy.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -243,3 +248,7 @@ recall_answer는 작업자 실행 없이 범위 검토로 지속 기록한다. �
 아닌 사람 검토 자료로 추가되며 고정 검사를 바꾸거나 LLM 생성을 요구할 수 없다.
 질문 캡처 이전의 과거 요청에는 원래 질문 재실행이 없음을 명시한다. 범용 코드 편집,
 식별자 충돌 해결, 원본 반영이나 병합을 허용하지 않는다. 실제 사용자 판단은 여전히 필요하다.
+
+## 검토 전송 수정 — 2026-11-15
+
+실제 Recall 추적은 기존 256 KiB 접수 한도를 초과할 수 있다. 선택적 중계와 외부 접수기는 전체 검토 기록을 보존하며 최대 8 MiB의 제한된 JSON 요청을 받는다. 중계 오류는 JSON으로 반환하며, 화면은 현재 판단을 버리지 않고 JSON이 아닌 서버 응답을 설명한다. 작업 범위·권한·원본 그래프 제한은 유지한다. 회귀 검사는 300 KB 합성 검토와 JSON 중계 거절을 확인하며 모델 답변의 정확성을 입증하지 않는다.

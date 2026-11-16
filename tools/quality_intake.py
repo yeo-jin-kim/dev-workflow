@@ -163,7 +163,7 @@ def make_server(intake,port):
                 if self.headers.get('Content-Type')!='application/json':raise ValueError('JSON content type required.')
                 if self.headers.get('Transfer-Encoding'):raise ValueError('Chunked requests unsupported.')
                 size=int(self.headers.get('Content-Length','0'))
-                if not 0<size<=262144:raise ValueError('Request must be 1–262144 bytes.')
+                if not 0<size<=8388608:raise ValueError('Request must be 1–8388608 bytes.')
                 r,duplicate=intake.accept(json.loads(self.rfile.read(size)))
                 self.send_body(200 if duplicate else 202,{'id':r['id'],'status':r['status'],'duplicate':duplicate})
             except PermissionError as e:self.send_body(403,{'error':str(e)})

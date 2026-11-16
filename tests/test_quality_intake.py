@@ -42,6 +42,12 @@ class IntakeTests(unittest.TestCase):
         except ValueError:pass
         return r.status,data
 
+    def test_real_review_larger_than_old_limit_is_retained(self):
+        record=self.completed_record();record['response']['trace']='x'*300000
+        status,result=self.http('POST','/api/requests',{**self.notes,'repairScope':'recall_answer','reviewRecord':record})
+        self.assertEqual(status,202)
+        self.assertEqual(self.intake.get(result['id'])['notes']['reviewRecord'],record)
+
     def test_http_accepts_once_and_dispatches_only_fixed_policy_with_notes_as_data(self):
         status,r=self.http('POST','/api/requests',{**self.notes,'command':['UNTRUSTED'],'total_seconds':999999});self.assertEqual(status,202)
         again,same=self.http('POST','/api/requests',{**self.notes,'reason':'Different notes cannot refill budget'})

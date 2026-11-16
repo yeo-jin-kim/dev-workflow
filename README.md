@@ -178,6 +178,11 @@ Review pages can submit changes_requested directly to an opt-in local intake wit
 
 Submit review feedback from the existing CoRA Real-data Recall page. The quality page is a readable result/diagnostic view; source-thread IDs are details. Answer issues outside the configured removal contract are saved for scope review, never executed as removals. See docs/data-quality-workflow.md.
 
+
+## Review transport correction — 2026-11-15
+
+Real Recall traces can exceed the previous 256 KiB intake limit. Both optional relay and external intake now accept bounded JSON requests up to 8 MiB, preserving the complete review record. Relay failures return JSON; the UI reports non-JSON service responses without discarding the current judgment. Scope, authorization and original-graph restrictions are unchanged. Regression checks cover a 300 KB synthetic review and JSON relay rejection; these do not establish model answer accuracy.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -344,3 +349,7 @@ JSON 계약/스키마와 변경 불가인 과거 실행 자료는 복제하거�
 ## Recall 중심 수정 검토 — 2026-11-15
 
 기존 CoRA 실데이터 Recall 화면에서 검토 의견을 전송한다. 품질 화면은 읽기 쉬운 결과·진단용이며 원본 스레드 ID는 상세에 둔다. 설정된 제거 계약 밖의 답변 문제는 범위 검토로 저장하고 제거 작업으로 실행하지 않는다. docs/data-quality-workflow.md를 참고한다.
+
+## 검토 전송 수정 — 2026-11-15
+
+실제 Recall 추적은 기존 256 KiB 접수 한도를 초과할 수 있다. 선택적 중계와 외부 접수기는 전체 검토 기록을 보존하며 최대 8 MiB의 제한된 JSON 요청을 받는다. 중계 오류는 JSON으로 반환하며, 화면은 현재 판단을 버리지 않고 JSON이 아닌 서버 응답을 설명한다. 작업 범위·권한·원본 그래프 제한은 유지한다. 회귀 검사는 300 KB 합성 검토와 JSON 중계 거절을 확인하며 모델 답변의 정확성을 입증하지 않는다.
