@@ -19,7 +19,8 @@ def replay(target, review, evidence, command):
     expected = manifest(target)['digest']
     original = review.read_bytes()
     selected = json.loads(original)
-    subprocess.run(command, cwd=target, check=True)
+    process=subprocess.run(command, cwd=target, capture_output=True, text=True)
+    if process.returncode:raise ValueError('Replay failed: '+(process.stderr.strip().splitlines() or ['Native replay failed'])[-1][:1000])
     if not artifact.is_file() or artifact.is_symlink():
         raise ValueError('Trusted replay did not produce review-replay.json.')
     if artifact.stat().st_size > 32 * 1024 * 1024:
@@ -34,6 +35,8 @@ def replay(target, review, evidence, command):
             or review.read_bytes() != original
             or result.get('snapshot_sha256') != selected['context']['snapshotSha256']):
         raise ValueError('Replay observation source/review/data binding mismatch.')
+    if selected['context'].get('graphContentSha256') and result.get('graph_content_sha256')!=selected['context']['graphContentSha256']:
+        raise ValueError('Replay graph content binding mismatch.')
     response = result.get('response')
     if not isinstance(response, dict) or not isinstance(response.get('answer'), dict) or not isinstance(response.get('trace'), dict) or not response['trace']:
         raise ValueError('An actual traced answer observation is required.')

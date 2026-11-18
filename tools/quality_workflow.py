@@ -116,10 +116,10 @@ def run(policy_path, output, *, expected_binding=None, deadline_limit=None, issu
     return receipt
 
 
-def serve(folder,port,policy=None,review_url=None):
+def serve(folder,port,policy=None,review_url=None,answer_policy=None):
     if policy:
         from quality_intake import serve_intake
-        return serve_intake(folder,port,policy,review_url)
+        return serve_intake(folder,port,policy,review_url,answer_policy)
     folder=Path(folder).resolve()
     allowed={'/':'trial/index.html','/plan.json':'trial/plan.json','/result.json':'trial/result.json',
              '/recall-comparison.json':'trial/recall-comparison.json','/receipt.json':'receipt.json'}
@@ -137,8 +137,8 @@ def serve(folder,port,policy=None,review_url=None):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['run','serve']);p.add_argument('--policy');p.add_argument('--review-url');p.add_argument('--output',required=True);p.add_argument('--port',type=int,default=8775);a=p.parse_args()
-    if a.action=='serve':serve(a.output,a.port,a.policy,a.review_url)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('action',choices=['run','serve']);p.add_argument('--policy');p.add_argument('--answer-policy');p.add_argument('--review-url');p.add_argument('--output',required=True);p.add_argument('--port',type=int,default=8775);a=p.parse_args()
+    if a.action=='serve':serve(a.output,a.port,a.policy,a.review_url,a.answer_policy)
     else:
         if not a.policy:p.error('--policy required')
         r=run(a.policy,a.output);print(json.dumps(r,ensure_ascii=False,indent=2));raise SystemExit(0 if r['status'] in {'awaiting_owner_review','no_selected_finding','duplicate_not_dispatched'} else 2)

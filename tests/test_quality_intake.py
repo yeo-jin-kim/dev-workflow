@@ -42,6 +42,29 @@ class IntakeTests(unittest.TestCase):
         except ValueError:pass
         return r.status,data
 
+    def test_answer_route_dispatches_once_and_never_uses_mixed_node_runner(self):
+        import review_intake as ri
+        self.intake.answer_policy=str(self.policy)
+        self.intake.answer_authority=ri.fingerprint([self.policy])
+        record=self.completed_record()
+        record['context'].update(frontendDirty=False,frontendCommit='a'*40,sourceSha256='b'*64,graphSha256='c'*64)
+        notes={**self.notes,'repairScope':'recall_answer','reviewRecord':record}
+        status,r=self.http('POST','/api/requests',notes);self.assertEqual(status,202)
+        self.assertEqual(self.intake.get(r['id'])['status'],'queued')
+        record['id']='new-export-id';record['request']['clientRequestId']='new-transport-id';record['response']['requestId']='new-response-id'
+        status,again=self.http('POST','/api/requests',notes);self.assertEqual(again['id'],r['id'])
+        self.assertTrue(again['duplicate'])
+        def dispatch(argv,cwd,log,timeout):
+            self.assertIn('answer_dispatch.py',argv[1]);self.assertLessEqual(timeout,60)
+            out=Path(argv[argv.index('--output')+1]);out.mkdir()
+            q.save(out/'receipt.json',{'phase':'awaiting_human_retest','comparison':{'answer':'Candidate answer'}})
+            return 0
+        with patch.object(m,'execute',side_effect=dispatch) as executor,patch.object(q,'run') as mixed:
+            result=self.intake.process(r['id']);self.intake.process(r['id'])
+            self.assertEqual(result['status'],'awaiting_human_retest');self.assertEqual(executor.call_count,1);mixed.assert_not_called()
+        status,body=self.http('GET','/api/requests/'+r['id']);self.assertEqual(status,200)
+        status,page=self.http('GET',body['resultUrl']);self.assertEqual(status,200);self.assertIn(b'Candidate answer',page)
+
     def test_real_review_larger_than_old_limit_is_retained(self):
         record=self.completed_record();record['response']['trace']='x'*300000
         status,result=self.http('POST','/api/requests',{**self.notes,'repairScope':'recall_answer','reviewRecord':record})

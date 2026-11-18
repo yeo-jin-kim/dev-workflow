@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import secrets
+import sys
 import tempfile
 import threading
 import time
@@ -21,7 +22,7 @@ def plan_hash(plan):
 
 
 class Intake:
-    def __init__(self, folder, policy):
+    def __init__(self, folder, policy, answer_policy=None):
         self.folder=Path(folder).resolve();self.policy=Path(policy).resolve()
         if not self.policy.is_relative_to(q.ROOT/'projects'):raise ValueError('Trusted projects/ policy required.')
         self.cfg=q.read(self.policy)
@@ -49,6 +50,12 @@ class Intake:
         if trial.count('--expected-review')!=1 or trial[trial.index('--expected-review')+1]!='{run}/review-binding.json':raise ValueError('Trial must bind the exact reviewed graph and snapshot.')
         if 'repair_project' in self.cfg:raise ValueError('Intake currently supports fixed domain repair, not open code editing.')
         self.queue=q.ROOT/'.local/quality-requests';self.queue.mkdir(parents=True,exist_ok=True);self.queue.chmod(0o700)
+        self.answer_policy=None;self.answer_authority=None
+        if answer_policy:
+            import review_intake as ri
+            cfg,project,contract,files,authority=ri.policy_inputs(answer_policy)
+            if contract.get('id')!='cora-recall-answer-repair-v1':raise ValueError('Dedicated answer repair contract required.')
+            self.answer_policy=str(Path(answer_policy).resolve());self.answer_authority=authority
         self.token=secrets.token_urlsafe(32);self.mutex=threading.Lock();self.wake=threading.Event();self.stop=threading.Event()
 
     def guard(self):
@@ -79,9 +86,18 @@ class Intake:
         with self.mutex,lock(self.queue/'intake.lock'):
             self.guard()
             key=q.sha({'plan':self.plan['plan_digest'],'policy':self.policy_hash,'contract':self.contract_hash})
-            if scope=='recall_answer':key=q.sha({'fixed_key':key,'request':record['request'],'record_id':record.get('id')})
+            if scope=='recall_answer':
+                import review_intake as ri
+                if self.answer_policy:
+                    record,_=ri.select_record({'schemaVersion':1,'records':[record]})
+                    request=record['request'];context=record['context']
+                    case={'context':{**{k:context.get(k) for k in ('frontendCommit','sourceSha256','snapshotSha256')},'graph':context.get('graphContentSha256',context.get('graphSha256'))},'request':{k:request.get(k) for k in ('query','options','scope')},'conversation':{k:request.get('conversation',{}).get(k) for k in ('mode','parentRequestId')}}
+                    key=q.sha({'scope':'recall_answer','case':case})
+                else:key=q.sha({'fixed_key':key,'request':record['request'],'record_id':record.get('id')})
             path=self.queue/(key+'.json')
             if path.exists():
+                previous=q.read(path)
+                if scope=='recall_answer' and self.answer_policy and previous.get('answer_authority')!=self.answer_authority:raise ValueError('Existing answer request authority changed; no new allowance.')
                 if record is not None:
                     attachments=self.queue/'review-context';attachments.mkdir(exist_ok=True);attachments.chmod(0o700)
                     attachment=attachments/(key+'-'+q.sha(record)+'.json')
@@ -93,7 +109,9 @@ class Intake:
                 if execute(args,Path(self.cfg['target']),Path(td)/'audit.log',min(20,self.cfg.get('total_seconds',3600))) or q.read(output)['binding']!=self.plan['binding']:raise ValueError('Graph changed since review; regenerate review before submitting.')
             self.guard()
             r={'schema_version':1,'id':key,'status':'queued','created_at':now,'deadline':now+self.cfg.get('total_seconds',3600),'policy':str(self.policy),'policy_hash':self.policy_hash,'contract_hash':self.contract_hash,'source_digest':self.source,'binding':self.plan['binding'],'notes':notes,'production_apply_authorized':False,'review_folder':str(self.folder)}
-            if scope=='recall_answer':r.update(status='decision_required',reason='답변·검색 수정 요청을 기록했습니다. 현재 자동 계약은 혼합 노드 제거만 허용하므로 별도 작업 범위 검토가 필요합니다.')
+            if scope=='recall_answer' and self.answer_policy:
+                r.update(answer_policy=self.answer_policy,answer_authority=self.answer_authority)
+            elif scope=='recall_answer':r.update(status='decision_required',reason='답변·검색 수정 요청을 기록했습니다. 현재 자동 계약은 혼합 노드 제거만 허용하므로 별도 작업 범위 검토가 필요합니다.')
             save(path,r);path.chmod(0o600);self.wake.set();return r,False
 
     def get(self,key):
@@ -114,6 +132,16 @@ class Intake:
                 if time.time()>=r['deadline']:raise ValueError('Original request deadline expired; no allowance reset.')
                 r.update(status='running',started_at=time.time());save(path,r)
                 out=self.queue/key
+                if r.get('answer_policy'):
+                    import review_intake as ri
+                    if r['answer_policy']!=self.answer_policy or ri.fingerprint([Path(p) for p in r['answer_authority']])!=r['answer_authority']:raise ValueError('Answer authority changed; no dispatch.')
+                    r['run']=str(out);save(path,r)
+                    notes=self.queue/(key+'-notes.json');save(notes,r['notes']);notes.chmod(0o600)
+                    command=[sys.executable,str(q.ROOT/'tools/answer_dispatch.py'),'--notes',str(notes),'--policy',self.answer_policy,'--output',str(out)]
+                    execute(command,q.ROOT,self.queue/(key+'-dispatch.log'),max(.01,r['deadline']-time.time()))
+                    receipt=q.read(out/'receipt.json')
+                    r.update(status=receipt.get('phase','decision_required'),run=str(out),reason=receipt.get('reason','개발 실행 결과를 확인해 주세요.'),ended_at=time.time())
+                    save(path,r);return r
                 receipt=q.run(self.policy,out,expected_binding=r['binding'],deadline_limit=r['deadline'],issue_evidence=r['notes'],expected_target=r['source_digest'],expected_snapshot=self.plan['snapshot_sha256'],authority_files={str(self.contract_path):self.contract_hash,str((Path(self.cfg['target'])/self.cfg['snapshot']).resolve()):self.plan['snapshot_sha256']})
                 r.update(status=receipt['status'],run=str(out),ended_at=time.time())
             except Exception as e:
@@ -182,13 +210,13 @@ def make_server(intake,port):
                 if self.path=='/api/session':
                     matching=[q.read(p) for p in intake.queue.glob('*.json') if q.read(p).get('policy_hash')==intake.policy_hash and q.read(p).get('review_folder')==str(intake.folder)]
                     latest=max(matching,key=lambda r:r.get('created_at',0))['id'] if matching else None
-                    self.send_body(200,{'token':intake.token,'planDigest':intake.plan['plan_digest'],'latestRequestId':latest});return
+                    self.send_body(200,{'token':intake.token,'planDigest':intake.plan['plan_digest'],'latestRequestId':latest,'answerRepairEnabled':bool(intake.answer_policy)});return
                 if self.path.startswith('/api/requests/'):
                     r=intake.get(self.path.removeprefix('/api/requests/'));body={k:r[k] for k in ['id','status','deadline','production_apply_authorized']}
                     if 'reason' in r:body['reason']=r['reason']
                     run=Path(r['run']) if r.get('run') else intake.queue/r['id']
                     if (run/'receipt.json').is_file():
-                        receipt=q.read(run/'receipt.json');body['phase']=receipt['status'] if receipt['status'] not in {'auditing'} else 'auditing'
+                        receipt=q.read(run/'receipt.json');body['phase']=receipt.get('phase',receipt.get('status','running'))
                     if r['status'] not in {'queued','running'}:body.pop('phase',None)
                     if (run/'trial/index.html').is_file():body['resultUrl']='/results/'+r['id']+'/'
                     elif r['notes'].get('reviewRecord'):body['resultUrl']='/feedback/'+r['id']+'/'
@@ -199,7 +227,16 @@ def make_server(intake,port):
                     if len(parts)!=4 or parts[3]:raise ValueError('Invalid receipt path.')
                     r=intake.get(parts[2]);record=r['notes'].get('reviewRecord')
                     if not record:raise ValueError('No Recall review attached.')
-                    html='<meta charset="utf-8"><title>Recall review request</title><main style="max-width:960px;margin:30px auto;font:16px system-ui;line-height:1.7"><h1>Recall 수정 요청 접수 내역</h1><h2>검토한 질문</h2><p>'+escape(record['request']['query'])+'</p><h2>검토 당시 답변</h2><p>'+escape(record['response']['answer'].get('summary',''))+'</p><h2>요청한 수정</h2><p>'+escape(r['notes']['reason'])+'</p><h2>다음 판단</h2><p>'+escape(r.get('reason','작업 범위를 검토 중입니다.'))+'</p><p>아직 변경 후 답변이 없습니다. 원본 그래프는 변경하지 않았습니다.</p></main>'
+                    comparison=''
+                    if r.get('answer_policy') and r.get('run'):
+                        outcome=q.read(Path(r['run'])/'receipt.json') if (Path(r['run'])/'receipt.json').is_file() else {}
+                        comparison='<h2>Development status / 개발 상태</h2><p>'+escape(r['status'])+'</p>'
+                        if outcome.get('comparison'):
+                            comparison+='<h2>Candidate answer / 후보 답변</h2><p>'+escape(outcome['comparison']['answer'])+'</p><p>Human retest required / 휴먼 재검토 필요</p>'
+                        else:comparison+='<p>No verified candidate answer yet. / 아직 검증된 후보 답변이 없습니다.</p>'
+                        if outcome.get('candidate'):comparison+='<pre>'+escape(json.dumps(outcome['candidate'],ensure_ascii=False,indent=2))+'</pre>'
+                    html='<meta charset="utf-8"><title>Recall review request</title><main style="max-width:960px;margin:30px auto;font:16px system-ui;line-height:1.7"><h1>Recall 수정 요청 접수 내역</h1><h2>검토한 질문</h2><p>'+escape(record['request']['query'])+'</p><h2>검토 당시 답변</h2><p>'+escape(record['response']['answer'].get('summary',''))+'</p><h2>요청한 수정</h2><p>'+escape(r['notes']['reason'])+'</p><h2>다음 판단</h2><p>'+escape(r.get('reason','작업 범위를 검토 중입니다.'))+'</p><p>원본 그래프는 변경하지 않았습니다.</p></main>'
+                    html+=comparison
                     review_url=getattr(intake,'review_url',None)
                     if review_url:html+='<a href="'+escape(review_url,quote=True)+'">Recall 검토 화면으로 돌아가기</a>'
                     self.send_body(200,html.encode(),'text/html; charset=utf-8');return
@@ -235,8 +272,8 @@ def make_server(intake,port):
     return ThreadingHTTPServer(('127.0.0.1',port),Handler)
 
 
-def serve_intake(folder,port,policy,review_url=None):
-    intake=Intake(folder,policy)
+def serve_intake(folder,port,policy,review_url=None,answer_policy=None):
+    intake=Intake(folder,policy,answer_policy)
     if review_url:
         u=urlsplit(review_url)
         if u.scheme!='http' or u.hostname!='127.0.0.1' or not u.port or u.username or u.password or u.query or u.fragment:raise ValueError('Review URL must be a loopback page.')

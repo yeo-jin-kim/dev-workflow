@@ -58,6 +58,19 @@ class IntakeTests(unittest.TestCase):
     def prepare(self):
         return intake.prepare(self.review,self.policy)
 
+    def test_web_adapter_baseline_then_real_fixture_pipeline_and_comparison(self):
+        import answer_dispatch
+        import review_replay_gate
+        output=self.control/'.local/web-adapter'
+        def baseline(target,selected,evidence,command):
+            save(Path(evidence)/'review-replay.json',{'baseline':'synthetic fixture only'})
+        with patch.object(review_replay_gate,'replay',side_effect=baseline) as observed:
+            receipt=answer_dispatch.dispatch({'reviewRecord':self.record},self.policy,output)
+        self.assertEqual(receipt['phase'],'awaiting_human_retest',receipt)
+        self.assertIn('Synthetic replay observation',receipt['comparison']['answer'])
+        self.assertTrue(receipt['comparison']['human_retest_required']);observed.assert_called_once()
+        self.assertFalse(receipt['merge_authorized'])
+
     def test_real_w1_w2_chain_and_duplicate_start_never_runs_twice(self):
         receipt=self.prepare();self.assertEqual(receipt['phase'],'prepared')
         result=intake.run(receipt['id']);self.assertEqual(result['phase'],'awaiting_human_retest',result)

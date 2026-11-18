@@ -61,6 +61,11 @@ class ReplayGateTests(unittest.TestCase):
                 with self.assertRaises(ValueError):self.invoke(obs)
                 (self.output/'review-replay.json').unlink()
 
+    def test_graph_content_binding_is_required_when_exported(self):
+        self.record['context']['graphContentSha256']='c'*64;self.review.write_text(json.dumps(self.record))
+        self.observation['selected_review_sha256']=hashlib.sha256(self.review.read_bytes()).hexdigest()
+        with self.assertRaisesRegex(ValueError,'graph content'):self.invoke()
+
     def test_conversation_context_cannot_be_silently_dropped(self):
         self.record['request']['conversation']={'mode':'follow_up','parentRequestId':'prior-turn'}
         self.review.write_text(json.dumps(self.record))

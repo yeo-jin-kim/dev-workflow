@@ -11,10 +11,16 @@
   ],
   "replay_check": [
     "python3",
-    "/ABSOLUTE/PATH/TO/OWNER_APPROVED_REPLAY.py",
+    "/ABSOLUTE/PATH/TO/dev-workflow/tools/cora_review_replay.py",
     "--review",
     "{review}",
     "--evidence",
-    "{evidence}"
+    "{evidence}",
+    "--graph",
+    "/ABSOLUTE/PATH/TO/graph.db",
+    "--snapshot",
+    "/ABSOLUTE/PATH/TO/snapshot.json",
+    "--python",
+    "/ABSOLUTE/PATH/TO/COra_PYTHON"
   ]
 }
