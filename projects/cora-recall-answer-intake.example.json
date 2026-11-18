@@ -21,6 +21,6 @@
     "--snapshot",
     "/ABSOLUTE/PATH/TO/snapshot.json",
     "--python",
-    "/ABSOLUTE/PATH/TO/COra_PYTHON"
+    "/ABSOLUTE/PATH/TO/CORA_PYTHON"
   ]
 }

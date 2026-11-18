@@ -704,6 +704,9 @@ The dispatcher first invokes a trusted replay through `review_replay_gate.py`, p
 
 Status and the private feedback page show development state. Only a successfully reviewed W1 candidate with a bound replay for its accepted digest exposes an after-answer; the original reviewed answer and reason remain visible. Human retest, semantic ambiguity, merge and production installation remain separate decisions. The browser retains review state; refreshing does not turn an old record into current authorization. A replay observation alone is not semantic acceptance. Current integration tests use synthetic worker/browser/CI fixtures; a real-data native replay probe is separate from an actual autonomous repair. No actual coding worker or original graph modification was started in this integration delivery.
 
+
+Final integration validation (2026-11-18): 149 controller tests passed in 124.938 seconds; the earlier run (136.511 seconds) is archived. CoRA passed 533 tests and exact-head CI at 1dd7608. HTTP dispatch/W2/W1/after-answer fixtures use synthetic workers and CI; native copy-only replay used real data. No actual coding worker or answer correction is claimed. Changed graph versions require a fresh shared-intake review binding.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1275,3 +1278,5 @@ recall_answer는 작업자 실행 없이 범위 검토로 지속 기록한다. �
 실행 연결기는 먼저 `review_replay_gate.py`로 신뢰된 재실행을 수행하고 비공개 기준 관찰을 작업 입력으로 고정한 뒤 고정 개발 계약을 준비·실행한다. `cora_review_replay.py`는 대상 체크아웃의 CoRA 네이티브 복사본 재실행 명령을 시작해 소스/검토 연결을 추가하며 대상 패키지를 가져오지 않는다. 바깥 실행 기한은 사전 확인/재실행을 포함하고 시간 초과 시 프로세스 그룹을 종료하며 내부 W1 수정 횟수는 최대 5회다. 중단된 작업을 자동 재시작하지 않는다. 내보내기에 안정된 그래프 내용 신원이 있으면 검사한다. 대화 기록이나 검증된 로컬 모델 신원이 없으면 설정을 바꾸거나 수정 완료를 주장하지 않고 차단한다.
 
 상태 조회와 비공개 접수 화면에 개발 상태를 표시한다. 검토를 통과한 W1 후보에 승인된 내용 지문과 연결된 재실행 결과가 있을 때만 수정 후 답변을 표시하며 검토 당시 답변과 이유를 유지한다. 휴먼 재검토·의미 모호성·병합·운영 반영은 별도 결정이다. 브라우저는 검토 상태를 보존하며 새로고침이 과거 기록을 현재 승인으로 바꾸지 않는다. 재실행 관찰만으로 의미 정확성을 승인하지 않는다. 현재 통합 시험의 작업자/브라우저/CI는 합성 대체이며 실제 데이터 네이티브 재실행 시험은 실제 자율 수정과 구분한다. 이번 통합 전달에서는 실제 코드 작업자를 시작하거나 원본 그래프를 수정하지 않았다.
+
+최종 통합 검증(2026-11-18): 컨트롤러 검사 149개가 124.938초에 통과했으며 이전 실행(136.511초)도 보존했다. CoRA 검사 533개와 1dd7608의 정확한 커밋 CI를 통과했다. HTTP 실행/W2/W1/후보 답변 시험의 작업자와 CI는 합성이며 네이티브 복사본 재실행은 실제 데이터를 사용했다. 실제 코드 작업자 실행이나 답변 오류 수정을 주장하지 않는다. 그래프 버전이 바뀌면 공유 접수기의 검토 연결을 갱신해야 한다.
