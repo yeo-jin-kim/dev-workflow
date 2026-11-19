@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "cora-recall-answer-repair-v1",
-  "revision": 1,
+  "revision": 2,
   "review_repair_template": true,
   "goal": "Reproduce and repair a human-reported answer or retrieval regression using the exact captured question, settings and graph. Deliver a reviewed candidate and private before/after evidence for human retest.",
   "production_apply_authorized": false,
@@ -25,7 +25,7 @@
   "criteria": [
     {
       "id": "baseline_reproduction",
-      "requirement": "Reproduce the reported failure on the exact clean reviewed source and private graph/snapshot version before editing. Keep captured and newly reproduced responses separately with request, options, scope, conversation, provider/model identity and trace. A stale, already-fixed, ambiguous or unreproducible report requires decision, never a fabricated failing result."
+      "requirement": "Reproduce on the exact clean task baseline: either the reviewed source or an explicitly authorized current-version revalidation. Preserve the original report and automated current observation separately. Current revalidation inherits the issue reason, not a fresh human judgment or gold answer. Confirm the issue actually persists before editing; already-fixed, ambiguous or unreproducible reports require decision, never a manufactured patch."
     },
     {
       "id": "root_cause_and_expected_behavior",
@@ -46,6 +46,10 @@
     {
       "id": "independent_review_and_handoff",
       "requirement": "A separate read-only review must inspect the diff, reproduced failure, synthetic failure-to-pass evidence, trusted regression logs, real-data before/after and documentation. Require no unresolved semantic blockers; automated test success alone is insufficient. Deliver revision-bound branch/report with question, reason, diagnosed cause, changed answer/evidence, remaining limits and human retest instructions. Missing UI capability remains explicit. Human retest and merge are separate owner decisions."
+    },
+    {
+      "id": "revalidation_provenance",
+      "requirement": "For a revalidated report inspect original_review_file, current selected record and baseline observation. Preserve question/options/conversation/data binding and explicit current provider configuration. Historical provider identity may be unknown: never claim exact historical model equivalence. Current observed answer must be checked against evidence and the original complaint before changing code. Do not weaken revalidation, grounding checks or authority inputs."
     }
   ],
   "checks": [

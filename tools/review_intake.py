@@ -159,6 +159,10 @@ def policy_inputs(path):
     if not contract.get('allowed_paths') or not contract.get('checks') or not contract.get('criteria'):
         raise ValueError('Trusted paths, checks and criteria are required.')
     paths = [path, project_path, contract_path]
+    if policy.get('allow_stale_revalidation'):
+        binding=Path(policy['revalidation_binding']).resolve()
+        if not binding.is_relative_to(ROOT/'.local') or not binding.is_file():raise ValueError('Private trusted graph revalidation binding required.')
+        paths.append(binding)
     authority = fingerprint(paths)
     if any(strict_read(p) != value for p, value in zip(paths, (policy, project, contract))) or fingerprint(paths) != authority:
         raise ValueError('Authority changed while loading configuration.')
@@ -186,7 +190,7 @@ def version_guard(record, project, policy):
     return target
 
 
-def prepare(review_path, policy_path, record_id=None, baseline_observation=None):
+def prepare(review_path, policy_path, record_id=None, baseline_observation=None, original_review=None, seconds_limit=None):
     document, original_bytes = strict_read(review_path, with_bytes=True)
     record, key = select_record(document, record_id)
     policy, project, contract, trusted, authority = policy_inputs(policy_path)
@@ -236,13 +240,23 @@ def prepare(review_path, policy_path, record_id=None, baseline_observation=None)
             durable(generated, contract, exclusive=True)
             project = copy.deepcopy(project); project['contract'] = str(generated)
             project['execution_authorization'] = policy['authorization_reference']
+            if original_review:
+                original_path=Path(original_review).resolve()
+                if not original_path.is_relative_to(ROOT/'.local') or not original_path.is_file():raise ValueError('Private original review evidence required.')
+                contract['untrusted_review']['original_review_file']=str(original_path)
+                contract['untrusted_review']['current_response_human_reviewed']=False
+                # Contract was saved above; pin the added provenance before approval.
+                durable(generated,contract)
+                project.setdefault('protected_files',[]).append(str(original_path))
             if baseline_observation:project.setdefault('protected_files',[]).append(str(baseline_path))
             project['protected_files'] = list(dict.fromkeys([*[str((ROOT / p).resolve()) for p in project.get('protected_files', [])], *map(str, trusted), str(base/'review.original.json'), str(base/'review.json'), str(base/'selected.json')]))
             durable(base/'project.json', project, exclusive=True)
-            cap = {'max_tasks':1, 'max_reserved_seconds':policy['total_seconds'], 'max_reserved_cycles':policy['max_cycles']}
-            q = {'schema_version':1, 'id':'review-'+key, 'limits':dict(cap, window_seconds=policy['total_seconds']),
+            seconds=policy['total_seconds'] if seconds_limit is None else min(policy['total_seconds'],seconds_limit)
+            queue.positive(seconds)
+            cap = {'max_tasks':1, 'max_reserved_seconds':seconds, 'max_reserved_cycles':policy['max_cycles']}
+            q = {'schema_version':1, 'id':'review-'+key, 'limits':dict(cap, window_seconds=seconds),
                  'project_limits':{project['delivery']['repository']:cap},
-                 'tasks':[{'id':'repair', 'project':str(base/'project.json'), 'total_seconds':policy['total_seconds'], 'max_cycles':policy['max_cycles']}]}
+                 'tasks':[{'id':'repair', 'project':str(base/'project.json'), 'total_seconds':seconds, 'max_cycles':policy['max_cycles']}]}
             durable(base/'queue.json', q, exclusive=True)
             # This records existing owner policy, never approval from report prose.
             with queue.target_locks([{'target':str(target)}]):
@@ -256,6 +270,7 @@ def prepare(review_path, policy_path, record_id=None, baseline_observation=None)
                 raise ValueError('Authority changed during preparation.')
             paths = [*trusted, generated, *base.glob('*.json')]
             if baseline_observation:paths.append(baseline_path)
+            if original_review:paths.append(original_path)
             bound = fingerprint(paths)
             if any(bound.get(path) != digest for path, digest in authority.items()):
                 raise ValueError('Authority changed while binding prepared inputs.')

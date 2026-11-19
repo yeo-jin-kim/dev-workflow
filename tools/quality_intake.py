@@ -97,6 +97,10 @@ class Intake:
             path=self.queue/(key+'.json')
             if path.exists():
                 previous=q.read(path)
+                if previous.get('continuation_id'):
+                    linked=self.get(previous['continuation_id'])
+                    if linked.get('answer_authority')!=self.answer_authority:raise ValueError('Linked continuation authority changed; no new allowance.')
+                    return linked,True
                 if scope=='recall_answer' and self.answer_policy and previous.get('answer_authority')!=self.answer_authority:raise ValueError('Existing answer request authority changed; no new allowance.')
                 if record is not None:
                     attachments=self.queue/'review-context';attachments.mkdir(exist_ok=True);attachments.chmod(0o700)
@@ -113,6 +117,35 @@ class Intake:
                 r.update(answer_policy=self.answer_policy,answer_authority=self.answer_authority)
             elif scope=='recall_answer':r.update(status='decision_required',reason='답변·검색 수정 요청을 기록했습니다. 현재 자동 계약은 혼합 노드 제거만 허용하므로 별도 작업 범위 검토가 필요합니다.')
             save(path,r);path.chmod(0o600);self.wake.set();return r,False
+
+    def continue_preflight(self,key,authorization):
+        """Explicit operator continuation only; never reopen a dispatched W1 run."""
+        if not self.answer_policy or not isinstance(authorization,str) or not authorization.strip():raise ValueError('Explicit current owner continuation reference required.')
+        import review_intake as ri
+        with self.mutex,lock(self.queue/'intake.lock'):
+            old=self.get(key)
+            if old.get('continuation_id'):return self.get(old['continuation_id']),True
+            if not old.get('answer_policy') or old['status']!='decision_required':raise ValueError('Only stopped answer preflight may continue.')
+            _,identity=ri.select_record({'schemaVersion':1,'records':[old['notes']['reviewRecord']]})
+            if ri.locations(identity)[1].exists():raise ValueError('W1 preparation/dispatch already exists; no automatic allowance restart.')
+            receipt_path=Path(old.get('run',''))/'receipt.json'
+            if receipt_path.is_file() and q.read(receipt_path).get('state_dir'):raise ValueError('Dispatched worker requires its existing cumulative state.')
+            self.guard()
+            spent=max(0,old.get('ended_at',time.time())-old['created_at'])
+            remaining=min(3600,old.get('remaining_seconds_before',old['deadline']-old['created_at']))-spent
+            if remaining<1:raise ValueError('Original cumulative allowance exhausted; no automatic renewal.')
+            child_id=q.sha({'continuation_of':key,'kind':'explicit-preflight-continuation-v1'})
+            path=self.queue/(child_id+'.json')
+            if path.exists():child=q.read(path);duplicate=True
+            else:
+                now=time.time()
+                child={**old,'id':child_id,'status':'queued','created_at':now,'deadline':now+remaining,'remaining_seconds_before':remaining,
+                       'source_digest':self.source,'answer_policy':self.answer_policy,'answer_authority':self.answer_authority,
+                       'continuation_of':key,'continuation_authorization':authorization,'previous_execution_seconds':spent}
+                for field in ('reason','run','started_at','ended_at','continuation_id'):child.pop(field,None)
+                save(path,child);path.chmod(0o600);duplicate=False
+            old['continuation_id']=child_id;save(self.queue/(key+'.json'),old)
+            self.wake.set();return child,duplicate
 
     def get(self,key):
         if not re.fullmatch('[a-f0-9]{64}',key):raise ValueError('Invalid request ID.')
@@ -137,7 +170,7 @@ class Intake:
                     if r['answer_policy']!=self.answer_policy or ri.fingerprint([Path(p) for p in r['answer_authority']])!=r['answer_authority']:raise ValueError('Answer authority changed; no dispatch.')
                     r['run']=str(out);save(path,r)
                     notes=self.queue/(key+'-notes.json');save(notes,r['notes']);notes.chmod(0o600)
-                    command=[sys.executable,str(q.ROOT/'tools/answer_dispatch.py'),'--notes',str(notes),'--policy',self.answer_policy,'--output',str(out)]
+                    command=[sys.executable,str(q.ROOT/'tools/answer_dispatch.py'),'--notes',str(notes),'--policy',self.answer_policy,'--output',str(out),'--deadline',str(r['deadline'])]
                     execute(command,q.ROOT,self.queue/(key+'-dispatch.log'),max(.01,r['deadline']-time.time()))
                     receipt=q.read(out/'receipt.json')
                     r.update(status=receipt.get('phase','decision_required'),run=str(out),reason=receipt.get('reason','개발 실행 결과를 확인해 주세요.'),ended_at=time.time())
@@ -214,9 +247,18 @@ def make_server(intake,port):
                 if self.path.startswith('/api/requests/'):
                     r=intake.get(self.path.removeprefix('/api/requests/'));body={k:r[k] for k in ['id','status','deadline','production_apply_authorized']}
                     if 'reason' in r:body['reason']=r['reason']
+                    if r.get('continuation_id'):body['continuationId']=r['continuation_id']
                     run=Path(r['run']) if r.get('run') else intake.queue/r['id']
                     if (run/'receipt.json').is_file():
                         receipt=q.read(run/'receipt.json');body['phase']=receipt.get('phase',receipt.get('status','running'))
+                        if r.get('answer_policy') and r['status']=='running' and receipt.get('id'):
+                            import review_intake as ri
+                            journal=ri.locations(receipt['id'])[1]
+                            if journal.is_file():
+                                progress=q.read(journal)
+                                if progress.get('state_dir'):
+                                    state_path=Path(progress['state_dir'])/'tasks/repair/state.json'
+                                    if state_path.is_relative_to(q.ROOT/'.local') and state_path.is_file():body['phase']=q.read(state_path).get('status','running')
                     if r['status'] not in {'queued','running'}:body.pop('phase',None)
                     if (run/'trial/index.html').is_file():body['resultUrl']='/results/'+r['id']+'/'
                     elif r['notes'].get('reviewRecord'):body['resultUrl']='/feedback/'+r['id']+'/'
@@ -225,12 +267,19 @@ def make_server(intake,port):
                     from html import escape
                     parts=self.path.split('/')
                     if len(parts)!=4 or parts[3]:raise ValueError('Invalid receipt path.')
-                    r=intake.get(parts[2]);record=r['notes'].get('reviewRecord')
+                    r=intake.get(parts[2])
+                    if r.get('continuation_id'):
+                        self.send_response(302);self.send_header('Location','/feedback/'+r['continuation_id']+'/');self.send_header('Content-Length','0');self.end_headers();return
+                    record=r['notes'].get('reviewRecord')
                     if not record:raise ValueError('No Recall review attached.')
                     comparison=''
                     if r.get('answer_policy') and r.get('run'):
                         outcome=q.read(Path(r['run'])/'receipt.json') if (Path(r['run'])/'receipt.json').is_file() else {}
-                        comparison='<h2>Development status / 개발 상태</h2><p>'+escape(r['status'])+'</p>'
+                        current_path=Path(r['run'])/'current-review.json'
+                        if current_path.is_file():
+                            current=q.read(current_path)['records'][0]
+                            comparison='<h2>Current-version reproduction / 현재 버전 재현</h2><p>'+escape(current['response']['answer'].get('summary',''))+'</p><p>Automated observation, not human acceptance / 자동 관찰이며 휴먼 승인 아님</p>'
+                        comparison+='<h2>Development status / 개발 상태</h2><p>'+escape(r['status'])+'</p>'
                         if outcome.get('comparison'):
                             comparison+='<h2>Candidate answer / 후보 답변</h2><p>'+escape(outcome['comparison']['answer'])+'</p><p>Human retest required / 휴먼 재검토 필요</p>'
                         else:comparison+='<p>No verified candidate answer yet. / 아직 검증된 후보 답변이 없습니다.</p>'

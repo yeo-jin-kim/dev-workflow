@@ -58,6 +58,28 @@ class IntakeTests(unittest.TestCase):
     def prepare(self):
         return intake.prepare(self.review,self.policy)
 
+    def test_stale_report_revalidates_without_fabricating_human_review(self):
+        import answer_dispatch,review_replay_gate
+        current=copy.deepcopy(self.record['context'])
+        self.record['context']['frontendCommit']='0'*40
+        binding=self.control/'.local/binding.json';binding.parent.mkdir(exist_ok=True)
+        save(binding,{'plan_digest':'d'*64,'snapshot_sha256':current['snapshotSha256'],'binding':{'graph_sequence':1,'graph_digest':'c'*64}})
+        policy=json.loads(self.policy.read_text());policy.update(allow_stale_revalidation=True,revalidation_binding=str(binding));save(self.policy,policy)
+        output=self.control/'.local/revalidated-adapter'
+        def baseline(target,selected,evidence,command):
+            self.assertIn('--revalidate-current',command)
+            observation={'current_context':current,'response':self.record['response']}
+            save(Path(evidence)/'review-replay.json',observation);return observation
+        with patch.object(review_replay_gate,'replay',side_effect=baseline):
+            receipt=answer_dispatch.dispatch({'planDigest':'d'*64,'reviewRecord':self.record},self.policy,output)
+        self.assertEqual(receipt['phase'],'awaiting_human_retest',receipt)
+        original=json.loads((output/'review.json').read_text())['records'][0]
+        derived=json.loads((output/'current-review.json').read_text())['records'][0]
+        self.assertEqual(original['context']['frontendCommit'],'0'*40)
+        self.assertEqual(derived['context'],current)
+        self.assertFalse(derived['review']['currentResponseHumanReviewed'])
+        self.assertEqual(derived['review']['reason'],original['review']['reason'])
+
     def test_web_adapter_baseline_then_real_fixture_pipeline_and_comparison(self):
         import answer_dispatch
         import review_replay_gate

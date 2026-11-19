@@ -21,6 +21,14 @@
     "--snapshot",
     "/ABSOLUTE/PATH/TO/snapshot.json",
     "--python",
-    "/ABSOLUTE/PATH/TO/CORA_PYTHON"
-  ]
+    "/ABSOLUTE/PATH/TO/CORA_PYTHON",
+    "--model",
+    "/ABSOLUTE/PATH/TO/LOCAL_GEMMA",
+    "--soba-repo",
+    "/ABSOLUTE/PATH/TO/soba",
+    "--mlx-python",
+    "/ABSOLUTE/PATH/TO/MLX_PYTHON"
+  ],
+  "allow_stale_revalidation": false,
+  "revalidation_binding": "/ABSOLUTE/PATH/TO/dev-workflow/.local/review/trial/plan.json"
 }

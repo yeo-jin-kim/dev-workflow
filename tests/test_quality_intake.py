@@ -42,6 +42,28 @@ class IntakeTests(unittest.TestCase):
         except ValueError:pass
         return r.status,data
 
+    def test_explicit_preflight_continuation_keeps_failure_and_remaining_budget(self):
+        import review_intake as ri
+        self.intake.answer_policy=str(self.policy);self.intake.answer_authority=ri.fingerprint([self.policy])
+        record=self.completed_record()
+        record['context'].update(frontendDirty=False,frontendCommit='a'*40,sourceSha256='b'*64,graphSha256='c'*64)
+        _,result=self.http('POST','/api/requests',{**self.notes,'repairScope':'recall_answer','reviewRecord':record})
+        old=self.intake.get(result['id']);old.update(status='decision_required',reason='stale fixture',ended_at=old['created_at']+2)
+        q.save(self.intake.queue/(old['id']+'.json'),old)
+        with patch.object(ri,'ROOT',self.root):
+            child,duplicate=self.intake.continue_preflight(old['id'],'Explicit fixture owner continuation')
+            again,duplicate=self.intake.continue_preflight(old['id'],'Same request cannot refill')
+        self.assertEqual(child['id'],again['id']);self.assertTrue(duplicate)
+        self.assertAlmostEqual(child['deadline']-child['created_at'],58,places=3)
+        self.assertEqual(self.intake.get(old['id'])['reason'],'stale fixture')
+        self.assertEqual(self.intake.get(old['id'])['status'],'decision_required')
+        self.assertEqual(child['continuation_of'],old['id'])
+        run=self.intake.queue/child['id'];run.mkdir();q.save(run/'receipt.json',{'state_dir':'already-dispatched'})
+        child.update(status='decision_required',run=str(run),ended_at=child['created_at']+1);q.save(self.intake.queue/(child['id']+'.json'),child)
+        with patch.object(ri,'ROOT',self.root):
+            with self.assertRaisesRegex(ValueError,'Dispatched worker'):self.intake.continue_preflight(child['id'],'Cannot replenish dispatched worker')
+
+
     def test_answer_route_dispatches_once_and_never_uses_mixed_node_runner(self):
         import review_intake as ri
         self.intake.answer_policy=str(self.policy)

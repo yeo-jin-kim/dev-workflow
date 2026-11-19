@@ -153,6 +153,15 @@ The dispatcher first invokes a trusted replay through `review_replay_gate.py`, p
 
 Status and the private feedback page show development state. Only a successfully reviewed W1 candidate with a bound replay for its accepted digest exposes an after-answer; the original reviewed answer and reason remain visible. Human retest, semantic ambiguity, merge and production installation remain separate decisions. The browser retains review state; refreshing does not turn an old record into current authorization. A replay observation alone is not semantic acceptance. Current integration tests use synthetic worker/browser/CI fixtures; a real-data native replay probe is separate from an actual autonomous repair. No actual coding worker or original graph modification was started in this integration delivery.
 
+
+## Stale-answer revalidation and bounded continuation — 2026-11-19
+
+Answer policy may explicitly enable `allow_stale_revalidation` with a pinned `revalidation_binding` plan under ignored `.local/`. The plan fingerprint joins policy authority. The original review is retained; trusted native replay must match its snapshot, sequence and the plan's semantic graph digest. It emits a separate current context/response, which inherits the reported issue but is not a new human judgment. Current source is checked before W1 preparation. LLM-enabled requests remain LLM-enabled with explicit provider/model settings; absent historical identity is disclosed, not invented. Model identity is configuration/file metadata, not full weight attestation. The worker must establish whether the issue persists before changing code.
+
+`tools/continue_answer_request.py --review REVIEW_FOLDER --policy QUALITY_POLICY --answer-policy ANSWER_POLICY --request REQUEST_ID --authorization OWNER_REFERENCE` explicitly continues only a stopped preflight with no W1 preparation/dispatch. It preserves the old failure and links a child request, subtracts previous execution time from the original 3600-second allowance, and reuses the same child on repeats. Already dispatched work requires its existing cumulative state; this command cannot reset it. The separate five-cycle ceiling remains unchanged. No automatic renewal or production merge is authorized. The web status/receipt follows the linked continuation and displays current replay and actual worker phases.
+
+Validation includes stale-source refresh through synthetic W2/W1, immutable original review, trusted binding, and continuation allowance/idempotency/refusal after dispatch. Final full controller suite: 151 passed in 139.071 seconds; live worker outcomes are reported separately. Synthetic worker fixtures do not prove a real answer correction.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -294,3 +303,11 @@ AI/브라우저/CI/재실행 응답을 사용했다. 무인 실제 CoRA 수정�
 실행 연결기는 먼저 `review_replay_gate.py`로 신뢰된 재실행을 수행하고 비공개 기준 관찰을 작업 입력으로 고정한 뒤 고정 개발 계약을 준비·실행한다. `cora_review_replay.py`는 대상 체크아웃의 CoRA 네이티브 복사본 재실행 명령을 시작해 소스/검토 연결을 추가하며 대상 패키지를 가져오지 않는다. 바깥 실행 기한은 사전 확인/재실행을 포함하고 시간 초과 시 프로세스 그룹을 종료하며 내부 W1 수정 횟수는 최대 5회다. 중단된 작업을 자동 재시작하지 않는다. 내보내기에 안정된 그래프 내용 신원이 있으면 검사한다. 대화 기록이나 검증된 로컬 모델 신원이 없으면 설정을 바꾸거나 수정 완료를 주장하지 않고 차단한다.
 
 상태 조회와 비공개 접수 화면에 개발 상태를 표시한다. 검토를 통과한 W1 후보에 승인된 내용 지문과 연결된 재실행 결과가 있을 때만 수정 후 답변을 표시하며 검토 당시 답변과 이유를 유지한다. 휴먼 재검토·의미 모호성·병합·운영 반영은 별도 결정이다. 브라우저는 검토 상태를 보존하며 새로고침이 과거 기록을 현재 승인으로 바꾸지 않는다. 재실행 관찰만으로 의미 정확성을 승인하지 않는다. 현재 통합 시험의 작업자/브라우저/CI는 합성 대체이며 실제 데이터 네이티브 재실행 시험은 실제 자율 수정과 구분한다. 이번 통합 전달에서는 실제 코드 작업자를 시작하거나 원본 그래프를 수정하지 않았다.
+
+## 오래된 답변 재확인과 한도 내 연결 실행 — 2026-11-19
+
+답변 정책은 무시되는 `.local/` 아래에 고정한 계획 `revalidation_binding`과 함께 `allow_stale_revalidation`을 명시적으로 켤 수 있다. 계획 지문도 정책 권한 검증에 포함된다. 원래 검토를 보존하고 신뢰된 네이티브 재실행에서 원래 스냅샷·순번 및 계획의 의미 그래프 지문을 확인한다. 별도 현재 문맥·응답은 기존 오류 보고를 계승하며 새 사람 판단이 아니다. W1 준비 전에 현재 소스를 검증한다. LLM 요청은 명시적 제공자·모델 설정으로 LLM을 유지한다. 과거 신원이 없으면 만들어내지 않고 알 수 없다고 밝힌다. 모델 신원은 설정·파일 메타데이터이며 전체 가중치 증명이 아니다. 작업자는 코드를 바꾸기 전에 문제가 여전히 재현되는지 확인해야 한다.
+
+`tools/continue_answer_request.py --review REVIEW_FOLDER --policy QUALITY_POLICY --answer-policy ANSWER_POLICY --request REQUEST_ID --authorization OWNER_REFERENCE`는 W1 준비·실행이 시작되지 않은 중단 사전 검사만 명시적으로 이어간다. 이전 실패를 보존하고 하위 요청을 연결하며 원래 3600초 한도에서 앞선 실행 시간을 차감한다. 반복 호출은 같은 하위 요청을 사용한다. 이미 실행된 작업은 기존 누적 상태가 필요하며 이 명령으로 초기화할 수 없다. 별도 5회 한도도 유지한다. 자동 한도 갱신이나 운영 병합은 허가하지 않는다. 웹 상태와 접수 화면은 연결 실행을 따라가며 현재 재실행과 실제 작업 단계를 표시한다.
+
+검증은 합성 W2/W1을 통한 오래된 소스 갱신, 원래 검토 보존, 신뢰된 연결, 연결 실행의 한도·중복 방지·실행 후 거절을 다룬다. 최종 컨트롤러 전체 검사 151개가 139.071초에 통과했다. 실제 작업자 결과는 별도로 보고한다. 합성 작업자 시험은 실제 답변 수정을 입증하지 않는다.
