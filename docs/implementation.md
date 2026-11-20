@@ -716,6 +716,13 @@ Answer policy may explicitly enable `allow_stale_revalidation` with a pinned `re
 
 Validation includes stale-source refresh through synthetic W2/W1, immutable original review, trusted binding, and continuation allowance/idempotency/refusal after dispatch. Final full controller suite: 151 passed in 139.071 seconds; live worker outcomes are reported separately. Synthetic worker fixtures do not prove a real answer correction.
 
+
+## Publication-audit sequencing clarification — 2026-11-19
+
+A live answer-repair trial reproduced the original omission and produced a candidate whose real-data answer includes the evidenced owner. The candidate passed 537 controller-run tests, copy-only replay and the browser harness, but was not semantically accepted or published. Publication safety first identified newly added private absolute evidence links; those were redacted without changing original evidence. A second audit confused uncommitted WIP publication with semantic acceptance/merge authorization. The candidate and both rejection records remain private; no allowance was renewed. One operator documentation correction used the same W1 state and counted as the second cycle. This trial is not a fully autonomous successful repair.
+
+The publication-audit prompt now explicitly describes its position before commit/CI and the existing trusted authorization to publish an UNACCEPTED dedicated branch. Pending CI, independent semantic review, human retest and withheld merge do not themselves indicate unsafe publication. Actual privacy/scope findings still block, and a passing safety audit still grants no semantic acceptance. This clarification has not yet been validated by another live reviewer. Focused delivery tests: 48 passed in 68.517 seconds. These mechanical tests do not prove model adherence.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1297,3 +1304,9 @@ recall_answer는 작업자 실행 없이 범위 검토로 지속 기록한다. �
 `tools/continue_answer_request.py --review REVIEW_FOLDER --policy QUALITY_POLICY --answer-policy ANSWER_POLICY --request REQUEST_ID --authorization OWNER_REFERENCE`는 W1 준비·실행이 시작되지 않은 중단 사전 검사만 명시적으로 이어간다. 이전 실패를 보존하고 하위 요청을 연결하며 원래 3600초 한도에서 앞선 실행 시간을 차감한다. 반복 호출은 같은 하위 요청을 사용한다. 이미 실행된 작업은 기존 누적 상태가 필요하며 이 명령으로 초기화할 수 없다. 별도 5회 한도도 유지한다. 자동 한도 갱신이나 운영 병합은 허가하지 않는다. 웹 상태와 접수 화면은 연결 실행을 따라가며 현재 재실행과 실제 작업 단계를 표시한다.
 
 검증은 합성 W2/W1을 통한 오래된 소스 갱신, 원래 검토 보존, 신뢰된 연결, 연결 실행의 한도·중복 방지·실행 후 거절을 다룬다. 최종 컨트롤러 전체 검사 151개가 139.071초에 통과했다. 실제 작업자 결과는 별도로 보고한다. 합성 작업자 시험은 실제 답변 수정을 입증하지 않는다.
+
+## 게시 검토 순서 명확화 — 2026-11-19
+
+실제 답변 수정 시험은 원래 누락을 재현하고, 실데이터 답변에 근거 있는 소유자가 포함되는 후보를 만들었다. 후보는 컨트롤러가 실행한 검사 537개·복사본 재실행·브라우저 검사를 통과했지만 의미 승인을 받거나 게시되지는 않았다. 첫 게시 검토에서 새로 추가한 비공개 절대 증거 경로를 발견해 원래 증거를 바꾸지 않고 문서에서 제거했다. 두 번째 검토는 커밋 전 작업 후보의 게시와 의미 승인·병합 권한을 혼동했다. 후보와 두 거절 기록은 비공개로 보존했고 한도를 갱신하지 않았다. 운영자의 문서 수정 1회는 같은 W1 상태에서 두 번째 회차로 계산했다. 이 시험을 완전 자동 수정 성공으로 보지 않는다.
+
+게시 검토 프롬프트는 커밋·CI보다 앞선 단계라는 점과 미승인 전용 브랜치를 게시할 기존의 신뢰된 권한을 명시한다. CI·독립 의미 검토·사람 재시험 대기와 병합 미승인 자체는 안전하지 않은 게시를 뜻하지 않는다. 실제 개인정보·범위 문제는 계속 차단하며 안전 검토 통과도 의미 승인을 부여하지 않는다. 이 명확화는 다른 실제 검토자로 아직 검증하지 않았다. 전달 집중 검사 48개가 68.517초에 통과했다. 이 기계적 검사는 모델의 지침 준수를 입증하지 않는다.
