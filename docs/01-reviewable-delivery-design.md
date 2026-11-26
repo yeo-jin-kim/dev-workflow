@@ -415,6 +415,10 @@ the final focused review passed after rejecting symlinked replay evidence.
 The added push CI workflow repeats the suite on the published revision.
 No CoRA implementation, original graph or prior execution grant was changed.
 
+Remote CI uses Ubuntu 22.04 for Python 3.9. The initial Ubuntu 26.04 image
+could not install Python 3.9 and never ran tests; its failed run is preserved.
+Only the runner image was pinned; the complete test command remains unchanged.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -769,3 +773,7 @@ EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화
 독립 재검토는 최초의 연결·권한 지적이 수정됐음을 확인했으며, 심볼릭 링크 재현
 증거를 거부한 뒤 마지막 집중 검토도 통과했다. 추가한 푸시 CI는 게시 버전에서
 전체 검사를 다시 실행한다. CoRA 구현·원본 그래프·과거 실행 권한은 변경하지 않았다.
+
+원격 CI는 Python 3.9를 위해 Ubuntu 22.04를 사용한다. 최초 Ubuntu 26.04
+환경은 Python 3.9 설치 단계에서 실패해 검사를 실행하지 못했고 실패 기록을 보존했다.
+실행 환경만 고정했으며 전체 검사 명령은 바꾸지 않았다.
