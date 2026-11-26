@@ -67,5 +67,6 @@
     "enabled": false,
     "contract": "contracts/cora/data-quality-removal.json",
     "repair_mode": "remove_mixed_preserve_unresolved"
-  }
+  },
+  "handoff_console_url": "http://127.0.0.1:8780"
 }

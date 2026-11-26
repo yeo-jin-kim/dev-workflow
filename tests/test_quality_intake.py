@@ -42,6 +42,17 @@ class IntakeTests(unittest.TestCase):
         except ValueError:pass
         return r.status,data
 
+    def test_console_link_is_operator_configured_and_stays_loopback(self):
+        self.intake.console_url='http://127.0.0.1:8780'
+        status,result=self.http('POST','/api/requests',{**self.notes,'repairScope':'recall_answer','reviewRecord':self.completed_record()})
+        self.assertEqual(status,202)
+        status,body=self.http('GET','/api/requests/'+result['id'])
+        self.assertEqual(body['comparisonUrl'],'http://127.0.0.1:8780/?id='+result['id'])
+        self.assertTrue(body['resultUrl'].startswith('/feedback/'))
+        self.assertIn(b'http://127.0.0.1:8780/?id=',self.http('GET',body['resultUrl'])[1])
+        self.cfg['handoff_console_url']='https://outside.example';q.save(self.policy,self.cfg)
+        with self.assertRaisesRegex(ValueError,'loopback'):m.Intake(self.folder,self.policy)
+
     def test_explicit_preflight_continuation_keeps_failure_and_remaining_budget(self):
         import review_intake as ri
         self.intake.answer_policy=str(self.policy);self.intake.answer_authority=ri.fingerprint([self.policy])

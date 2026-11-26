@@ -26,6 +26,10 @@ class Intake:
         self.folder=Path(folder).resolve();self.policy=Path(policy).resolve()
         if not self.policy.is_relative_to(q.ROOT/'projects'):raise ValueError('Trusted projects/ policy required.')
         self.cfg=q.read(self.policy)
+        self.console_url=self.cfg.get('handoff_console_url')
+        if self.console_url:
+            url=urlsplit(self.console_url)
+            if url.scheme!='http' or url.hostname!='127.0.0.1' or not url.port or url.path not in ('','/') or url.query or url.fragment or url.username or url.password:raise ValueError('Handoff console must be a loopback origin.')
         if self.cfg.get('enabled') is not True or not self.cfg.get('authorization_reference'):raise ValueError('Enabled owner policy required.')
         if self.cfg.get('intake',{}).get('enabled') is not True:raise ValueError('Intake is disabled in trusted policy.')
         seconds=self.cfg.get('total_seconds',3600)
@@ -262,6 +266,9 @@ def make_server(intake,port):
                     if r['status'] not in {'queued','running'}:body.pop('phase',None)
                     if (run/'trial/index.html').is_file():body['resultUrl']='/results/'+r['id']+'/'
                     elif r['notes'].get('reviewRecord'):body['resultUrl']='/feedback/'+r['id']+'/'
+                    if getattr(intake,'console_url',None) and r['notes'].get('reviewRecord'):
+                        packet_id=receipt.get('handoff_id') if (run/'receipt.json').is_file() else None
+                        body['comparisonUrl']=intake.console_url.rstrip('/')+'/?id='+(packet_id or r['id'])
                     self.send_body(200,body);return
                 if self.path.startswith('/feedback/'):
                     from html import escape
@@ -272,7 +279,7 @@ def make_server(intake,port):
                         self.send_response(302);self.send_header('Location','/feedback/'+r['continuation_id']+'/');self.send_header('Content-Length','0');self.end_headers();return
                     record=r['notes'].get('reviewRecord')
                     if not record:raise ValueError('No Recall review attached.')
-                    comparison=''
+                    comparison='';outcome={}
                     if r.get('answer_policy') and r.get('run'):
                         outcome=q.read(Path(r['run'])/'receipt.json') if (Path(r['run'])/'receipt.json').is_file() else {}
                         current_path=Path(r['run'])/'current-review.json'
@@ -286,6 +293,9 @@ def make_server(intake,port):
                         if outcome.get('candidate'):comparison+='<pre>'+escape(json.dumps(outcome['candidate'],ensure_ascii=False,indent=2))+'</pre>'
                     html='<meta charset="utf-8"><title>Recall review request</title><main style="max-width:960px;margin:30px auto;font:16px system-ui;line-height:1.7"><h1>Recall 수정 요청 접수 내역</h1><h2>검토한 질문</h2><p>'+escape(record['request']['query'])+'</p><h2>검토 당시 답변</h2><p>'+escape(record['response']['answer'].get('summary',''))+'</p><h2>요청한 수정</h2><p>'+escape(r['notes']['reason'])+'</p><h2>다음 판단</h2><p>'+escape(r.get('reason','작업 범위를 검토 중입니다.'))+'</p><p>원본 그래프는 변경하지 않았습니다.</p></main>'
                     html+=comparison
+                    if getattr(intake,'console_url',None):
+                        link=intake.console_url.rstrip('/')+'/?id='+(outcome.get('handoff_id') or r['id'])
+                        html+='<p><a href="'+escape(link,quote=True)+'">Compare answers and track development / 답변 비교와 개발 상태 보기</a></p>'
                     review_url=getattr(intake,'review_url',None)
                     if review_url:html+='<a href="'+escape(review_url,quote=True)+'">Recall 검토 화면으로 돌아가기</a>'
                     self.send_body(200,html.encode(),'text/html; charset=utf-8');return

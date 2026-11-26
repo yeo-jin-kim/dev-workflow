@@ -723,6 +723,116 @@ A live answer-repair trial reproduced the original omission and produced a candi
 
 The publication-audit prompt now explicitly describes its position before commit/CI and the existing trusted authorization to publish an UNACCEPTED dedicated branch. Pending CI, independent semantic review, human retest and withheld merge do not themselves indicate unsafe publication. Actual privacy/scope findings still block, and a passing safety audit still grants no semantic acceptance. This clarification has not yet been validated by another live reviewer. Focused delivery tests: 48 passed in 68.517 seconds. These mechanical tests do not prove model adherence.
 
+## Development review handoff — 2026-11-26
+
+The external controller now provides `tools/handoff_server.py`, a loopback console
+for queued request progress and revision-bound before/after comparisons. It shows
+the captured question, correction reason, original/candidate answers, returned
+graph subsets, claims, paths and evidence. Graph layouts are presentation only;
+missing candidate evidence is displayed explicitly. Existing queue/runner state
+is polled every three seconds without dispatching or replenishing its allowance.
+
+Successful answer dispatch automatically registers a private immutable handoff
+from the verified publication report and matching replay. The report must pass
+independent review and exact-head/base CI; replay request, source digest, snapshot
+and available graph-content identity must match. Changed artifacts invalidate the
+handoff. Browser retest notes are version-bound and append-only, with a latest-note
+projection. They are local unauthenticated notes, not merge authority.
+
+`tools/delivery_handoff.py merge` is an explicit operator action, requiring a
+passing retest, an owner authorization reference and trusted check argv arrays.
+It requires a clean target checkout, matching repository and exact local/remote
+base and remote candidate. It merges the recorded commit, checks tree equality,
+runs post-merge checks (600 seconds each, 3600 seconds overall), checks for dirty
+or moved revisions, then uses an ordinary non-force push. A failed or interrupted
+merge attempt remains recorded and cannot silently restart. Failed checks preserve
+the local merge for inspection and do not push; recovery is an operator decision.
+The web server exposes no merge, command execution or worker restart endpoint.
+
+An owner may preserve explicit required/forbidden claim IDs after a passing retest.
+Cases and data bindings remain private. Future matching candidate replay is checked
+against these assertions before handoff; different requests/snapshots are explicitly
+not applicable. The standalone regression command executes a trusted replay in a
+fresh external folder and verifies source/request/data identity and assertions.
+Cases are not an automatically generated gold answer or general accuracy proof.
+Read-only `inspect` records Git ancestry for work already merged outside this helper;
+it does not invent a new approval or rewrite the historical delivery report.
+
+```sh
+python3 tools/handoff_server.py --port 8780
+python3 tools/delivery_handoff.py register --report REPORT.json --review REVIEW.json --observation REPLAY.json
+python3 tools/delivery_handoff.py inspect --packet PACKET.json --target TARGET_CHECKOUT
+python3 tools/delivery_handoff.py retest --packet PACKET.json --decision pass --reason 'What was tested'
+python3 tools/delivery_handoff.py preserve --packet PACKET.json --required claim:STATE_ID
+python3 tools/delivery_handoff.py merge --packet PACKET.json --target TARGET_CHECKOUT --approval projects/.local/merge-approvals/PACKET_ID.json
+python3 tools/delivery_handoff.py regression --case CASE.json --target TARGET_CHECKOUT --command TRUSTED_REPLAY_ARGV.json --expected-head CURRENT_FULL_SHA --output .local/NEW_REGRESSION
+```
+
+All packet/report/review/replay paths must remain under controller `.local/`.
+The checks file contains JSON arrays of argv arrays; the replay file contains one
+argv array with `{output}` for fresh artifacts and must write `review-replay.json`.
+No shell command text is accepted from browser notes. Source/review/CI checks still
+belong to the existing bounded runner. This adds neither a background scheduler,
+monetary metering nor arbitrary next-goal selection. No CoRA code or original data
+is changed by this delivery. Private evidence is accessible to the local user;
+this is loopback/session protection, not multi-user authentication or OS isolation.
+The console covers answer-repair handoffs; domain graph repair retains its existing
+copy-only results and separate apply policy. Preserve that boundary.
+
+### Trust and validation details
+
+Registration reuses the replay gate's complete observation validator, including
+the exact selected-record bytes, response query/settings, trace and graph version.
+It also checks the immutable report identity against controller state, raw
+source-bound check/review receipts and the pinned project/contract criteria and CI
+gates, including browser evidence when configured. The same proof files are pinned
+in the handoff. A freely constructed success-shaped JSON is insufficient.
+
+The operator first records an actual owner decision with `authorize`; this writes
+an immutable, revision/target/check-bound approval under trusted `projects/.local/`.
+`merge` consumes that file, not arbitrary authorization prose, and rechecks the
+controller and protected task inputs before changing the target. It is operator
+attestation, not authentication of the human: review text and web notes cannot
+create it, and operators must not invent owner approval. Git calls have a 60-second
+timeout; post-merge checks retain their per-check and cumulative limits.
+
+```sh
+python3 tools/delivery_handoff.py authorize --packet PACKET.json --target TARGET_CHECKOUT --reference 'Actual owner decision reference' --checks TRUSTED_CHECKS.json
+python3 tools/delivery_handoff.py merge --packet PACKET.json --target TARGET_CHECKOUT --approval projects/.local/merge-approvals/PACKET_ID.json
+```
+
+Regression cases intentionally run on future revisions rather than requiring the
+origin commit forever. Their origin SHA/digest is preserved, while each fresh run
+requires `--expected-head CURRENT_FULL_SHA`, a clean checkout, unchanged source,
+exact review bytes and a traced replay. Trusted replay argv must include both
+`{review}` and `{output}`. Current-source identity is checked against the fresh
+observation, not substituted with the old case's source identity.
+
+Optional `handoff_console_url` in the trusted quality intake policy supplies the
+loopback console origin. The existing feedback page links to it; its relative
+result URL remains compatible with the CoRA relay. The disabled example includes
+this option. This delivery does not renew old execution grants or replace their
+policies. Start an explicitly configured intake for a new authorized scope.
+
+`register --historical-only` imports a past comparison without granting retest,
+regression-case acceptance or merge authority. It records any raw-proof failure
+and remains read-only even when Git shows the source was merged. The live EMNLP
+comparison uses this mode: its historical browser harness no longer matches the
+recorded file inventory. No historical report/evidence or acceptance was rewritten.
+
+### Delivery validation — 2026-11-26
+
+Implemented candidate. Final local suite: **165 tests passed in 129.383 seconds**;
+13 focused handoff tests cover real disposable Git merges/pushes, failed-check
+push prevention, changed revisions/approvals, replay faults and HTTP boundaries.
+Live CUA checks rendered the actual captured EMNLP comparison; a separately labeled
+synthetic browser fixture verified saving a test, selecting/preserving a regression
+assertion and restoring it after reload. This is not a new real-data repair run.
+Independent re-review confirmed the initial binding/authority findings fixed;
+the final focused review passed after rejecting symlinked replay evidence.
+The added push CI workflow repeats the suite on the published revision.
+No CoRA implementation, original graph or prior execution grant was changed.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1310,3 +1420,105 @@ recall_answer는 작업자 실행 없이 범위 검토로 지속 기록한다. �
 실제 답변 수정 시험은 원래 누락을 재현하고, 실데이터 답변에 근거 있는 소유자가 포함되는 후보를 만들었다. 후보는 컨트롤러가 실행한 검사 537개·복사본 재실행·브라우저 검사를 통과했지만 의미 승인을 받거나 게시되지는 않았다. 첫 게시 검토에서 새로 추가한 비공개 절대 증거 경로를 발견해 원래 증거를 바꾸지 않고 문서에서 제거했다. 두 번째 검토는 커밋 전 작업 후보의 게시와 의미 승인·병합 권한을 혼동했다. 후보와 두 거절 기록은 비공개로 보존했고 한도를 갱신하지 않았다. 운영자의 문서 수정 1회는 같은 W1 상태에서 두 번째 회차로 계산했다. 이 시험을 완전 자동 수정 성공으로 보지 않는다.
 
 게시 검토 프롬프트는 커밋·CI보다 앞선 단계라는 점과 미승인 전용 브랜치를 게시할 기존의 신뢰된 권한을 명시한다. CI·독립 의미 검토·사람 재시험 대기와 병합 미승인 자체는 안전하지 않은 게시를 뜻하지 않는다. 실제 개인정보·범위 문제는 계속 차단하며 안전 검토 통과도 의미 승인을 부여하지 않는다. 이 명확화는 다른 실제 검토자로 아직 검증하지 않았다. 전달 집중 검사 48개가 68.517초에 통과했다. 이 기계적 검사는 모델의 지침 준수를 입증하지 않는다.
+
+## 개발 검토 인계 — 2026-11-26
+
+외부 컨트롤러의 `tools/handoff_server.py`는 대기 요청 진행 상태와 버전에 묶인
+수정 전후 비교를 제공하는 로컬 화면이다. 저장된 질문·수정 이유·원래 답변·후보 답변,
+반환 그래프 일부·답변 항목·경로·근거를 보여준다. 그래프 배치는 표시용이다.
+후보 근거가 없으면 없다고 표시한다. 기존 큐·실행기 상태를 3초마다 읽으며
+작업을 새로 시작하거나 한도를 보충하지 않는다.
+
+답변 수정 실행이 성공하면 검증된 게시 보고서와 대응 재현 결과로 비공개 불변
+인계 기록을 자동 생성한다. 독립 검토와 정확한 후보·기준 버전의 CI가 통과해야 하며,
+재현 요청·소스 다이제스트·스냅샷·존재하는 그래프 내용 식별자가 일치해야 한다.
+연결된 자료가 바뀌면 인계를 무효화한다. 브라우저 테스트 기록은 버전에 묶이며
+이력을 추가로 보존하고 최신 기록을 별도로 표시한다. 로컬 비인증 메모이므로
+병합 권한을 부여하지 않는다.
+
+`tools/delivery_handoff.py merge`는 작업자의 명시적 실행으로, 통과 테스트 기록,
+사용자 승인 참조와 신뢰하는 검사 명령 인자 배열이 필요하다. 대상 체크아웃이
+깨끗해야 하고 저장소, 로컬·원격 기준 버전, 원격 후보 버전이 정확히 일치해야 한다.
+기록된 커밋을 병합하고 트리 일치를 확인한 뒤 병합 후 검사를 실행한다.
+각 검사는 600초, 전체는 3600초 한도다. 미커밋 변경이나 버전 이동을 확인한 뒤
+강제 옵션 없는 일반 푸시를 수행한다. 실패·중단된 병합은 기록되고 조용히
+재시작하지 않는다. 검사 실패 시 로컬 병합을 보존하고 푸시하지 않으며,
+복구는 작업자가 판단한다. 웹 서버에는 병합·명령 실행·작업 재시작 API가 없다.
+
+사용자는 통과 테스트 후 필수·금지 답변 항목 ID를 명시해 회귀 사례로 보존할 수 있다.
+사례와 데이터 연결은 비공개다. 이후 같은 입력의 후보 재현 결과는 인계 전에 이 조건을
+검사하며, 다른 질문·스냅샷은 적용 대상이 아니라고 표시한다. 독립 회귀 실행 명령은
+새 외부 폴더에서 신뢰하는 재현을 실행하고 소스·요청·데이터 식별자와 조건을 검사한다.
+사례는 자동으로 생성한 정답이나 일반 정확도 증명이 아니다. 읽기 전용 `inspect`는
+다른 방식으로 이미 병합한 작업의 Git 조상 관계를 기록한다. 새로운 승인을
+만들거나 과거 전달 보고서를 다시 쓰지 않는다.
+
+```sh
+python3 tools/handoff_server.py --port 8780
+python3 tools/delivery_handoff.py register --report REPORT.json --review REVIEW.json --observation REPLAY.json
+python3 tools/delivery_handoff.py inspect --packet PACKET.json --target TARGET_CHECKOUT
+python3 tools/delivery_handoff.py retest --packet PACKET.json --decision pass --reason 'What was tested'
+python3 tools/delivery_handoff.py preserve --packet PACKET.json --required claim:STATE_ID
+python3 tools/delivery_handoff.py merge --packet PACKET.json --target TARGET_CHECKOUT --approval projects/.local/merge-approvals/PACKET_ID.json
+python3 tools/delivery_handoff.py regression --case CASE.json --target TARGET_CHECKOUT --command TRUSTED_REPLAY_ARGV.json --expected-head CURRENT_FULL_SHA --output .local/NEW_REGRESSION
+```
+
+인계·보고서·검토·재현 파일은 모두 컨트롤러 `.local/` 아래에 있어야 한다.
+검사 파일은 명령 인자 배열들의 JSON 배열이다. 재현 파일은 새 증거 폴더를 나타내는
+`{output}`이 들어간 명령 인자 배열이며 `review-replay.json`을 생성해야 한다.
+브라우저 메모에서 셸 명령을 받지 않는다. 소스·검토·CI 검사는 기존의 한도 있는
+실행기가 담당한다. 백그라운드 스케줄러·금액 계측·임의의 다음 목표 선택은 추가하지
+않았다. 이번 전달은 CoRA 코드와 원본 데이터를 바꾸지 않는다. 로컬 사용자는
+비공개 증거에 접근할 수 있으며, 루프백·세션 보호는 다중 사용자 인증이나 운영체제
+격리가 아니다. 화면의 승인 인계 범위는 답변 수정이다. 도메인 그래프 수정은
+기존 복사본 결과와 별도 적용 정책을 유지한다.
+
+### 신뢰 경계와 검증 세부 사항
+
+인계 등록은 기존 재현 게이트의 전체 검증기를 재사용한다. 정확한 선택 레코드의
+바이트, 응답의 질문·설정, 추적과 그래프 버전을 확인한다. 불변 보고서 식별자를
+컨트롤러 상태, 소스에 묶인 실제 검사·검토 기록, 고정된 프로젝트·계약의 기준과
+CI 게이트에 대조하며 설정된 브라우저 증거도 확인한다. 같은 증거 파일을 인계에
+고정한다. 성공처럼 보이는 JSON을 임의로 만드는 것만으로는 충분하지 않다.
+
+작업자는 실제 사용자 결정을 먼저 `authorize`로 기록한다. 이 명령은 신뢰하는
+`projects/.local/` 아래에 버전·대상·검사에 묶인 불변 승인 파일을 만든다.
+`merge`는 자유 형식 승인 문구 대신 그 파일을 사용하며, 대상 변경 전에 컨트롤러와
+보호된 작업 입력도 재확인한다. 이는 작업자의 확인 기록이며 인간의 신원을
+인증하지는 않는다. 검토 문구와 웹 메모로는 이 기록을 만들 수 없으며 작업자가
+사용자 승인을 만들어내서는 안 된다. Git 호출은 60초 한도이며 병합 후 검사는
+개별·누적 시간 한도를 유지한다.
+
+```sh
+python3 tools/delivery_handoff.py authorize --packet PACKET.json --target TARGET_CHECKOUT --reference 'Actual owner decision reference' --checks TRUSTED_CHECKS.json
+python3 tools/delivery_handoff.py merge --packet PACKET.json --target TARGET_CHECKOUT --approval projects/.local/merge-approvals/PACKET_ID.json
+```
+
+회귀 사례는 과거 커밋에 영구 고정하지 않고 이후 버전에서도 실행하는 것이 목적이다.
+기원 SHA·다이제스트를 보존하고, 매 실행은 `--expected-head CURRENT_FULL_SHA`,
+깨끗한 체크아웃, 변경되지 않은 소스, 정확한 검토 바이트와 추적을 포함한 재현을
+요구한다. 신뢰하는 재현 인자에는 `{review}`와 `{output}`이 모두 있어야 한다.
+이번 소스 식별자는 새 관찰 결과에 대조하며 과거 사례의 소스 식별자로 대체하지 않는다.
+
+신뢰하는 품질 접수 정책의 선택 항목 `handoff_console_url`로 루프백 화면 주소를
+설정한다. 기존 접수 내역 화면이 이 주소로 연결하며, 상대 경로인 결과 URL은
+CoRA 중계와 계속 호환된다. 비활성 예제에 이 항목을 포함했다. 이번 전달은
+과거 실행 권한을 갱신하거나 정책을 대체하지 않는다. 새로운 승인 범위에는
+명시적으로 설정한 접수 실행기를 사용한다.
+
+`register --historical-only`는 과거 비교를 가져오되 테스트 통과·회귀 사례 채택·병합
+권한을 부여하지 않는다. 실제 증거 재확인 실패를 기록하며 Git에서 병합을 확인해도
+읽기 전용이다. 현재 EMNLP 비교는 이 모드다. 과거 브라우저 검사 폴더의 현재
+파일 목록이 기록된 목록과 일치하지 않기 때문이다. 과거 보고서·증거·승인을
+다시 쓰지 않았다.
+
+### 전달 검증 — 2026-11-26
+
+구현된 후보 상태다. 최종 로컬 전체 검사 **165개가 129.383초에 통과**했다.
+인계 집중 검사 13개는 실제 임시 Git 병합·푸시, 검사 실패 시 푸시 차단,
+버전·승인 변경, 재현 자료 오류와 HTTP 경계를 다룬다. 실제 CUA에서 저장된
+EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화면에서 테스트 기록,
+회귀 조건 선택·보존, 새로고침 후 복원을 확인했다. 새로운 실데이터 수정 실행은 아니다.
+독립 재검토는 최초의 연결·권한 지적이 수정됐음을 확인했으며, 심볼릭 링크 재현
+증거를 거부한 뒤 마지막 집중 검토도 통과했다. 추가한 푸시 CI는 게시 버전에서
+전체 검사를 다시 실행한다. CoRA 구현·원본 그래프·과거 실행 권한은 변경하지 않았다.

@@ -55,6 +55,14 @@ def dispatch(notes,policy,output,deadline=None):
             if not matches:raise ValueError('Accepted candidate has no bound replay observation.')
             path,observed=matches[-1]
             receipt['comparison']={'answer':observed['response']['answer']['summary'],'observation':str(path),'candidate_digest':digest,'baseline_observation':str(baseline/'review-replay.json'),'human_retest_required':True}
+            import delivery_handoff as handoff
+            receipt['regressions']=handoff.check_registry(observed, intake.ROOT/'.local/handoffs')
+            report_path=receipt.get('candidate',{}).get('report')
+            if not report_path:raise ValueError('Published candidate has no verified revision report.')
+            selected_record=intake.locations(receipt['id'])[0]/'selected.json'
+            packet=handoff.register(report_path,selected_record,path,intake.ROOT/'.local/handoffs')
+            receipt['handoff_packet']=str(packet)
+            receipt['handoff_id']=packet.stem
         if receipt['phase']=='decision_required':
             state_path=Path(receipt.get('state_dir',output))/'tasks/repair/state.json'
             if state_path.is_file():

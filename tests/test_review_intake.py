@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'tools'))
+import delivery_handoff
 import review_intake as intake
 from development_loop import save
 import test_approved_queue as fixtures
@@ -44,6 +45,7 @@ class IntakeTests(unittest.TestCase):
                           'source_patterns':['task.txt','impl.md'],
                           'replay_check':[sys.executable,'-c',REPLAY,'{review}','{evidence}',str(Path(intake.__file__).parent)]})
         p=patch.object(intake,'ROOT',self.control);p.start();self.addCleanup(p.stop)
+        p=patch.object(delivery_handoff,'ROOT',self.control);p.start();self.addCleanup(p.stop)
         self.record={'id':'test-record','context':{'frontendCommit':self.f.cmd('git','rev-parse','HEAD'),'frontendDirty':False,
                         'sourceSha256':intake.source_digest(self.f.repo,['task.txt','impl.md']), 'graphSha256':'a'*64,'snapshotSha256':'b'*64},
                      'request':{'query':'What went wrong?','options':{'llmAnswer':False}},
@@ -91,6 +93,8 @@ class IntakeTests(unittest.TestCase):
         self.assertEqual(receipt['phase'],'awaiting_human_retest',receipt)
         self.assertIn('Synthetic replay observation',receipt['comparison']['answer'])
         self.assertTrue(receipt['comparison']['human_retest_required']);observed.assert_called_once()
+        packet=delivery_handoff.verify(receipt['handoff_packet'])
+        self.assertEqual(packet['candidate']['response']['answer']['summary'],receipt['comparison']['answer'])
         self.assertFalse(receipt['merge_authorized'])
 
     def test_real_w1_w2_chain_and_duplicate_start_never_runs_twice(self):
