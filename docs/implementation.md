@@ -895,6 +895,15 @@ Independent live semantic review and actual model repair remain unverified.
 
 Per-step limits may be configured up to 3600 seconds. Each command is still capped by the remaining cumulative episode deadline; this does not renew time or repair cycles. This permits pinned 30-source evaluations to complete within the owner-approved 60-minute experiment.
 
+
+### Unattended topic experiment — 2026-11-26
+
+A live owner-authorized experiment ran on an isolated CoRA worktree at `fc832b79a15c3149e23ae2bae7cd1280079848aa`, with a cumulative 60-minute / 5-cycle limit. The frozen 8 gold cases and 30 real sources produced 20 passes and 18 failures. Real-source errors were 8 activity-name citation failures, 7 source-grounding failures and 2 identity citation failures. Real-source runtime passes do not establish semantic accuracy.
+
+The installed agent completed a separate read-only diagnosis and requested an owner decision about customer-work canonical names: both the longer source expression and the protected shorter expected name are source-backed, while the design lacks a shared-core naming rule. The episode stopped at `decision_required` before repair, candidate reevaluation or independent candidate review. One diagnostic cycle was consumed; no repair was applied. The original deadline and complete private evidence remain preserved. No target commit, merge, active-pool replacement or original graph modification occurred. An answer to the policy question is not itself a budget renewal.
+
+Validation: controller focused suite 18 passed (16.366s), full suite 183 passed (162.208s); unchanged CoRA baseline 587 passed (20.35s). Timeout-support revision `4d02081ae892a7cd1df8e670c6bb6fdca7c844ba` passed push CI. Private run evidence is stored under ignored `.local/quality-improvement/topic-unattended-20261126/`. This is a reproduced-failure/decision result, not a completed repair or quality acceptance.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1634,3 +1643,11 @@ EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화
 ### 실제 실험 시간 제한 설정 — 2026-11-26
 
 단계별 제한은 최대 3600초까지 설정할 수 있다. 각 명령은 계속 누적 실험의 남은 시간으로 제한되며, 시간이나 수정 횟수를 갱신하지 않는다. 사용자 승인 60분 실험 안에서 고정 원문 30개 평가를 완료할 수 있도록 한다.
+
+### 무인 토픽 실험 — 2026-11-26
+
+사용자가 승인한 실제 실험을 CoRA `fc832b79a15c3149e23ae2bae7cd1280079848aa`의 별도 작업 공간에서 누적 60분·5회 한도로 실행했다. 고정 합성 사례 8개와 실제 원문 30개의 결과는 통과 20개, 실패 18개였다. 실제 원문의 오류는 활동 이름 인용 실패 8건, 원문 근거 검증 실패 7건, 식별 이름 인용 실패 2건이었다. 실제 원문의 처리 성공은 의미 정확성의 입증이 아니다.
+
+설치된 에이전트가 별도의 읽기 전용 진단을 완료하고 고객 업무의 대표 이름 정책에 대한 사용자 결정을 요청했다. 원문의 긴 표현과 보호된 짧은 예상 이름 모두 원문 근거가 있지만 설계에 공통 핵심 이름 규칙이 없기 때문이다. 실험은 수정·후보 재평가·별도 후보 검토 전에 `decision_required`로 중단됐다. 진단 주기 1회를 사용했으며 실제 수정은 적용하지 않았다. 원래 마감 시각과 비공개 증거 전체는 보존된다. 대상 commit·병합·활성 pool 교체·원본 그래프 변경은 없었다. 정책 질문의 답변 자체가 실행 예산 갱신을 뜻하지는 않는다.
+
+검증: 실행기 집중 검사 18개 통과(16.366초), 전체 검사 183개 통과(162.208초), 변경 없는 CoRA 기준 검사 587개 통과(20.35초). 시간 제한 지원 버전 `4d02081ae892a7cd1df8e670c6bb6fdca7c844ba`의 push CI가 통과했다. 비공개 실행 증거는 무시된 `.local/quality-improvement/topic-unattended-20261126/`에 보관한다. 이 결과는 실패 재현과 결정 요청이며, 수정 완료나 품질 승인이 아니다.
