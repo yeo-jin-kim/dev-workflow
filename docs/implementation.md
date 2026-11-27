@@ -914,6 +914,13 @@ This is an explicitly owner-approved evaluation-policy revision, not a worker ch
 
 Validation: controller full suite **184 tests passed**; focused quality/adapter suite **19 passed in 17.307s** after the final model-identity binding update. Native CoRA `5540e8f` passed 596 regression tests and all 8 live synthetic semantic cases; the exact-name customer-work diagnostic remained false while the semantic verdict passed. No new unattended 30-source repair episode was run.
 
+
+### Real-source repair retry outcome — 2026-11-27
+
+A new owner-authorized 60-minute/5-cycle episode froze the semantic fixtures and the same 30 original sources; baseline was 21 pass/17 fail with all 8 synthetic cases passing. The read-only agent stopped with decision requests, treating missing real semantic gold as a blocker to even source-format repair; its pytest attempt also failed because its read-only environment could not create temporary files. Parent supervision selected the already-authorized bounded prompt-format class without changing protected expectations/validators. This intervention does not count as successful unattended operation. Original episode and authority were retained.
+
+Two supervised candidate cycles used the original deadline (three cycles including diagnosis). The first introduced a hobby regression from missing identity `reason`; its evaluation was stopped. The next explicitly specified mandatory fields and passed 602 CoRA regression tests, but its live evaluation completed only four synthetic cases before the cumulative deadline: project failed on an empty identity response, the other three passed. The supervised continuation is `budget_exhausted`. No final same-source candidate comparison, independent candidate review, semantic acceptance or merge occurred; the 17 source failures are not verified fixed. Partial/failed evidence remains under ignored `.local/quality-improvement/topic-runtime-retrial-20261127/`. CoRA experimental candidate `171ab3a` is unaccepted. An additional 30 minutes was requested, not granted at stop; neither deadline nor cycles were reset.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1669,3 +1676,9 @@ CoRA 자체 평가기는 이제 `semanticVersion: 1`과 원문 기반 `semanticS
 이는 사용자가 명시적으로 승인한 평가 정책 변경이며 작업자가 통과하려고 정답을 바꾼 것이 아니다. 과거 실패 실험·원문·진단용 예상 이름은 유지한다. 새 의미 대상 설명은 대상·활동·범위와 보호된 명시적 식별 정보를 정의한다. 새 실험에는 새 고정 예상 기준이 필요하며 과거 종료 상태와 사용 예산은 초기화하지 않는다. 같은 로컬 모델의 별도 호출은 독립적인 사람의 의미 검증이 아니다. 자동 병합·그래프 승인·과거 실제 원문 오류 17건의 수정을 주장하지 않는다.
 
 검증: 실행기 전체 검사 **184개 통과**, 최종 모델 식별 고정 변경 후 품질·연결 집중 검사 **19개 통과(17.307초)**. CoRA `5540e8f`는 회귀 검사 596개와 실제 합성 의미 평가 8개를 통과했다. 고객 업무의 이름 정확 일치 진단은 false를 유지하고 의미 판정은 통과했다. 새로운 원문 30개 무인 수정 실험은 실행하지 않았다.
+
+### 실제 원문 수정 재실험 결과 — 2026-11-27
+
+사용자가 승인한 새 60분·5회 실험에서 의미 사례와 동일 원문 30개를 고정했다. 기준 결과는 통과 21개·실패 17개이며 합성 사례 8개는 모두 통과했다. 읽기 전용 작업자는 실제 의미 정답 부재를 원문 형식 수정까지 막는 사유로 보아 결정 요청으로 중단했고, 임시 파일을 만들 수 없어 pytest 시도도 실패했다. 상위 감독은 보호된 예상 기준·검증기를 바꾸지 않고 기존 허용 범위인 제한적 prompt-format 수정을 선택했다. 이 개입은 무인 운영의 성공으로 계산하지 않는다. 최초 실험과 권한 기록은 유지했다.
+
+감독 후보 주기 2회는 최초 마감 시각을 사용했으며 진단 포함 총 3회였다. 첫 후보는 식별 `reason` 누락으로 취미 회귀가 발생해 평가를 중단했다. 다음 후보는 필수 필드를 명시하고 CoRA 회귀 검사 602개를 통과했지만 실제 평가는 누적 마감 전에 합성 사례 4개만 완료했다. 프로젝트는 빈 식별 응답으로 실패하고 나머지 3개는 통과했다. 감독 후속 실행은 `budget_exhausted`다. 최종 동일 원문 후보 비교·독립 후보 검토·의미 승인·병합은 없었으며 원문 오류 17건은 수정 검증되지 않았다. 부분·실패 증거는 무시된 `.local/quality-improvement/topic-runtime-retrial-20261127/`에 보존한다. CoRA 실험 후보 `171ab3a`는 수락되지 않았다. 추가 30분은 요청했지만 중단 시점에 승인되지 않았으며 마감이나 횟수를 초기화하지 않았다.
