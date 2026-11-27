@@ -61,6 +61,14 @@ class QualityProtocolTests(unittest.TestCase):
 
     def run_protocol(self):return q.Protocol(self.cfg).run()
 
+    def test_long_step_limit_remains_under_cumulative_deadline(self):
+        cfg=q.read(self.cfg);cfg['step_seconds']=3600;q.save(self.cfg,cfg)
+        result=self.run_protocol()
+        self.assertEqual(result['status'],'awaiting_human_retest')
+        self.assertEqual(result['cycles'],1)
+        cfg['step_seconds']=3601;q.save(self.cfg,cfg)
+        with self.assertRaisesRegex(ValueError,'per-step'):q.Protocol(self.cfg)
+
     def test_full_loop_stops_at_human_retest_and_repeated_run_does_not_renew(self):
         result=self.run_protocol()
         self.assertEqual(result['status'],'awaiting_human_retest');self.assertEqual(result['cycles'],1)

@@ -110,6 +110,11 @@ See `docs/implementation.md` for final test and delivery-review evidence.
 
 Prior phase directories are content-hashed after commands exit. Every later check and retest validates the complete recorded file set, including inputs, process logs, native results and agent outputs. Modified, missing, added or symlink evidence invalidates the candidate; a stored hash without rechecking is insufficient.
 
+
+### Live experiment timeout configuration — 2026-11-26
+
+Per-step limits may be configured up to 3600 seconds. Each command is still capped by the remaining cumulative episode deadline; this does not renew time or repair cycles. This permits pinned 30-source evaluations to complete within the owner-approved 60-minute experiment.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -202,3 +207,7 @@ python3 tools/quality_improvement.py analyze-topics --report PRIVATE_CAPTURED_RE
 CoRA 코드는 변경하지 않았다. 최종 검사와 전달 검토 증거는 `docs/implementation.md`를 참고한다.
 
 명령이 끝난 뒤 이전 단계 폴더의 내용 해시를 기록한다. 이후 검사와 재시험에서는 입력·프로세스 로그·고유 평가 결과·에이전트 출력을 포함한 전체 파일 목록을 다시 대조한다. 수정·누락·추가·심볼릭 링크 증거는 후보를 무효화한다. 해시를 저장만 하고 대조하지 않는 것은 충분하지 않다.
+
+### 실제 실험 시간 제한 설정 — 2026-11-26
+
+단계별 제한은 최대 3600초까지 설정할 수 있다. 각 명령은 계속 누적 실험의 남은 시간으로 제한되며, 시간이나 수정 횟수를 갱신하지 않는다. 사용자 승인 60분 실험 안에서 고정 원문 30개 평가를 완료할 수 있도록 한다.

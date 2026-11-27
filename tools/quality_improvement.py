@@ -57,7 +57,7 @@ def policy(path):
     if cfg.get('branch') in {None,'','main','master'}:raise ValueError('Dedicated candidate branch required')
     for key,maximum in [('total_seconds',3600),('max_cycles',5)]:
         if type(cfg.get(key)) is not int or not 1<=cfg[key]<=maximum:raise ValueError('Explicit bounded limits required')
-    if type(cfg.get('step_seconds',600)) is not int or not 1<=cfg.get('step_seconds',600)<=600:raise ValueError('Invalid per-step timeout')
+    if type(cfg.get('step_seconds',600)) is not int or not 1<=cfg.get('step_seconds',600)<=3600:raise ValueError('Invalid per-step timeout')
     allowed=cfg['allowed_paths']
     if not isinstance(allowed,list) or not allowed:raise ValueError('Explicit allowed files required')
     for name in allowed:

@@ -890,6 +890,11 @@ the same episode becomes decision_required, with no budget renewal. Initial push
 revision e699734 passed remote CI; the follow-up has its own exact-head push CI.
 Independent live semantic review and actual model repair remain unverified.
 
+
+### Live experiment timeout configuration — 2026-11-26
+
+Per-step limits may be configured up to 3600 seconds. Each command is still capped by the remaining cumulative episode deadline; this does not renew time or repair cycles. This permits pinned 30-source evaluations to complete within the owner-approved 60-minute experiment.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1625,3 +1630,7 @@ EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화
 과거 기준 버전 로그를 바꾸면 동일 작업이 예산 갱신 없이 decision_required로 바뀌는지 확인한다.
 최초 게시 버전 e699734는 원격 CI를 통과했다. 후속 보완에는 별도의 정확한 게시 버전 CI가
 적용된다. 독립적인 실제 의미 검토와 실제 모델 수정은 여전히 미검증이다.
+
+### 실제 실험 시간 제한 설정 — 2026-11-26
+
+단계별 제한은 최대 3600초까지 설정할 수 있다. 각 명령은 계속 누적 실험의 남은 시간으로 제한되며, 시간이나 수정 횟수를 갱신하지 않는다. 사용자 승인 60분 실험 안에서 고정 원문 30개 평가를 완료할 수 있도록 한다.

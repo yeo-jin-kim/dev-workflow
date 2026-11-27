@@ -349,6 +349,11 @@ See [protocol and operating instructions](docs/quality-improvement-protocol.md).
 
 Prior step inputs, logs and result files are hashed and rechecked before later phases and human retest; changed evidence invalidates the candidate.
 
+
+### Live experiment timeout configuration — 2026-11-26
+
+Per-step limits may be configured up to 3600 seconds. Each command is still capped by the remaining cumulative episode deadline; this does not renew time or repair cycles. This permits pinned 30-source evaluations to complete within the owner-approved 60-minute experiment.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -669,3 +674,7 @@ CoRA 평가 연결기는 고정 합성 정답과 실원문 실행 검사를 결�
 [프로토콜과 사용 순서](docs/quality-improvement-protocol.md)를 참고한다.
 
 이전 단계의 입력·로그·결과 파일을 해시하고 이후 단계와 사람 재시험 전에 다시 대조한다. 증거가 바뀌면 후보를 무효화한다.
+
+### 실제 실험 시간 제한 설정 — 2026-11-26
+
+단계별 제한은 최대 3600초까지 설정할 수 있다. 각 명령은 계속 누적 실험의 남은 시간으로 제한되며, 시간이나 수정 횟수를 갱신하지 않는다. 사용자 승인 60분 실험 안에서 고정 원문 30개 평가를 완료할 수 있도록 한다.
