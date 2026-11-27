@@ -27,13 +27,22 @@ def convert(config,gold,real,source):
     for case in gold['goldEvaluation']:
         run=runs[case['id']]
         normal=run['status']=='completed' and not any(o['status'] in {'schema_error','model_error','unsupported_quote'} for o in run.get('outcomes',[]))
-        good=normal and not case['forbiddenCategoryPresent'] and (case['exactMatch'] is True or case['exactMatch'] is None)
-        id_='gold:'+case['id'];rows.append({'id':id_,'expected_digest':expected[id_],'status':'pass' if good else 'fail'})
+        if case.get('semanticVersion')==1:
+            verdict=case.get('semanticStatus')
+            if verdict not in {'pass','fail','needs_review'}:raise ValueError('Invalid semantic evaluation verdict')
+            status=('deferred' if verdict=='needs_review' else verdict) if normal and not case['forbiddenCategoryPresent'] else 'fail'
+        elif any(c.get('semanticTargets') for c in read(config['gold'])['cases']):
+            raise ValueError('Semantic fixtures require semantic evaluation; exact fallback refused')
+        else:
+            good=normal and not case['forbiddenCategoryPresent'] and (case['exactMatch'] is True or case['exactMatch'] is None)
+            status='pass' if good else 'fail'
+        id_='gold:'+case['id'];rows.append({'id':id_,'expected_digest':expected[id_],'status':status})
     for run in real['runs']:
         good=run['status']=='completed' and not any(o['status'] in {'schema_error','model_error','resolver_error','unsupported_quote'} for o in run.get('outcomes',[]))
         id_='runtime:'+run['sourceId'];rows.append({'id':id_,'expected_digest':expected[id_],'status':'pass' if good else 'fail'})
     if len(rows)!=len(expected) or {r['id'] for r in rows}!=set(expected):raise ValueError('Native evaluation coverage missing/duplicated')
     identities=sorted({(s.get('completion',{}).get('llm_provider') or '',s.get('completion',{}).get('llm_model') or '') for report in [gold,real] for run in report['runs'] for s in run.get('stages',[]) if s.get('completion')})
+    identities=sorted(set(identities)|{(c['semanticCompletion'].get('llm_provider') or '',c['semanticCompletion'].get('llm_model') or '') for c in gold['goldEvaluation'] if c.get('semanticCompletion')})
     return {'model_identity':[{'provider':p,'model':m} for p,m in identities],'schema_version':1,'source_digest':source,'dataset_digest':sha(expected),'cases':rows,'decision_requests':[],'semantic_quality_accepted':False,'limitations':['Real-source pass means no recorded processing/grounding failure; semantic quality still requires human review.','No-source output and deferrals are not real-source semantic gold. Positive frozen gold cases prevent universal empty output from passing the complete suite.']}
 
 

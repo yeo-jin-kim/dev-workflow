@@ -26,6 +26,7 @@
     "/absolute/controller/schemas/quality-repair.schema.json",
     "/absolute/controller/schemas/quality-review.schema.json",
     "/absolute/path/to/cora/tools/evaluate_topic_subjects.py",
+    "/absolute/path/to/cora/src/cora/cognition/topic_evaluation.py",
     "/absolute/path/to/cora/tests/fixtures/topic_subject_gold.json",
     "/absolute/private/controller/path/pinned-real-manifest.json",
     "/absolute/private/path/snapshot.json",

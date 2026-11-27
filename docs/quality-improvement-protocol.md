@@ -115,6 +115,16 @@ Prior phase directories are content-hashed after commands exit. Every later chec
 
 Per-step limits may be configured up to 3600 seconds. Each command is still capped by the remaining cumulative episode deadline; this does not renew time or repair cycles. This permits pinned 30-source evaluations to complete within the owner-approved 60-minute experiment.
 
+
+### Owner-approved semantic topic evaluation — 2026-11-27
+
+The native CoRA evaluator now reports `semanticVersion: 1` and source-grounded `semanticStatus` (`pass`, `fail`, `needs_review`). The controller uses this verdict rather than diagnostic `exactMatch`; ambiguity maps to `deferred` and cannot satisfy complete acceptance. Semantic fixtures refuse fallback to the old exact-match grade. Evaluation-model completion identities are included in the observed model binding, and the example policy protects the new native semantic evaluator alongside the fixtures and evaluation command.
+
+This is an explicitly owner-approved evaluation-policy revision, not a worker changing labels to pass. The original failed episode, source text and diagnostic expected names remain unchanged. New semantic target descriptors define referent/activity/scope and protected explicit identifiers. A new episode requires fresh frozen expectations; the old terminal state and consumed budget are not reset. The same local model in a separate call is not independent human semantic proof. No automatic merging, graph approval or correction of the previous 17 real-source failures is claimed.
+
+
+Validation: controller full suite **184 tests passed**; focused quality/adapter suite **19 passed in 17.307s** after the final model-identity binding update. Native CoRA `5540e8f` passed 596 regression tests and all 8 live synthetic semantic cases; the exact-name customer-work diagnostic remained false while the semantic verdict passed. No new unattended 30-source repair episode was run.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -211,3 +221,11 @@ CoRA 코드는 변경하지 않았다. 최종 검사와 전달 검토 증거는 
 ### 실제 실험 시간 제한 설정 — 2026-11-26
 
 단계별 제한은 최대 3600초까지 설정할 수 있다. 각 명령은 계속 누적 실험의 남은 시간으로 제한되며, 시간이나 수정 횟수를 갱신하지 않는다. 사용자 승인 60분 실험 안에서 고정 원문 30개 평가를 완료할 수 있도록 한다.
+
+### 사용자 승인 토픽 의미 평가 — 2026-11-27
+
+CoRA 자체 평가기는 이제 `semanticVersion: 1`과 원문 기반 `semanticStatus`(`pass`, `fail`, `needs_review`)를 보고한다. 실행기는 진단용 `exactMatch` 대신 이 판정을 사용한다. 모호함은 `deferred`로 전달하며 전체 승인 조건을 충족하지 못한다. 의미 평가 사례를 기존 정확 일치 판정으로 대체하지 않는다. 평가 모델 응답의 식별 정보도 관측 모델 고정 검사에 포함하며 예제 정책은 기존 사례·평가 명령과 함께 새 의미 평가기를 보호한다.
+
+이는 사용자가 명시적으로 승인한 평가 정책 변경이며 작업자가 통과하려고 정답을 바꾼 것이 아니다. 과거 실패 실험·원문·진단용 예상 이름은 유지한다. 새 의미 대상 설명은 대상·활동·범위와 보호된 명시적 식별 정보를 정의한다. 새 실험에는 새 고정 예상 기준이 필요하며 과거 종료 상태와 사용 예산은 초기화하지 않는다. 같은 로컬 모델의 별도 호출은 독립적인 사람의 의미 검증이 아니다. 자동 병합·그래프 승인·과거 실제 원문 오류 17건의 수정을 주장하지 않는다.
+
+검증: 실행기 전체 검사 **184개 통과**, 최종 모델 식별 고정 변경 후 품질·연결 집중 검사 **19개 통과(17.307초)**. CoRA `5540e8f`는 회귀 검사 596개와 실제 합성 의미 평가 8개를 통과했다. 고객 업무의 이름 정확 일치 진단은 false를 유지하고 의미 판정은 통과했다. 새로운 원문 30개 무인 수정 실험은 실행하지 않았다.

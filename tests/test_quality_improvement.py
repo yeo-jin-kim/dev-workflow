@@ -173,6 +173,22 @@ class TopicAdapterTests(unittest.TestCase):
             self.assertFalse(out['semantic_quality_accepted'])
             rr['runs']=[]
             with self.assertRaises(ValueError):e.convert(cfg,gr,rr,'candidate')
+    def test_semantic_verdict_replaces_literal_match_without_hiding_ambiguity(self):
+        import quality_topic_evaluate as e
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);gold=root/'gold.json';manifest=root/'manifest.json'
+            q.save(gold,{'cases':[{'id':'positive','semanticTargets':[{'meaning':'Activity'}]}]})
+            q.save(manifest,{'sources':[{'id':'real','digest':'frozen'}]})
+            cfg={'gold':str(gold),'manifest':str(manifest)}
+            row={'id':'positive','exactMatch':False,'forbiddenCategoryPresent':False,'semanticVersion':1,'semanticStatus':'pass'}
+            gr={'runs':[{'sourceId':'positive','status':'completed'}],'goldEvaluation':[row]}
+            rr={'runs':[{'sourceId':'real','status':'completed'}]}
+            self.assertEqual(e.convert(cfg,gr,rr,'source')['cases'][0]['status'],'pass')
+            row['semanticStatus']='needs_review'
+            self.assertEqual(e.convert(cfg,gr,rr,'source')['cases'][0]['status'],'deferred')
+            del row['semanticVersion']
+            with self.assertRaisesRegex(ValueError,'fallback'):e.convert(cfg,gr,rr,'source')
+
     def test_agent_roles_are_separate_readonly_and_workspace_write(self):
         import quality_agent_stage as a
         with tempfile.TemporaryDirectory() as d:
