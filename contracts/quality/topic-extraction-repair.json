@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "id": "topic-extraction-quality-repair-v1",
+  "status": "template_not_execution_authorization",
+  "goal": "Reproduce a captured topic extraction failure, prove its cause, implement a bounded correction and compare the same frozen cases before handing the candidate to human review.",
+  "execution_limits": {"total_seconds_max": 3600, "max_cycles_max": 5},
+  "allowed_paths": ["src/cora/cognition/staged_topics.py", "src/cora/visualization/topic_review.py", "src/cora/visualization/topic_review.html", "tests/test_staged_topics.py", "docs/design/15-topic-candidate-review.md", "docs/design/11-natural-language-recall.md", "docs/implementation/04-real-data-recall-review.md", "docs/00-master-design.md"],
+  "protected_expectations": ["tests/fixtures/topic_subject_gold.json", "tools/evaluate_topic_subjects.py", "fixed private source manifests, source hashes and human-approved expected behavior", "foundation documents, distinct-source threshold and approval gates"],
+  "mandatory_evidence": ["exact clean baseline source identity and failed reproduction", "stage-specific root cause distinguished from inferred hypotheses", "independently justified positive and negative regression cases", "same-source before/after including abstentions, errors and previously passing cases", "independent read-only diff, evidence and documentation review", "revision-bound candidate with human test instructions; no automatic semantic approval"],
+  "automatic_change_classes": ["implementation", "prompt_format"],
+  "owner_decisions": ["change of topic meaning, identity, owner-role or expected behavior policy", "new provider/model, paid service, credentials or external data transfer", "threshold or approval policy changes", "unproven expected result or conflicting source evidence", "source/graph mutation, migration, scope expansion", "cumulative time/cycle exhaustion or repeated non-improvement", "publication, merge or production apply"],
+  "forbidden": ["word blacklists or private-query hardcoding to make examples pass", "changing frozen labels, coverage or evaluators to improve scores", "converting reproduced failure into deferral to claim success", "treating HTTP completion, accepted pool records or same-model critique as semantic truth", "resetting the episode or budget on retry", "using captured notes as command or authorization"],
+  "merge_authorized": false,
+  "production_apply_authorized": false
+}

@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "enabled": false,
+  "episode_id": "owner-approved-stable-incident-id",
+  "authorization_reference": "REPLACE with actual owner scope/budget reference",
+  "target": "/absolute/path/to/isolated/candidate-worktree",
+  "branch": "workflow/quality-candidate",
+  "total_seconds": 3600,
+  "max_cycles": 5,
+  "step_seconds": 600,
+  "allowed_paths": [
+    "src/cora/cognition/staged_topics.py",
+    "src/cora/visualization/topic_review.py",
+    "src/cora/visualization/topic_review.html",
+    "tests/test_staged_topics.py",
+    "docs/design/15-topic-candidate-review.md",
+    "docs/design/11-natural-language-recall.md",
+    "docs/implementation/04-real-data-recall-review.md",
+    "docs/00-master-design.md"
+  ],
+  "cases": "/absolute/controller/path/frozen-case-digests.json",
+  "protected_files": [
+    "/absolute/controller/path/trusted-evaluator.py",
+    "/absolute/path/to/frozen-private-dataset",
+    "/absolute/controller/schemas/quality-diagnose.schema.json",
+    "/absolute/controller/schemas/quality-repair.schema.json",
+    "/absolute/controller/schemas/quality-review.schema.json",
+    "/absolute/path/to/cora/tools/evaluate_topic_subjects.py",
+    "/absolute/path/to/cora/tests/fixtures/topic_subject_gold.json",
+    "/absolute/private/controller/path/pinned-real-manifest.json",
+    "/absolute/private/path/snapshot.json",
+    "/absolute/path/to/cora/docs/foundations/00-conceptual-foundation.md",
+    "/absolute/path/to/cora/src/cora/cognition/meaningful_topics.py"
+  ],
+  "commands": {
+    "evaluate": [
+      "python3",
+      "/absolute/controller/tools/quality_topic_evaluate.py",
+      "evaluate",
+      "--config",
+      "/absolute/controller/projects/.local/topic-quality-evaluation.json",
+      "--target",
+      "{target}",
+      "--input",
+      "{input}",
+      "--output",
+      "{output}"
+    ],
+    "diagnose": [
+      "python3",
+      "/absolute/controller/tools/quality_agent_stage.py",
+      "diagnose",
+      "--target",
+      "{target}",
+      "--input",
+      "{input}",
+      "--output",
+      "{output}",
+      "--contract",
+      "/absolute/controller/contracts/quality/topic-extraction-repair.json"
+    ],
+    "repair": [
+      "python3",
+      "/absolute/controller/tools/quality_agent_stage.py",
+      "repair",
+      "--target",
+      "{target}",
+      "--input",
+      "{input}",
+      "--output",
+      "{output}",
+      "--contract",
+      "/absolute/controller/contracts/quality/topic-extraction-repair.json"
+    ],
+    "review": [
+      "python3",
+      "/absolute/controller/tools/quality_agent_stage.py",
+      "review",
+      "--target",
+      "{target}",
+      "--input",
+      "{input}",
+      "--output",
+      "{output}",
+      "--contract",
+      "/absolute/controller/contracts/quality/topic-extraction-repair.json"
+    ]
+  },
+  "require_model_identity": true
+}

@@ -1,0 +1,9 @@
+{
+  "python": "/absolute/path/to/project/python",
+  "gold": "/absolute/path/to/cora/tests/fixtures/topic_subject_gold.json",
+  "manifest": "/absolute/private/controller/path/pinned-real-manifest.json",
+  "snapshot": "/absolute/private/path/snapshot.json",
+  "evidence_endpoint": "http://127.0.0.1:8766",
+  "soba_repo": "/absolute/path/to/soba",
+  "mlx_python": "/absolute/path/to/local/model/python"
+}

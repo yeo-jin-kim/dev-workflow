@@ -1,0 +1,70 @@
+{
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decision_requests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "verdict": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "changes_requested"
+      ]
+    },
+    "blocking_findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "criteria": {
+      "type": "object",
+      "properties": {
+        "root_cause": {
+          "type": "boolean"
+        },
+        "source_grounding": {
+          "type": "boolean"
+        },
+        "regression": {
+          "type": "boolean"
+        },
+        "documentation_sync": {
+          "type": "boolean"
+        },
+        "scope": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "root_cause",
+        "source_grounding",
+        "regression",
+        "documentation_sync",
+        "scope"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "summary",
+    "evidence",
+    "decision_requests",
+    "verdict",
+    "blocking_findings",
+    "criteria"
+  ],
+  "additionalProperties": false
+}

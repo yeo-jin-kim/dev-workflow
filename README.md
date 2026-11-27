@@ -329,6 +329,23 @@ Remote CI uses Ubuntu 22.04 for Python 3.9. The initial Ubuntu 26.04 image
 could not install Python 3.9 and never ran tests; its failed run is preserved.
 Only the runner image was pinned; the complete test command remains unchanged.
 
+## Automatic quality improvement protocol — experimental
+
+`tools/quality_improvement.py` adds bounded reproduction, causal diagnosis, repair,
+fixed-case evaluation and separate review. Review feedback is automatically passed
+to another attempt; regression, hidden failures, two non-accepted attempts and owner
+boundaries are preserved. Successful candidates stop at human retest, without automatic
+publication or merge. Stable episode IDs retain cumulative limits and interrupted runs.
+
+The CoRA evaluator adapter combines frozen synthetic labels with real-source runtime
+checks; runtime success is not semantic accuracy. The installed agent adapter uses
+separate read-only diagnosis/review and bounded writable repair. It preserves default
+model settings. The disabled example policy and topic contract need trusted local
+paths, protected inputs and an actual scope/budget reference before live execution.
+No scheduler or current-model repair was activated. Current captured CoRA results
+were ingested: 30 sources, 17 with failures, still not proven causal diagnoses or gold.
+See [protocol and operating instructions](docs/quality-improvement-protocol.md).
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -633,3 +650,17 @@ EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화
 원격 CI는 Python 3.9를 위해 Ubuntu 22.04를 사용한다. 최초 Ubuntu 26.04
 환경은 Python 3.9 설치 단계에서 실패해 검사를 실행하지 못했고 실패 기록을 보존했다.
 실행 환경만 고정했으며 전체 검사 명령은 바꾸지 않았다.
+
+## 자동 품질 개선 프로토콜 — 실험 단계
+
+`tools/quality_improvement.py`에 한도 있는 재현·원인 검토·수정·고정 사례 평가·별도 검토를
+추가했다. 검토 지적을 다음 시도에 자동 전달하며 회귀·실패 숨김·연속 두 번 미수락·사용자 결정
+경계를 유지한다. 성공 후보도 자동 게시·병합 없이 사람 재시험에서 멈춘다. 고정 작업 ID가 누적
+한도와 중단 기록을 보존한다.
+
+CoRA 평가 연결기는 고정 합성 정답과 실원문 실행 검사를 결합한다. 실행 성공은 의미 정확도가
+아니다. 설치된 에이전트 연결기는 읽기 전용 원인 검토/재검토와 한도 있는 쓰기 수정을 별도로
+호출하고 기본 모델 설정을 유지한다. 비활성 예제 정책·토픽 계약은 실제 로컬 경로·보호 입력·
+범위/예산 승인 참조를 설정해야 실제 실행할 수 있다. 스케줄러나 현재 모델 수정은 활성화하지
+않았다. 실제 CoRA 결과 30개 원문·17개 실패를 접수했으며 아직 확정된 원인이나 정답은 아니다.
+[프로토콜과 사용 순서](docs/quality-improvement-protocol.md)를 참고한다.

@@ -1,0 +1,52 @@
+{
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "decision_requests": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reproduced": {
+      "type": "boolean"
+    },
+    "root_cause": {
+      "type": "string"
+    },
+    "change_class": {
+      "type": "string",
+      "enum": [
+        "implementation",
+        "prompt_format",
+        "semantic_policy",
+        "model_change",
+        "out_of_scope"
+      ]
+    },
+    "repair_plan": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "summary",
+    "evidence",
+    "decision_requests",
+    "reproduced",
+    "root_cause",
+    "change_class",
+    "repair_plan"
+  ],
+  "additionalProperties": false
+}

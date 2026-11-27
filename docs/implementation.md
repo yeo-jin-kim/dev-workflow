@@ -837,6 +837,46 @@ Remote CI uses Ubuntu 22.04 for Python 3.9. The initial Ubuntu 26.04 image
 could not install Python 3.9 and never ran tests; its failed run is preserved.
 Only the runner image was pinned; the complete test command remains unchanged.
 
+## Automatic quality improvement implementation — 2026-11-26
+
+Implemented experimental controller components: `quality_improvement.py` (durable
+phase/cycle/deadline state and gates), `quality_agent_stage.py` (installed agent
+roles with controller-owned schemas) and `quality_topic_evaluate.py` (native CoRA
+subprocess evaluation, no target imports). Added a scope-only topic repair contract,
+disabled private-configuration examples, frozen case registries, ordinary review
+feedback iteration, protected-input and exact-source checks, regression/deferral
+blocking, cumulative limits, stale-candidate invalidation, observed model/provider binding and terminal deduplication.
+No CoRA implementation, original data or active review pool was modified.
+
+Actual captured evaluation intake: 30 sources, 17 sources with grounded-text-related
+errors, preserved in ignored private analysis. `root_cause_proven=false` and
+`semantic_quality_accepted=false` remain explicit. No live model worker, independent
+agent review, real before/after quality acceptance, installed listener, publication
+of a worker candidate or automatic merge was executed. Templates are not renewed
+execution authorization. Stronger semantic labels, source context and local model
+capabilities must be supplied through protected configuration. The protocol cannot
+prove an agent's causal reasoning merely from JSON and does not replace human retest.
+
+The implementation was source-reviewed for input ownership, source/version binding,
+expected-label/coverage preservation, process-group deadlines, repeat-run limits and
+read-only stages. Independent live review remains pending; this is an experimental
+branch delivery. Final deterministic validation is recorded below. See
+`quality-improvement-protocol.md` for full state transitions and operating limits.
+
+### Protocol delivery validation
+
+Final controller suite: **181 tests passed in 143.007 seconds**. Focused new
+protocol/adapter suite: **16 tests passed in 13.915 seconds**. The focused cases
+include a complete synthetic repair-to-retest run, automatic review-feedback retry,
+coverage/expectation tampering, semantic decisions, out-of-scope writes, reviewer
+writes, regressions, failure-to-deferral hiding, timeout/cycle accounting, no budget
+renewal, interrupted-step refusal, stale candidate invalidation, observed model change,
+case/source binding and agent sandbox role construction. Earlier full suites of
+179/180 tests also passed but are historical intermediate versions. No acceptance
+labels were changed to obtain these results. JSON schemas/configuration and bilingual
+source documentation were inspected; `git diff --check` passed. Push CI is a separate
+mechanical gate and does not replace independent live semantic review.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1530,3 +1570,35 @@ EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화
 원격 CI는 Python 3.9를 위해 Ubuntu 22.04를 사용한다. 최초 Ubuntu 26.04
 환경은 Python 3.9 설치 단계에서 실패해 검사를 실행하지 못했고 실패 기록을 보존했다.
 실행 환경만 고정했으며 전체 검사 명령은 바꾸지 않았다.
+
+## 자동 품질 개선 구현 — 2026-11-26
+
+실험적 컨트롤러 구성 요소를 구현했다. `quality_improvement.py`는 지속되는 단계·회차·마감·
+검증 조건을, `quality_agent_stage.py`는 컨트롤러 소유 스키마를 사용하는 설치된 에이전트의
+역할을, `quality_topic_evaluate.py`는 대상 패키지를 가져오지 않는 CoRA 하위 프로세스 평가를
+담당한다. 토픽 수정 범위 계약·비활성 비공개 설정 예제·고정 사례 목록·일반 검토 지적의 반복
+전달·보호 입력과 정확한 소스 검사·회귀/보류 차단·누적 한도·오래된 후보 무효화·관찰된 모델/제공자 연결·종료 상태 중복
+방지를 추가했다. CoRA 구현·원본 데이터·실제 검토 pool은 변경하지 않았다.
+
+실제 평가 기록 접수는 원문 30개·원문 근거 관련 오류가 있는 원문 17개이며 비공개 분석으로
+보존했다. `root_cause_proven=false`, `semantic_quality_accepted=false`를 유지한다. 실제
+모델 작업자·독립 에이전트 검토·실제 수정 전후 품질 승인·설치된 수신기·작업자 후보 게시·자동
+병합은 실행하지 않았다. 템플릿은 실행 권한 갱신이 아니다. 더 강한 의미 정답·원문 맥락·로컬
+모델 기능을 보호된 설정으로 공급해야 한다. JSON만으로 에이전트의 인과 추론이 옳다고 증명할
+수 없으며 사람 재시험을 대체하지 않는다.
+
+구현 소스에서 입력 소유권·소스/버전 연결·정답/사례 보존·프로세스 그룹 마감·재호출 한도·
+읽기 전용 단계를 검토했다. 독립 실제 검토는 대기 상태이며 실험 브랜치 전달이다. 최종 결정적
+검증은 아래에 기록한다. 전체 상태 전이와 운영 한계는 `quality-improvement-protocol.md`를
+참고한다.
+
+### 프로토콜 전달 검증
+
+최종 컨트롤러 전체 검사 **181개가 143.007초에 통과**했다. 새 프로토콜/연결기 집중 검사
+**16개가 13.915초에 통과**했다. 집중 검사는 합성 수정→재시험 전체 흐름, 검토 지적의 자동
+재시도, 사례/정답 변조, 의미 결정, 범위 밖 변경, 검토자의 변경, 회귀, 실패를 보류로 숨김,
+시간/회차 집계, 예산 갱신 금지, 중단 단계 재실행 거절, 오래된 후보 무효화, 관찰한 모델 변경,
+사례/소스 연결과 에이전트 실행 모드 구성을 다룬다. 앞선 전체 검사 179/180개도 통과했으나
+중간 버전의 과거 결과다. 통과를 위해 승인 기준이나 정답을 바꾸지 않았다. JSON 스키마/설정과
+영문·한국어 소스 문서를 검토했고 `git diff --check`가 통과했다. Push CI는 별도 기계적 검사이며
+실제 독립 의미 검토를 대체하지 않는다.
