@@ -921,6 +921,15 @@ A new owner-authorized 60-minute/5-cycle episode froze the semantic fixtures and
 
 Two supervised candidate cycles used the original deadline (three cycles including diagnosis). The first introduced a hobby regression from missing identity `reason`; its evaluation was stopped. The next explicitly specified mandatory fields and passed 602 CoRA regression tests, but its live evaluation completed only four synthetic cases before the cumulative deadline: project failed on an empty identity response, the other three passed. The supervised continuation is `budget_exhausted`. No final same-source candidate comparison, independent candidate review, semantic acceptance or merge occurred; the 17 source failures are not verified fixed. Partial/failed evidence remains under ignored `.local/quality-improvement/topic-runtime-retrial-20261127/`. CoRA experimental candidate `171ab3a` is unaccepted. An additional 30 minutes was requested, not granted at stop; neither deadline nor cycles were reset.
 
+
+### Approved extension completed without acceptance — 2026-11-27
+
+Owner approval added 30 minutes while retaining five total cycles; consumed authority is now 90 minutes/five cycles. The original episode and each failed/partial attempt remain immutable. Cycle 4 restored the baseline first-call prompt and passed 602 tests/8 synthetic cases, but partial real-source states showed no improvement and preliminary review found a potential identity switch. Cycle 5 added preservation of already-grounded identity values, a separate same-target check, exact field-specific repair feedback and adversarial regression cases.
+
+Final evidence: CoRA `9485160`, **607 tests passed (21.34s)**; **8/8** synthetic semantic cases passed; **30/30** fixed original sources evaluated. Processing-error sources decreased **17 → 13** (38-case operational pass 21 → 25, fail 17 → 13; no case-level processing regressions). Accepted outcomes increased 14 → 17 and needs_scope 4 → 6. Case-level runtime scoring treats normal deferral as operational completion; private item-level audit records new deferrals separately, which cannot qualify semantic repair.
+
+The candidate is not accepted: parent inspection found a reviewer notification promoted to an authored-submission candidate. Final independent review timed out with no verdict; preliminary review requested changes, and no final pass is implied by addressing its source-guard finding. All five cycles are used. No merge, canonical graph mutation or active-pool replacement occurred. Native evidence, comparison, explicit extension authority and `final-outcome.json` are under ignored `.local/quality-improvement/topic-runtime-retrial-20261127/`. Final status is budget_exhausted with thirteen processing failures and a semantic role blocker. Next priority requires source-backed owner-role/authorship validation and another explicitly approved allowance, not a silent retry/reset. This was supervised recovery after an automatic diagnostic stop, not a successful unattended closed loop.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1682,3 +1691,11 @@ CoRA 자체 평가기는 이제 `semanticVersion: 1`과 원문 기반 `semanticS
 사용자가 승인한 새 60분·5회 실험에서 의미 사례와 동일 원문 30개를 고정했다. 기준 결과는 통과 21개·실패 17개이며 합성 사례 8개는 모두 통과했다. 읽기 전용 작업자는 실제 의미 정답 부재를 원문 형식 수정까지 막는 사유로 보아 결정 요청으로 중단했고, 임시 파일을 만들 수 없어 pytest 시도도 실패했다. 상위 감독은 보호된 예상 기준·검증기를 바꾸지 않고 기존 허용 범위인 제한적 prompt-format 수정을 선택했다. 이 개입은 무인 운영의 성공으로 계산하지 않는다. 최초 실험과 권한 기록은 유지했다.
 
 감독 후보 주기 2회는 최초 마감 시각을 사용했으며 진단 포함 총 3회였다. 첫 후보는 식별 `reason` 누락으로 취미 회귀가 발생해 평가를 중단했다. 다음 후보는 필수 필드를 명시하고 CoRA 회귀 검사 602개를 통과했지만 실제 평가는 누적 마감 전에 합성 사례 4개만 완료했다. 프로젝트는 빈 식별 응답으로 실패하고 나머지 3개는 통과했다. 감독 후속 실행은 `budget_exhausted`다. 최종 동일 원문 후보 비교·독립 후보 검토·의미 승인·병합은 없었으며 원문 오류 17건은 수정 검증되지 않았다. 부분·실패 증거는 무시된 `.local/quality-improvement/topic-runtime-retrial-20261127/`에 보존한다. CoRA 실험 후보 `171ab3a`는 수락되지 않았다. 추가 30분은 요청했지만 중단 시점에 승인되지 않았으며 마감이나 횟수를 초기화하지 않았다.
+
+### 승인 연장 완료, 수락 없음 — 2026-11-27
+
+사용자가 총 5회를 유지하며 30분을 추가 승인했다. 사용한 권한은 이제 90분·5회다. 최초 실험과 모든 실패·부분 실행은 변경 없이 보존한다. 4번째 주기는 기준 첫 호출 프롬프트를 복원해 검사 602개·합성 사례 8개를 통과했지만 실제 원문 부분 상태에 개선이 없었고 예비 검토에서 식별 대상 변경 가능성을 지적했다. 5번째 주기는 이미 원문으로 확인된 식별 값 보존, 별도 동일 대상 검사, 정확한 필드별 수정 피드백과 적대적 회귀 사례를 추가했다.
+
+최종 증거: CoRA `9485160`, **검사 607개 통과(21.34초)**, 합성 의미 사례 **8/8 통과**, 고정 실제 원문 **30/30 평가**. 처리 오류 원문은 **17 → 13건**(38개 처리 점수 통과 21 → 25, 실패 17 → 13, 사례 단위 처리 회귀 없음). 수락 항목은 14 → 17개, needs_scope는 4 → 6개로 늘었다. 사례 단위 실행 점수는 정상 보류를 처리 완료로 보므로 비공개 항목 단위 감사에서 새 보류를 별도로 기록하며 의미 수정으로 인정하지 않는다.
+
+후보는 수락하지 않는다. 상위 감독 검토에서 리뷰어 알림을 저자 논문 제출 후보로 승격한 문제가 확인됐다. 최종 독립 검토는 판정 없이 시간 초과됐고 예비 검토는 수정을 요청했으며, 소스 보호 지적을 반영한 것만으로 최종 통과를 뜻하지 않는다. 5회를 모두 사용했다. 병합·정식 그래프 변경·활성 pool 교체는 없었다. 자체 실행 증거·비교·명시적 연장 권한·`final-outcome.json`은 무시된 `.local/quality-improvement/topic-runtime-retrial-20261127/`에 있다. 최종 상태는 처리 실패 13건과 의미 역할 문제를 남긴 budget_exhausted다. 다음 우선순위는 원문 기반 사용자 역할·저자 관계 검증이며 별도로 승인된 추가 한도가 필요하고, 몰래 재시도하거나 초기화하지 않는다. 자동 진단 중단 후 감독 복구였으며 무인 폐쇄 반복의 성공은 아니다.
