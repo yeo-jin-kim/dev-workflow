@@ -865,7 +865,7 @@ branch delivery. Final deterministic validation is recorded below. See
 
 ### Protocol delivery validation
 
-Final controller suite: **181 tests passed in 143.007 seconds**. Focused new
+Initial protocol controller suite: **181 tests passed in 143.007 seconds**. Focused new
 protocol/adapter suite: **16 tests passed in 13.915 seconds**. The focused cases
 include a complete synthetic repair-to-retest run, automatic review-feedback retry,
 coverage/expectation tampering, semantic decisions, out-of-scope writes, reviewer
@@ -876,6 +876,19 @@ case/source binding and agent sandbox role construction. Earlier full suites of
 labels were changed to obtain these results. JSON schemas/configuration and bilingual
 source documentation were inspected; `git diff --check` passed. Push CI is a separate
 mechanical gate and does not replace independent live semantic review.
+
+
+### Evidence-integrity follow-up
+
+Final source adds complete per-stage file manifests and rechecks them before later
+phases and human retest. Changed inputs, logs, raw evaluator/agent outputs, missing
+files, added files or symlinks invalidate the candidate. This closes a source-review
+finding: recorded result hashes alone were not previously rechecked. Focused suite
+**17 passed in 16.596 seconds**; final full suite **182 passed in 144.462 seconds**.
+The added regression changes a prior baseline log after readiness and verifies that
+the same episode becomes decision_required, with no budget renewal. Initial pushed
+revision e699734 passed remote CI; the follow-up has its own exact-head push CI.
+Independent live semantic review and actual model repair remain unverified.
 
 <!-- document-language: ko -->
 # 한국어 번역
@@ -1594,7 +1607,7 @@ EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화
 
 ### 프로토콜 전달 검증
 
-최종 컨트롤러 전체 검사 **181개가 143.007초에 통과**했다. 새 프로토콜/연결기 집중 검사
+최초 프로토콜 컨트롤러 전체 검사 **181개가 143.007초에 통과**했다. 새 프로토콜/연결기 집중 검사
 **16개가 13.915초에 통과**했다. 집중 검사는 합성 수정→재시험 전체 흐름, 검토 지적의 자동
 재시도, 사례/정답 변조, 의미 결정, 범위 밖 변경, 검토자의 변경, 회귀, 실패를 보류로 숨김,
 시간/회차 집계, 예산 갱신 금지, 중단 단계 재실행 거절, 오래된 후보 무효화, 관찰한 모델 변경,
@@ -1602,3 +1615,13 @@ EMNLP 전후 비교를 확인했고, 별도로 합성 사례라고 표시한 화
 중간 버전의 과거 결과다. 통과를 위해 승인 기준이나 정답을 바꾸지 않았다. JSON 스키마/설정과
 영문·한국어 소스 문서를 검토했고 `git diff --check`가 통과했다. Push CI는 별도 기계적 검사이며
 실제 독립 의미 검토를 대체하지 않는다.
+
+### 증거 무결성 후속 보완
+
+최종 소스는 단계별 전체 파일 목록·해시를 기록하고 이후 단계와 사람 재시험 전에 다시 대조한다.
+입력·로그·원본 평가/에이전트 출력의 수정, 파일 누락·추가·심볼릭 링크는 후보를 무효화한다.
+결과 해시를 저장만 하고 다시 대조하지 않던 소스 검토 지적을 보완했다. 집중 검사 **17개가
+16.596초**, 최종 전체 검사 **182개가 144.462초에 통과**했다. 추가 회귀 검사는 준비 완료 뒤
+과거 기준 버전 로그를 바꾸면 동일 작업이 예산 갱신 없이 decision_required로 바뀌는지 확인한다.
+최초 게시 버전 e699734는 원격 CI를 통과했다. 후속 보완에는 별도의 정확한 게시 버전 CI가
+적용된다. 독립적인 실제 의미 검토와 실제 모델 수정은 여전히 미검증이다.

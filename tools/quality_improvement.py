@@ -37,6 +37,14 @@ def fingerprint(paths):
     return result
 
 
+def evidence_manifest(folder):
+    result={}
+    for item in sorted(Path(folder).rglob('*')):
+        if item.is_symlink():raise ValueError('Symlink evidence refused')
+        if item.is_file():result[str(item.relative_to(folder))]=hashlib.sha256(item.read_bytes()).hexdigest()
+    return result
+
+
 def policy(path):
     path=Path(path).resolve(strict=True);cfg=read(path)
     if not path.is_relative_to(ROOT):raise ValueError('Policy must be controller-owned')
@@ -101,6 +109,8 @@ class Protocol:
 
     def check(self,allow_target_change=False):
         if policy(self.path)[3]!=self.state['authority']:raise ValueError('Authority/protected inputs changed')
+        for item in self.state['history']:
+            if evidence_manifest(Path(item['directory']))!=item['files']:raise ValueError('Prior stage evidence changed')
         if git(self.target,'branch','--show-current')!=self.cfg['branch']:raise ValueError('Candidate branch changed')
         if git(self.target,'rev-parse','HEAD')!=self.state['head']:raise ValueError('Candidate HEAD moved outside protocol')
         for name in self.cfg['allowed_paths']:
@@ -135,7 +145,7 @@ class Protocol:
         if result.get('decision_requests'):
             raise ValueError('Human decision required: '+str(result['decision_requests']))
         if stage in {'evaluate','diagnose','review'} and result.get('source_digest')!=digest(self.target):raise ValueError('Stale step result')
-        self.state['history'].append({'stage':stage,'directory':str(output),'result_sha256':sha(result),'source_digest':digest(self.target)})
+        self.state['history'].append({'stage':stage,'directory':str(output),'result_sha256':sha(result),'source_digest':digest(self.target),'files':evidence_manifest(output)})
         self.checkpoint(stage,active_step=None,expected_digest=digest(self.target))
         return result
 

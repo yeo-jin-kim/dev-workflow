@@ -107,6 +107,9 @@ and a justified diagnosis must still establish their cause. No original graph,
 source data, active topic pool or CoRA code was changed by this controller delivery.
 See `docs/implementation.md` for final test and delivery-review evidence.
 
+
+Prior phase directories are content-hashed after commands exit. Every later check and retest validates the complete recorded file set, including inputs, process logs, native results and agent outputs. Modified, missing, added or symlink evidence invalidates the candidate; a stored hash without rechecking is insufficient.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -197,3 +200,5 @@ python3 tools/quality_improvement.py analyze-topics --report PRIVATE_CAPTURED_RE
 `semantic_quality_accepted=false`를 명시한다. 분류는 증상의 위치를 좁힐 뿐 원인을 확정하려면
 재현과 근거 있는 원인 검토가 필요하다. 이번 컨트롤러 작업에서 원본 그래프·원문·실제 토픽 pool·
 CoRA 코드는 변경하지 않았다. 최종 검사와 전달 검토 증거는 `docs/implementation.md`를 참고한다.
+
+명령이 끝난 뒤 이전 단계 폴더의 내용 해시를 기록한다. 이후 검사와 재시험에서는 입력·프로세스 로그·고유 평가 결과·에이전트 출력을 포함한 전체 파일 목록을 다시 대조한다. 수정·누락·추가·심볼릭 링크 증거는 후보를 무효화한다. 해시를 저장만 하고 대조하지 않는 것은 충분하지 않다.

@@ -132,6 +132,11 @@ class AdditionalProtocolTests(unittest.TestCase):
         self.configure('model_swap');cfg=q.read(self.cfg);cfg['require_model_identity']=True;q.save(self.cfg,cfg)
         r=self.run_protocol();self.assertEqual(r['status'],'decision_required')
         self.assertIn('provider/model changed',r['reason'])
+    def test_prior_evidence_tampering_invalidates_ready_candidate(self):
+        r=self.run_protocol();self.assertEqual(r['status'],'awaiting_human_retest')
+        (Path(r['history'][0]['directory'])/'process.log').write_text('rewritten baseline evidence')
+        after=self.run_protocol();self.assertEqual(after['status'],'decision_required')
+        self.assertIn('Prior stage evidence changed',after['reason'])
     def test_failure_cannot_be_hidden_as_deferral(self):
         self.configure('hide');r=self.run_protocol()
         self.assertNotEqual(r['status'],'awaiting_human_retest')

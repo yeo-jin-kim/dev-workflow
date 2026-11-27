@@ -346,6 +346,9 @@ No scheduler or current-model repair was activated. Current captured CoRA result
 were ingested: 30 sources, 17 with failures, still not proven causal diagnoses or gold.
 See [protocol and operating instructions](docs/quality-improvement-protocol.md).
 
+
+Prior step inputs, logs and result files are hashed and rechecked before later phases and human retest; changed evidence invalidates the candidate.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -664,3 +667,5 @@ CoRA 평가 연결기는 고정 합성 정답과 실원문 실행 검사를 결�
 범위/예산 승인 참조를 설정해야 실제 실행할 수 있다. 스케줄러나 현재 모델 수정은 활성화하지
 않았다. 실제 CoRA 결과 30개 원문·17개 실패를 접수했으며 아직 확정된 원인이나 정답은 아니다.
 [프로토콜과 사용 순서](docs/quality-improvement-protocol.md)를 참고한다.
+
+이전 단계의 입력·로그·결과 파일을 해시하고 이후 단계와 사람 재시험 전에 다시 대조한다. 증거가 바뀌면 후보를 무효화한다.
