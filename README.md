@@ -389,6 +389,19 @@ Final evidence: CoRA `9485160`, **607 tests passed (21.34s)**; **8/8** synthetic
 
 The candidate is not accepted: parent inspection found a reviewer notification promoted to an authored-submission candidate. Final independent review timed out with no verdict; preliminary review requested changes, and no final pass is implied by addressing its source-guard finding. All five cycles are used. No merge, canonical graph mutation or active-pool replacement occurred. Native evidence, comparison, explicit extension authority and `final-outcome.json` are under ignored `.local/quality-improvement/topic-runtime-retrial-20261127/`. Final status is budget_exhausted with thirteen processing failures and a semantic role blocker. Next priority requires source-backed owner-role/authorship validation and another explicitly approved allowance, not a silent retry/reset. This was supervised recovery after an automatic diagnostic stop, not a successful unattended closed loop.
 
+
+### Contextual interpretation outcomes — 2026-11-27
+
+CoRA supplies context-generated alternatives/conditions/questions and exact-source assessment records before topic pool insertion (design/16 in the target repository). The controller remains independent and imports no target modules. Runtime grading v2 maps `needs_scope`, `interpretation_deferred` and `interpretation_revision_required` to `deferred`, including mixed accepted/unresolved batches; they are neither verified fixes nor code failures. Invalid contextual review remains a processing failure. A baseline with no failure stops at `needs_context` if unresolved or `no_repair_needed` if fully passing, without invoking a development worker. Both terminal records retain integrity checks; they do not approve merge or Knowledge. Existing fail-to-deferred anti-hiding checks remain in force.
+
+The optional `context_fixtures` profile field adds frozen `context:` cases through the native contextual evaluator; missing or duplicate coverage fails closed, and evaluator/model identities are preserved. The example contract allows contextual implementation/test/design fixes while protecting contextual fixtures and evaluation commands. Runtime v2 changes case expectation digests: create a fresh registry rather than reuse/rewrite historical experiments. No automatic execution, budget renewal, model training, cross-event retrieval or publication is introduced. The previous 90-minute/five-cycle experiment remains exhausted and unaccepted. This is a new owner-requested implementation, not an extension/reset of that experiment.
+
+Validation: controller full suite **188 tests passed**; final focused suite **23 tests passed (23.393s)**. CoRA integration passed **634 tests** and a bounded four-case local-model pilot met unchanged primary-selection expectations. Uncertain original-source roles remained deferred; these results do not certify general semantic accuracy or resolve the prior 13 processing failures. Independent delivery review is pending; no merge or old-episode renewal.
+
+Final provenance-bound repeat: CoRA **634 tests passed (21.26s)**, controller **188 tests passed (148.184s)**, unchanged four-case primary-selection pilot **4/4 passed**. The controller deadline-error attempt remains preserved; a clean full repeat passed without code or test-budget changes. Test logs and model output are bound to file hashes before/after execution. This is prototype delivery evidence, not merge approval or general semantic certification.
+
+Delivery review completed: the separate read-only follow-up passed all five criteria with no blockers or decision requests. Earlier requested changes and failed checks remain preserved. This final status annotation changes documentation only; publication and merge are distinct gates.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -743,3 +756,15 @@ CoRA 자체 평가기는 이제 `semanticVersion: 1`과 원문 기반 `semanticS
 최종 증거: CoRA `9485160`, **검사 607개 통과(21.34초)**, 합성 의미 사례 **8/8 통과**, 고정 실제 원문 **30/30 평가**. 처리 오류 원문은 **17 → 13건**(38개 처리 점수 통과 21 → 25, 실패 17 → 13, 사례 단위 처리 회귀 없음). 수락 항목은 14 → 17개, needs_scope는 4 → 6개로 늘었다. 사례 단위 실행 점수는 정상 보류를 처리 완료로 보므로 비공개 항목 단위 감사에서 새 보류를 별도로 기록하며 의미 수정으로 인정하지 않는다.
 
 후보는 수락하지 않는다. 상위 감독 검토에서 리뷰어 알림을 저자 논문 제출 후보로 승격한 문제가 확인됐다. 최종 독립 검토는 판정 없이 시간 초과됐고 예비 검토는 수정을 요청했으며, 소스 보호 지적을 반영한 것만으로 최종 통과를 뜻하지 않는다. 5회를 모두 사용했다. 병합·정식 그래프 변경·활성 pool 교체는 없었다. 자체 실행 증거·비교·명시적 연장 권한·`final-outcome.json`은 무시된 `.local/quality-improvement/topic-runtime-retrial-20261127/`에 있다. 최종 상태는 처리 실패 13건과 의미 역할 문제를 남긴 budget_exhausted다. 다음 우선순위는 원문 기반 사용자 역할·저자 관계 검증이며 별도로 승인된 추가 한도가 필요하고, 몰래 재시도하거나 초기화하지 않는다. 자동 진단 중단 후 감독 복구였으며 무인 폐쇄 반복의 성공은 아니다.
+
+### 맥락별 해석 결과 처리 — 2026-11-27
+
+CoRA는 토픽 pool 저장 전에 맥락에서 생성한 대안·조건·질문과 원문 그대로의 평가 기록을 제공한다(대상 저장소 설계/16). 실행기는 독립적이며 대상 모듈을 가져오지 않는다. 실행 판정 v2는 `needs_scope`, `interpretation_deferred`, `interpretation_revision_required`를 수락·미해결이 섞인 결과까지 포함하여 `deferred`로 전달한다. 검증된 수정이나 코드 실패가 아니다. 맥락 검토 무효는 처리 실패로 유지한다. 실패가 없는 기준 평가는 미해결이면 `needs_context`, 모두 통과하면 `no_repair_needed`에서 멈추고 개발 작업자를 실행하지 않는다. 두 종료 기록도 무결성 검사를 유지하며 병합·Knowledge를 승인하지 않는다. 기존 실패→보류를 수정 성공으로 숨기지 못하는 검사는 유지한다.
+
+선택적 `context_fixtures` 설정은 자체 맥락 평가기로 고정 `context:` 사례를 추가한다. 누락·중복 항목은 차단하며 평가기·모델 식별 기록을 보존한다. 예제 계약은 맥락 구현·검사·설계 수정을 허용하되 맥락 사례·평가 명령은 보호한다. 실행 v2는 사례 예상 해시를 바꾸므로 새 목록을 만들고 과거 실험을 재사용·덮어쓰지 않는다. 자동 실행·예산 갱신·모델 학습·다른 이벤트 검색·게시는 도입하지 않는다. 이전 90분·5회 실험은 소진·미수락 상태로 보존한다. 사용자가 새로 요청한 구현이며 과거 실험의 연장·초기화가 아니다.
+
+검증: 실행기 전체 **188개 검사 통과**, 최종 집중 **23개 검사 통과(23.393초)**. CoRA 연결은 **634개 검사**와 변경하지 않은 primary 선택 기준의 제한적 로컬 모델 시험 4건을 통과했다. 실제 원문의 불확실한 역할은 보류했으며 일반 의미 정확성이나 기존 처리 실패 13건의 해결을 입증하지 않는다. 독립 전달 검토는 대기 상태이며 병합이나 과거 실험 한도 갱신은 없다.
+
+최종 버전 연결 재검증: CoRA **634개 검사 통과(21.26초)**, 실행기 **188개 검사 통과(148.184초)**, 변경하지 않은 primary 선택 모델 시험 **4/4개 통과**. 실행기의 시간 한도 오류 실행은 보존했고 코드나 검사 예산을 바꾸지 않은 전체 재실행은 통과했다. 검사 로그와 모델 출력은 실행 전후 파일 해시에 연결한다. 이는 프로토타입 전달 증거이며 병합 승인이나 일반 의미 정확성의 입증은 아니다.
+
+전달 검토 완료: 별도 읽기 전용 후속 검토가 다섯 기준을 모두 통과했고 차단 항목이나 결정 요청은 없었다. 앞선 수정 요청과 실패 검사는 보존한다. 이 최종 상태 주석은 문서만 바꾸며 게시와 병합은 별도 단계다.

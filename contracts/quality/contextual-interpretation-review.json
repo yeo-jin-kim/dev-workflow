@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "contextual-interpretation-review-prototype",
+  "status": "owner_requested_implementation_review_not_execution_authorization",
+  "goal": "Review the contextual interpretation prototype: preserve original claim and caller requirements, context-generated competitors/conditions/questions, exact-source evidence, provisional selection, no unsupported pool hits and normal-context/code-failure separation.",
+  "allowed_paths": [
+    "src/cora/cognition/contextual_review.py",
+    "src/cora/cognition/staged_topics.py",
+    "src/cora/visualization/topic_review.html",
+    "tests/test_contextual_review.py",
+    "tests/test_staged_topics.py",
+    "docs/design/16-contextual-interpretation-review.md",
+    "docs/design/15-topic-candidate-review.md",
+    "docs/implementation/04-real-data-recall-review.md",
+    "docs/00-master-design.md",
+    "tools/evaluate_topic_subjects.py",
+    "tools/evaluate_contextual_review.py",
+    "tests/fixtures/contextual_review_cases.json"
+  ],
+  "protected_expectations": [
+    "original source data, canonical graph and historical failed experiments",
+    "existing foundation terminology and Knowledge adoption/approval/hit thresholds",
+    "unchanged expectedPrimary positive/negative labels; no example-specific hardcoding"
+  ],
+  "review_scope": [
+    "Review new contextual_review.py in full and its staging gate; review current changes versus 9485160, new design/16 in full and new dated sections of existing design/implementation records. Historical records are not new runtime certification.",
+    "Check generated alternatives are not evidence, complete condition coverage, source-only citations and caller critical claims; fail closed on errors without pool hits.",
+    "Working Hypothesis is provisional: unsupported alternatives remain open and do not require disproof; a positively supported competitor or unknown required primary claim blocks primary selection.",
+    "Inspect actual unit/native evaluation logs; same-model judgments are not semantic truth. Source retrieval covers only provided records; cross-event retrieval and self-modifying prompt memory are deferred.",
+    "Review is read-only. Do not start agents, execute tests requiring temporary writes, modify target/controller, choose providers, change fixtures, publish or merge. Actual supplied tests are logs, not proof of general semantic accuracy."
+  ],
+  "mandatory_evidence": [
+    "current diff/source review",
+    "actual positive/negative/context/error tests",
+    "synthetic and real-case pilot with all failed attempts preserved",
+    "English-first/Korean-second design and implementation synchronization"
+  ],
+  "merge_authorized": false,
+  "scope_clarification": "Maintainer correction: the owner-requested implementation includes native evaluation fixtures/tools and provenance. They were omitted from the first reviewer path list, not from the authorized user task. No old repair contract is renewed."
+}

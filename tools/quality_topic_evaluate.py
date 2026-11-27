@@ -16,12 +16,14 @@ def expected_cases(config):
     cases={'gold:'+c['id']:sha(c) for c in gold['cases']}
     for row in manifest['sources']:
         if not row.get('digest'):raise ValueError('Real sources must already have pinned digests')
-        cases['runtime:'+row['id']]=sha({'source':row,'expectation':'No schema/model/resolver/unsupported-source errors; not a semantic gold label'})
-    if len(cases)!=len(gold['cases'])+len(manifest['sources']):raise ValueError('Duplicate evaluation case IDs')
+        cases['runtime:'+row['id']]=sha({'source':row,'expectation':'Runtime v2: no processing/grounding errors; unresolved context or scope is deferred, not repaired or semantic gold'})
+    contextual=read(config['context_fixtures'])['cases'] if config.get('context_fixtures') else []
+    cases.update({'context:'+c['id']:sha(c) for c in contextual})
+    if len(cases)!=len(gold['cases'])+len(manifest['sources'])+len(contextual):raise ValueError('Duplicate evaluation case IDs')
     return cases
 
 
-def convert(config,gold,real,source):
+def convert(config,gold,real,source,contextual=None):
     expected=expected_cases(config);rows=[]
     runs={r['sourceId']:r for r in gold['runs']}
     for case in gold['goldEvaluation']:
@@ -39,10 +41,20 @@ def convert(config,gold,real,source):
         id_='gold:'+case['id'];rows.append({'id':id_,'expected_digest':expected[id_],'status':status})
     for run in real['runs']:
         good=run['status']=='completed' and not any(o['status'] in {'schema_error','model_error','resolver_error','unsupported_quote'} for o in run.get('outcomes',[]))
-        id_='runtime:'+run['sourceId'];rows.append({'id':id_,'expected_digest':expected[id_],'status':'pass' if good else 'fail'})
+        unresolved=any(o.get('status') in {'needs_scope','interpretation_deferred','interpretation_revision_required'} for o in run.get('outcomes',[]))
+        status='fail' if not good else 'deferred' if unresolved else 'pass'
+        id_='runtime:'+run['sourceId'];rows.append({'id':id_,'expected_digest':expected[id_],'status':status})
+    if config.get('context_fixtures'):
+        if not isinstance(contextual,dict) or not isinstance(contextual.get('cases'),list):raise ValueError('Missing contextual evaluation coverage')
+        for case in contextual['cases']:
+            id_='context:'+case['id']
+            if id_ not in expected:raise ValueError('Unknown contextual case')
+            rows.append({'id':id_,'expected_digest':expected[id_],'status':'pass' if case.get('passed') is True else 'fail'})
     if len(rows)!=len(expected) or {r['id'] for r in rows}!=set(expected):raise ValueError('Native evaluation coverage missing/duplicated')
     identities=sorted({(s.get('completion',{}).get('llm_provider') or '',s.get('completion',{}).get('llm_model') or '') for report in [gold,real] for run in report['runs'] for s in run.get('stages',[]) if s.get('completion')})
     identities=sorted(set(identities)|{(c['semanticCompletion'].get('llm_provider') or '',c['semanticCompletion'].get('llm_model') or '') for c in gold['goldEvaluation'] if c.get('semanticCompletion')})
+    if contextual:
+        identities=sorted(set(identities)|{(t['completion'].get('llm_provider') or '',t['completion'].get('llm_model') or '') for c in contextual['cases'] for t in c.get('trace',[]) if t.get('completion')})
     return {'model_identity':[{'provider':p,'model':m} for p,m in identities],'schema_version':1,'source_digest':source,'dataset_digest':sha(expected),'cases':rows,'decision_requests':[],'semantic_quality_accepted':False,'limitations':['Real-source pass means no recorded processing/grounding failure; semantic quality still requires human review.','No-source output and deferrals are not real-source semantic gold. Positive frozen gold cases prevent universal empty output from passing the complete suite.']}
 
 
@@ -60,9 +72,14 @@ def evaluate(config,target,output):
             local_manifest=output/'manifest.json';local_manifest.write_bytes(Path(config['manifest']).read_bytes())
             args+=['--snapshot',config['snapshot'],'--manifest',str(local_manifest),'--evidence-endpoint',config['evidence_endpoint']]
         with (output/(name+'.log')).open('w') as log:subprocess.run(args,cwd=target,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+    contextual=None
+    if config.get('context_fixtures'):
+        cmd=[config['python'],str(target/'tools/evaluate_contextual_review.py'),'--fixtures',config['context_fixtures'],'--output',str(output/'context.json'),'--soba-repo',config['soba_repo'],'--mlx-python',config['mlx_python']]
+        with (output/'context.log').open('w') as log:subprocess.run(cmd,cwd=target,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
+        contextual=read(output/'context.json')
     if digest(target)!=source:raise ValueError('Target changed during evaluation')
-    result=convert(config,read(output/'gold.json'),read(output/'real.json'),source)
-    result['evidence']=[str(output/(name+'.json')) for name in ['gold','real']]
+    result=convert(config,read(output/'gold.json'),read(output/'real.json'),source,contextual)
+    result['evidence']=[str(output/(name+'.json')) for name in (['gold','real','context'] if contextual else ['gold','real'])]
     save(output/'step.json',result);return result
 
 

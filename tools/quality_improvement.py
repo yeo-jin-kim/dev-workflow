@@ -13,7 +13,7 @@ from development_loop import execute, lock, save, digest
 from delivery_evidence import git
 
 ROOT=Path(__file__).resolve().parents[1]
-TERMINAL={'awaiting_human_retest','decision_required','budget_exhausted','interrupted'}
+TERMINAL={'awaiting_human_retest','decision_required','budget_exhausted','interrupted','needs_context','no_repair_needed'}
 CRITERIA={'root_cause','source_grounding','regression','documentation_sync','scope'}
 
 
@@ -156,7 +156,7 @@ class Protocol:
                 self.state=read(self.file)
                 if self.state['authority']!=self.authority:raise ValueError('Cannot renew/change an existing episode')
                 if self.state['status'] in TERMINAL:
-                    if self.state['status']=='awaiting_human_retest':
+                    if self.state['status'] in {'awaiting_human_retest','needs_context','no_repair_needed'}:
                         try:self.check()
                         except Exception as error:self.checkpoint('decision_required',reason='Candidate became stale: '+str(error))
                     return self.state
@@ -171,7 +171,12 @@ class Protocol:
                 if self.cfg.get('require_model_identity'):model_binding(initial)
                 baseline=observation(initial,self.cases,digest(self.target));previous=baseline
                 self.state['baseline']=initial
-                if not any(s=='fail' for s in baseline.values()):raise ValueError('No reproduced failure; do not manufacture a repair')
+                if not any(s=='fail' for s in baseline.values()):
+                    if any(s=='deferred' for s in baseline.values()):
+                        self.checkpoint('needs_context',reason='Unresolved context/scope without a reproduced code failure; no repair worker started',evaluation=initial)
+                        return self.state
+                    self.checkpoint('no_repair_needed',reason='No reproduced failure or unresolved context; no repair worker started',evaluation=initial)
+                    return self.state
                 stalled=0
                 for cycle in range(1,self.cfg['max_cycles']+1):
                     self.remaining();self.state['cycles']=cycle
@@ -200,7 +205,7 @@ class Protocol:
                         continue
                     stalled=0;previous=current
                     if not any(v=='fail' for v in current.values()):
-                        self.checkpoint('awaiting_human_retest',candidate_digest=digest(self.target),evaluation=candidate,review=review)
+                        self.checkpoint('needs_context' if any(v=='deferred' for v in current.values()) else 'awaiting_human_retest',candidate_digest=digest(self.target),evaluation=candidate,review=review)
                         return self.state
                 self.checkpoint('budget_exhausted',reason='Cumulative repair-cycle limit reached; residual failures preserved')
             except subprocess.TimeoutExpired as e:self.checkpoint('budget_exhausted' if time.time()>=self.state['deadline'] else 'decision_required',reason='Command timeout: '+str(e))

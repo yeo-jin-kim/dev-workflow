@@ -125,6 +125,19 @@ This is an explicitly owner-approved evaluation-policy revision, not a worker ch
 
 Validation: controller full suite **184 tests passed**; focused quality/adapter suite **19 passed in 17.307s** after the final model-identity binding update. Native CoRA `5540e8f` passed 596 regression tests and all 8 live synthetic semantic cases; the exact-name customer-work diagnostic remained false while the semantic verdict passed. No new unattended 30-source repair episode was run.
 
+
+### Contextual interpretation outcomes — 2026-11-27
+
+CoRA supplies context-generated alternatives/conditions/questions and exact-source assessment records before topic pool insertion (design/16 in the target repository). The controller remains independent and imports no target modules. Runtime grading v2 maps `needs_scope`, `interpretation_deferred` and `interpretation_revision_required` to `deferred`, including mixed accepted/unresolved batches; they are neither verified fixes nor code failures. Invalid contextual review remains a processing failure. A baseline with no failure stops at `needs_context` if unresolved or `no_repair_needed` if fully passing, without invoking a development worker. Both terminal records retain integrity checks; they do not approve merge or Knowledge. Existing fail-to-deferred anti-hiding checks remain in force.
+
+The optional `context_fixtures` profile field adds frozen `context:` cases through the native contextual evaluator; missing or duplicate coverage fails closed, and evaluator/model identities are preserved. The example contract allows contextual implementation/test/design fixes while protecting contextual fixtures and evaluation commands. Runtime v2 changes case expectation digests: create a fresh registry rather than reuse/rewrite historical experiments. No automatic execution, budget renewal, model training, cross-event retrieval or publication is introduced. The previous 90-minute/five-cycle experiment remains exhausted and unaccepted. This is a new owner-requested implementation, not an extension/reset of that experiment.
+
+Validation: controller full suite **188 tests passed**; final focused suite **23 tests passed (23.393s)**. CoRA integration passed **634 tests** and a bounded four-case local-model pilot met unchanged primary-selection expectations. Uncertain original-source roles remained deferred; these results do not certify general semantic accuracy or resolve the prior 13 processing failures. Independent delivery review is pending; no merge or old-episode renewal.
+
+Final provenance-bound repeat: CoRA **634 tests passed (21.26s)**, controller **188 tests passed (148.184s)**, unchanged four-case primary-selection pilot **4/4 passed**. The controller deadline-error attempt remains preserved; a clean full repeat passed without code or test-budget changes. Test logs and model output are bound to file hashes before/after execution. This is prototype delivery evidence, not merge approval or general semantic certification.
+
+Delivery review completed: the separate read-only follow-up passed all five criteria with no blockers or decision requests. Earlier requested changes and failed checks remain preserved. This final status annotation changes documentation only; publication and merge are distinct gates.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -229,3 +242,15 @@ CoRA 자체 평가기는 이제 `semanticVersion: 1`과 원문 기반 `semanticS
 이는 사용자가 명시적으로 승인한 평가 정책 변경이며 작업자가 통과하려고 정답을 바꾼 것이 아니다. 과거 실패 실험·원문·진단용 예상 이름은 유지한다. 새 의미 대상 설명은 대상·활동·범위와 보호된 명시적 식별 정보를 정의한다. 새 실험에는 새 고정 예상 기준이 필요하며 과거 종료 상태와 사용 예산은 초기화하지 않는다. 같은 로컬 모델의 별도 호출은 독립적인 사람의 의미 검증이 아니다. 자동 병합·그래프 승인·과거 실제 원문 오류 17건의 수정을 주장하지 않는다.
 
 검증: 실행기 전체 검사 **184개 통과**, 최종 모델 식별 고정 변경 후 품질·연결 집중 검사 **19개 통과(17.307초)**. CoRA `5540e8f`는 회귀 검사 596개와 실제 합성 의미 평가 8개를 통과했다. 고객 업무의 이름 정확 일치 진단은 false를 유지하고 의미 판정은 통과했다. 새로운 원문 30개 무인 수정 실험은 실행하지 않았다.
+
+### 맥락별 해석 결과 처리 — 2026-11-27
+
+CoRA는 토픽 pool 저장 전에 맥락에서 생성한 대안·조건·질문과 원문 그대로의 평가 기록을 제공한다(대상 저장소 설계/16). 실행기는 독립적이며 대상 모듈을 가져오지 않는다. 실행 판정 v2는 `needs_scope`, `interpretation_deferred`, `interpretation_revision_required`를 수락·미해결이 섞인 결과까지 포함하여 `deferred`로 전달한다. 검증된 수정이나 코드 실패가 아니다. 맥락 검토 무효는 처리 실패로 유지한다. 실패가 없는 기준 평가는 미해결이면 `needs_context`, 모두 통과하면 `no_repair_needed`에서 멈추고 개발 작업자를 실행하지 않는다. 두 종료 기록도 무결성 검사를 유지하며 병합·Knowledge를 승인하지 않는다. 기존 실패→보류를 수정 성공으로 숨기지 못하는 검사는 유지한다.
+
+선택적 `context_fixtures` 설정은 자체 맥락 평가기로 고정 `context:` 사례를 추가한다. 누락·중복 항목은 차단하며 평가기·모델 식별 기록을 보존한다. 예제 계약은 맥락 구현·검사·설계 수정을 허용하되 맥락 사례·평가 명령은 보호한다. 실행 v2는 사례 예상 해시를 바꾸므로 새 목록을 만들고 과거 실험을 재사용·덮어쓰지 않는다. 자동 실행·예산 갱신·모델 학습·다른 이벤트 검색·게시는 도입하지 않는다. 이전 90분·5회 실험은 소진·미수락 상태로 보존한다. 사용자가 새로 요청한 구현이며 과거 실험의 연장·초기화가 아니다.
+
+검증: 실행기 전체 **188개 검사 통과**, 최종 집중 **23개 검사 통과(23.393초)**. CoRA 연결은 **634개 검사**와 변경하지 않은 primary 선택 기준의 제한적 로컬 모델 시험 4건을 통과했다. 실제 원문의 불확실한 역할은 보류했으며 일반 의미 정확성이나 기존 처리 실패 13건의 해결을 입증하지 않는다. 독립 전달 검토는 대기 상태이며 병합이나 과거 실험 한도 갱신은 없다.
+
+최종 버전 연결 재검증: CoRA **634개 검사 통과(21.26초)**, 실행기 **188개 검사 통과(148.184초)**, 변경하지 않은 primary 선택 모델 시험 **4/4개 통과**. 실행기의 시간 한도 오류 실행은 보존했고 코드나 검사 예산을 바꾸지 않은 전체 재실행은 통과했다. 검사 로그와 모델 출력은 실행 전후 파일 해시에 연결한다. 이는 프로토타입 전달 증거이며 병합 승인이나 일반 의미 정확성의 입증은 아니다.
+
+전달 검토 완료: 별도 읽기 전용 후속 검토가 다섯 기준을 모두 통과했고 차단 항목이나 결정 요청은 없었다. 앞선 수정 요청과 실패 검사는 보존한다. 이 최종 상태 주석은 문서만 바꾸며 게시와 병합은 별도 단계다.

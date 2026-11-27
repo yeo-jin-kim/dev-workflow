@@ -16,7 +16,10 @@
     "docs/design/15-topic-candidate-review.md",
     "docs/design/11-natural-language-recall.md",
     "docs/implementation/04-real-data-recall-review.md",
-    "docs/00-master-design.md"
+    "docs/00-master-design.md",
+    "src/cora/cognition/contextual_review.py",
+    "tests/test_contextual_review.py",
+    "docs/design/16-contextual-interpretation-review.md"
   ],
   "cases": "/absolute/controller/path/frozen-case-digests.json",
   "protected_files": [
@@ -31,7 +34,9 @@
     "/absolute/private/controller/path/pinned-real-manifest.json",
     "/absolute/private/path/snapshot.json",
     "/absolute/path/to/cora/docs/foundations/00-conceptual-foundation.md",
-    "/absolute/path/to/cora/src/cora/cognition/meaningful_topics.py"
+    "/absolute/path/to/cora/src/cora/cognition/meaningful_topics.py",
+    "/absolute/path/to/cora/tools/evaluate_contextual_review.py",
+    "/absolute/path/to/cora/tests/fixtures/contextual_review_cases.json"
   ],
   "commands": {
     "evaluate": [

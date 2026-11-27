@@ -69,6 +69,21 @@ class QualityProtocolTests(unittest.TestCase):
         cfg['step_seconds']=3601;q.save(self.cfg,cfg)
         with self.assertRaisesRegex(ValueError,'per-step'):q.Protocol(self.cfg)
 
+    def test_context_only_baseline_does_not_start_development_worker(self):
+        self.script.write_text(self.script.read_text().replace("'pass' if after else 'fail'","'pass' if after else 'deferred'"))
+        result=self.run_protocol()
+        self.assertEqual(result['status'],'needs_context');self.assertEqual(result['cycles'],0)
+        self.assertEqual(len(result['history']),1)
+        self.assertEqual(self.run_protocol()['status'],'needs_context')
+        (self.target/'code').write_text('changed')
+        self.assertEqual(self.run_protocol()['status'],'decision_required')
+
+    def test_passing_baseline_is_normal_noop_not_owner_decision(self):
+        self.script.write_text(self.script.read_text().replace("'pass' if after else 'fail'","'pass'"))
+        result=self.run_protocol()
+        self.assertEqual(result['status'],'no_repair_needed');self.assertEqual(result['cycles'],0)
+        self.assertEqual(len(result['history']),1)
+
     def test_full_loop_stops_at_human_retest_and_repeated_run_does_not_renew(self):
         result=self.run_protocol()
         self.assertEqual(result['status'],'awaiting_human_retest');self.assertEqual(result['cycles'],1)
@@ -188,6 +203,37 @@ class TopicAdapterTests(unittest.TestCase):
             self.assertEqual(e.convert(cfg,gr,rr,'source')['cases'][0]['status'],'deferred')
             del row['semanticVersion']
             with self.assertRaisesRegex(ValueError,'fallback'):e.convert(cfg,gr,rr,'source')
+
+    def test_scope_and_interpretation_deferrals_are_not_runtime_passes(self):
+        import quality_topic_evaluate as e
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);gold=root/'gold.json';manifest=root/'manifest.json'
+            q.save(gold,{'cases':[{'id':'positive','text':'Project','expected':[['project','Project']]}]})
+            q.save(manifest,{'sources':[{'id':'real','digest':'frozen'}]})
+            cfg={'gold':str(gold),'manifest':str(manifest)}
+            gr={'runs':[{'sourceId':'positive','status':'completed'}],'goldEvaluation':[{'id':'positive','exactMatch':True,'forbiddenCategoryPresent':False}]}
+            for state in ['needs_scope','interpretation_deferred','interpretation_revision_required']:
+                rr={'runs':[{'sourceId':'real','status':'completed','outcomes':[{'status':state}]}]}
+                self.assertEqual(e.convert(cfg,gr,rr,'source')['cases'][1]['status'],'deferred')
+            rr={'runs':[{'sourceId':'real','status':'completed_with_issues','outcomes':[{'status':'context_review_error'}]}]}
+            self.assertEqual(e.convert(cfg,gr,rr,'source')['cases'][1]['status'],'fail')
+
+    def test_optional_context_fixture_coverage_and_verdict_cannot_disappear(self):
+        import quality_topic_evaluate as e
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);gold=root/'gold.json';manifest=root/'manifest.json';context=root/'context.json'
+            q.save(gold,{'cases':[{'id':'positive'}]});q.save(manifest,{'sources':[{'id':'real','digest':'frozen'}]})
+            q.save(context,{'cases':[{'id':'role','expectedPrimary':False}]})
+            cfg={'gold':str(gold),'manifest':str(manifest),'context_fixtures':str(context)}
+            gr={'runs':[{'sourceId':'positive','status':'completed'}],'goldEvaluation':[{'id':'positive','exactMatch':True,'forbiddenCategoryPresent':False}]}
+            rr={'runs':[{'sourceId':'real','status':'completed'}]}
+            with self.assertRaisesRegex(ValueError,'contextual'):e.convert(cfg,gr,rr,'source')
+            cr={'cases':[{'id':'role','passed':True}]}
+            self.assertEqual(e.convert(cfg,gr,rr,'source',cr)['cases'][-1]['status'],'pass')
+            cr['cases'][0]['passed']=1
+            self.assertEqual(e.convert(cfg,gr,rr,'source',cr)['cases'][-1]['status'],'fail')
+            cr['cases']=[]
+            with self.assertRaisesRegex(ValueError,'coverage'):e.convert(cfg,gr,rr,'source',cr)
 
     def test_agent_roles_are_separate_readonly_and_workspace_write(self):
         import quality_agent_stage as a
