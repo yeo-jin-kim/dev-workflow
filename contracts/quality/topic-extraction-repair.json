@@ -18,7 +18,9 @@
     "docs/00-master-design.md",
     "src/cora/cognition/contextual_review.py",
     "tests/test_contextual_review.py",
-    "docs/design/16-contextual-interpretation-review.md"
+    "docs/design/16-contextual-interpretation-review.md",
+    "src/cora/cognition/contextual_sources.py",
+    "tests/test_contextual_sources.py"
   ],
   "protected_expectations": [
     "tests/fixtures/topic_subject_gold.json",
@@ -27,7 +29,8 @@
     "foundation documents, distinct-source threshold and approval gates",
     "tests/fixtures/contextual_review_cases.json",
     "tools/evaluate_contextual_review.py",
-    "Contextual review: original claim unchanged, evidence only from real source spans, unsupported alternatives retained, no automatic Knowledge adoption"
+    "Contextual review: original claim unchanged, evidence only from real source spans, unsupported alternatives retained, no automatic Knowledge adoption",
+    "tests/fixtures/contextual_source_cases.json"
   ],
   "mandatory_evidence": [
     "exact clean baseline source identity and failed reproduction",

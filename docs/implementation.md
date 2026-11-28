@@ -945,6 +945,72 @@ Final provenance-bound repeat: CoRA **634 tests passed (21.26s)**, controller **
 
 Delivery review completed: the separate read-only follow-up passed all five criteria with no blockers or decision requests. Earlier requested changes and failed checks remain preserved. This final status annotation changes documentation only; publication and merge are distinct gates.
 
+### Cross-source context evaluation — 2026-11-28
+
+The target now performs bounded original-source lookup inside its current entity
+snapshot before contextual assessment; its native topic evaluator narrows lookup
+to its frozen manifest only. This controller imports no target code and changes
+no execution budget. Optional `additional_context_fixtures` paths append protected
+source-linkage cases to the existing `context_fixtures` set through native
+`--additional-fixtures` arguments. All old case digests remain unchanged; duplicate
+IDs, omitted cases and extras without a primary fixture are rejected. New case
+sets require a new frozen registry, not restarting/regrading old episodes.
+
+Templates enumerate the new retrieval module/test and protect the new synthetic
+source-context fixture. Incomplete related-source lookup remains normal context
+`deferred`; its sources do not add pool hits. Missing/invalid model or processing
+results remain failures under the unchanged anti-hiding protocol. Evaluation cases
+can test conservative non-adoption, but neither the controller nor model certifies
+semantic truth. Graph traversal, alternative rewriting, original source/graph
+mutation and new repair-episode execution remain outside this delivery. The new
+read-only review contract is `contracts/quality/contextual-source-retrieval.json`.
+Actual extension validation is pending; previous 188-test results are historical.
+
+Extension regression: controller **190 tests passed (139.761s)**, including unchanged old case digests, required coverage for additional cases and rejection of duplicates/missing primary fixtures. The target preserves failed positive-model cases as failures; ordinary context deferral is not credited as a positive semantic fix. No old episode or execution budget was renewed.
+
+Extension validation — 2026-11-28: hash-bound CoRA **663 tests passed (22.47s)**;
+controller **190 tests passed (139.761s)**. Final local Gemma pilot **5/5** met the
+unchanged primary-selection expectations, including actual participation supported
+by a linked original and no authorship promotion from a different submission
+edition. The positive case used separate link/hypothesis assessments. Three earlier
+pilots (4/5, 3/5, 4/5) remain failures in private evidence, not retroactively passed.
+The source-bound real lookup probe retained three complete originals from 242 other
+matching cues in a 3,840-event snapshot and recorded 239 unexamined; this is lookup
+verification, not semantic accuracy. UI source inspection, JavaScript syntax and
+diff formatting passed; browser interaction and active-preview replacement were
+not performed. Independent read-only delivery review is pending. Existing 13-source
+processing failures were not rerun or claimed fixed. No source/graph write, old
+repair budget renewal, automatic rewriting, PR or merge.
+
+Final delivery candidate — 2026-11-28: **664 CoRA tests passed (22.73s)** and
+**190 controller tests passed (139.761s)**. After the native gold-isolation fix,
+the unchanged five-case model suite again passed **5/5** on the fully bound
+candidate. The existing ordinary synthetic gold cases now have no companion
+corpus: they are independent worlds even if names coincide. Real evaluation uses
+only its manifest; explicit cross-source fixtures supply their own companion set.
+The CLI integration test verifies this distinction without claiming model accuracy.
+Final real lookup again resolved three originals and reported 239 unexamined.
+
+The first independent review timed out without a verdict; it is not a pass.
+A concise read-only follow-up is pending. Earlier test/model failures and review
+output are preserved. This extension runs only after existing extraction,
+identity and semantic gates; it does not rescue an upstream `no_subject` or
+semantic rejection automatically. Active preview, graph data and old repair
+limits remain unchanged; graph traversal and alternative rewriting are deferred.
+
+Post-review validation — 2026-11-28: after the primary-time correction, bound CoRA
+regression **678 passed (23.44s)** and the unchanged model suite again passed
+**5/5**. Controller code still matches its **190-test** bound evidence. Actual
+source lookup remains three retained originals/239 unexamined. The fourteen new
+invalid-primary-time cases include empty and nonmatching explicit corpora. No
+companion records means no cross-source query is requested; ordinary single-source
+claims retain their previous behavior without claiming temporal corroboration.
+The independent correction request remains preserved; targeted follow-up is
+pending. No original data, graph, expected labels, thresholds or old episode limits
+changed.
+
+Delivery review completed — 2026-11-28: independent read-only follow-up passed all five criteria with no blockers or owner decisions. Earlier timeouts, requested correction and failed pilots remain preserved. This status annotation changes documentation only; commit/push is branch delivery, not merge or semantic adoption.
+
 <!-- document-language: ko -->
 # 한국어 번역
 
@@ -1728,3 +1794,61 @@ CoRA는 토픽 pool 저장 전에 맥락에서 생성한 대안·조건·질문�
 최종 버전 연결 재검증: CoRA **634개 검사 통과(21.26초)**, 실행기 **188개 검사 통과(148.184초)**, 변경하지 않은 primary 선택 모델 시험 **4/4개 통과**. 실행기의 시간 한도 오류 실행은 보존했고 코드나 검사 예산을 바꾸지 않은 전체 재실행은 통과했다. 검사 로그와 모델 출력은 실행 전후 파일 해시에 연결한다. 이는 프로토타입 전달 증거이며 병합 승인이나 일반 의미 정확성의 입증은 아니다.
 
 전달 검토 완료: 별도 읽기 전용 후속 검토가 다섯 기준을 모두 통과했고 차단 항목이나 결정 요청은 없었다. 앞선 수정 요청과 실패 검사는 보존한다. 이 최종 상태 주석은 문서만 바꾸며 게시와 병합은 별도 단계다.
+
+### 원문 간 맥락 평가 — 2026-11-28
+
+대상은 맥락 평가 전에 현재 개체 snapshot 안의 실제 원문을 제한적으로 검색하고,
+자체 토픽 평가기는 고정 manifest만 검색한다. 실행기는 대상 코드를 가져오지 않고
+실행 예산도 바꾸지 않는다. 선택적 `additional_context_fixtures` 경로는 자체
+`--additional-fixtures` 인자를 통해 기존 `context_fixtures`에 보호된 원문 연결 사례를
+추가한다. 기존 사례 해시는 유지하며 중복 ID·평가 누락·기본 사례 없이 추가 사례만
+지정한 설정은 거부한다. 사례 집합이 달라지면 새 고정 목록을 만들며 과거 실험을
+재시작하거나 다시 채점하지 않는다.
+
+예제는 새 검색 모듈·검사를 허용 경로에 명시하고 새 합성 원문 맥락 사례를 보호한다.
+관련 원문 조회가 불완전하면 정상 맥락 `deferred`로 남고 검색 원문은 pool hit를
+늘리지 않는다. 모델/처리 결과 누락·무효는 기존 실패 숨김 방지 정책의 실패로 유지한다.
+보수적 미채택을 검사할 수 있지만 실행기나 모델은 의미적 진실을 인증하지 않는다.
+그래프 탐색·대안 재작성·원본/그래프 변경·새 수정 실험 실행은 이번 전달에 포함하지
+않는다. 새 읽기 전용 검토 계약은 `contracts/quality/contextual-source-retrieval.json`이다.
+확장 검증 결과는 대기 상태이며 이전 188개 검사 결과는 과거 기록이다.
+
+확장 회귀 검증: 실행기 **190개 검사 통과(139.761초)**. 기존 사례 해시 유지·추가 사례 전체 평가·중복/기본 사례 누락 거부를 포함한다. 대상에서 실패한 긍정 모델 사례는 실패로 유지하며 정상 맥락 보류를 긍정적인 의미 수정으로 계산하지 않는다. 과거 실험이나 실행 예산을 갱신하지 않았다.
+
+확장 검증 — 2026-11-28: 코드에 연결한 CoRA **663개 검사 통과(22.47초)**,
+실행기 **190개 검사 통과(139.761초)**. 마지막 로컬 Gemma 시험은 변경하지 않은
+primary 선택 기준 **5/5개**를 충족했다. 연결된 실제 원문의 참여 근거로 원래 가설을
+선택하고 다른 제출 연도로 저자 참여를 승격하지 않는 경우를 포함한다. 긍정 사례는
+연결과 해석을 나눠 평가했다. 앞선 시험 세 번(4/5·3/5·4/5)은 비공개 증거에 실패로
+보존하며 소급해서 통과로 바꾸지 않는다. 코드에 연결한 실제 검색 시험은 이벤트
+3,840개 중 검토 원문 외 일치 단서 242개에서 전체 원문 3개를 유지하고 239개를
+미검토로 기록했다. 이는 검색 동작 검증이며 의미 정확성이 아니다. UI 소스 검토·
+JavaScript 문법·diff 형식 검사는 통과했고 브라우저 조작이나 활성 미리보기 교체는
+하지 않았다. 독립적인 읽기 전용 전달 검토는 대기 상태다. 기존 원문 처리 실패 13건은
+재실험하거나 해결했다고 주장하지 않는다. 원본/그래프 쓰기·과거 수정 예산 갱신·
+자동 대안 재작성·PR·병합은 없다.
+
+최종 전달 후보 — 2026-11-28: **CoRA 664개 검사 통과(22.73초)**,
+**실행기 190개 검사 통과(139.761초)**. 자체 합성 기준 평가 격리 보완 후 변경하지
+않은 모델 시험 다섯 건이 전체 코드에 연결된 후보에서 다시 **5/5개 통과**했다.
+일반 합성 기준 사례는 이름이 같아도 서로 독립된 상황이므로 보강 검색 범위를
+비워 둔다. 실제 평가는 manifest만 사용하고 명시적인 원문 연결 사례는 자체 관련
+원문 집합을 제공한다. CLI 통합 검사는 이 구분을 확인하며 모델 정확성을 주장하지
+않는다. 마지막 실제 검색도 원문 3개를 조회하고 미검토 239개를 기록했다.
+
+첫 독립 검토는 판정 없이 시간 초과됐으며 통과로 취급하지 않는다. 간결한 증거를
+사용한 읽기 전용 후속 검토는 대기 상태다. 앞선 검사·모델 실패와 검토 출력은
+보존한다. 이 확장은 기존 추출·동일성·의미 검증을 통과한 뒤 실행하며 앞 단계의
+`no_subject`나 의미 거절을 자동 복구하지 않는다. 활성 미리보기·그래프 데이터·
+과거 수정 한도는 그대로이며 그래프 탐색과 대안 재작성은 보류 상태다.
+
+검토 후 검증 — 2026-11-28: 기준 시점 보완 후 코드에 연결한 CoRA 회귀는
+**678개 통과(23.44초)**이고 변경하지 않은 모델 시험도 다시 **5/5개 통과**했다.
+실행기 코드는 **190개 검사** 증거와 계속 일치한다. 실제 원문 검색도 유지 원문
+3개/미검토 239개로 동일하다. 새 무효 기준 시점 사례 14개는 빈 범위와 불일치 범위의
+명시적 검색도 포함한다. 관련 기록이 없으면 원문 간 검색을 요청하지 않으며 단일
+원문 주장은 시간적 보강 근거를 얻었다고 주장하지 않고 기존 동작을 유지한다.
+독립 검토의 수정 요청은 보존하고 해당 부분의 후속 검토를 진행할 예정이다.
+원본·그래프·예상 정답·기준 횟수·과거 실험 한도는 바꾸지 않았다.
+
+전달 검토 완료 — 2026-11-28: 독립적인 읽기 전용 후속 검토가 다섯 기준을 모두 통과했고 차단 항목이나 사용자 결정 요청은 없었다. 앞선 시간 초과·수정 요청·실패 시험은 보존한다. 이 상태 주석은 문서만 바꾸며 commit/push는 브랜치 전달이지 병합이나 의미 채택이 아니다.

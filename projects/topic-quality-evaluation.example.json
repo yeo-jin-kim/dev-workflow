@@ -6,5 +6,8 @@
   "evidence_endpoint": "http://127.0.0.1:8766",
   "soba_repo": "/absolute/path/to/soba",
   "mlx_python": "/absolute/path/to/local/model/python",
-  "context_fixtures": "/absolute/path/to/cora/tests/fixtures/contextual_review_cases.json"
+  "context_fixtures": "/absolute/path/to/cora/tests/fixtures/contextual_review_cases.json",
+  "additional_context_fixtures": [
+    "/absolute/path/to/cora/tests/fixtures/contextual_source_cases.json"
+  ]
 }

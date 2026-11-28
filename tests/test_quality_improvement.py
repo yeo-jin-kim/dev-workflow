@@ -252,4 +252,34 @@ class TopicAdapterTests(unittest.TestCase):
             self.assertEqual([c[c.index('-s')+1] for c in calls],['read-only','workspace-write','read-only'])
             self.assertTrue(all('--model' not in c for c in calls))
 
+    def test_additional_context_sources_preserve_old_case_digests_and_require_full_coverage(self):
+        import quality_topic_evaluate as e
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);gold=root/'gold.json';manifest=root/'manifest.json';context=root/'context.json';extra=root/'extra.json'
+            q.save(gold,{'cases':[{'id':'positive'}]});q.save(manifest,{'sources':[{'id':'real','digest':'frozen'}]})
+            q.save(context,{'cases':[{'id':'role','expectedPrimary':False}]})
+            q.save(extra,{'cases':[{'id':'linked','expectedPrimary':True}]})
+            cfg={'gold':str(gold),'manifest':str(manifest),'context_fixtures':str(context)}
+            before=e.expected_cases(cfg)
+            cfg['additional_context_fixtures']=[str(extra)]
+            after=e.expected_cases(cfg)
+            self.assertEqual({k:after[k] for k in before},before)
+            self.assertIn('context:linked',after)
+            gr={'runs':[{'sourceId':'positive','status':'completed'}],'goldEvaluation':[{'id':'positive','exactMatch':True,'forbiddenCategoryPresent':False}]}
+            rr={'runs':[{'sourceId':'real','status':'completed'}]}
+            cr={'cases':[{'id':'role','passed':True}]}
+            with self.assertRaisesRegex(ValueError,'coverage'):e.convert(cfg,gr,rr,'code',cr)
+            cr['cases'].append({'id':'linked','passed':True})
+            self.assertEqual(len(e.convert(cfg,gr,rr,'code',cr)['cases']),4)
+            q.save(extra,{'cases':[{'id':'role','expectedPrimary':True}]})
+            with self.assertRaisesRegex(ValueError,'Duplicate'):e.expected_cases(cfg)
+
+    def test_extra_context_cases_cannot_exist_without_primary_fixture(self):
+        import quality_topic_evaluate as e
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);gold=root/'gold.json';manifest=root/'manifest.json'
+            q.save(gold,{'cases':[]});q.save(manifest,{'sources':[]})
+            with self.assertRaisesRegex(ValueError,'primary fixture'):
+                e.expected_cases({'gold':str(gold),'manifest':str(manifest),'additional_context_fixtures':['extra.json']})
+
 if __name__=='__main__':unittest.main()

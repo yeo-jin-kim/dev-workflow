@@ -19,7 +19,9 @@
     "docs/00-master-design.md",
     "src/cora/cognition/contextual_review.py",
     "tests/test_contextual_review.py",
-    "docs/design/16-contextual-interpretation-review.md"
+    "docs/design/16-contextual-interpretation-review.md",
+    "src/cora/cognition/contextual_sources.py",
+    "tests/test_contextual_sources.py"
   ],
   "cases": "/absolute/controller/path/frozen-case-digests.json",
   "protected_files": [
@@ -36,7 +38,8 @@
     "/absolute/path/to/cora/docs/foundations/00-conceptual-foundation.md",
     "/absolute/path/to/cora/src/cora/cognition/meaningful_topics.py",
     "/absolute/path/to/cora/tools/evaluate_contextual_review.py",
-    "/absolute/path/to/cora/tests/fixtures/contextual_review_cases.json"
+    "/absolute/path/to/cora/tests/fixtures/contextual_review_cases.json",
+    "/absolute/path/to/cora/tests/fixtures/contextual_source_cases.json"
   ],
   "commands": {
     "evaluate": [

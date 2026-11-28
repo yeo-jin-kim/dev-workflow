@@ -17,7 +17,10 @@ def expected_cases(config):
     for row in manifest['sources']:
         if not row.get('digest'):raise ValueError('Real sources must already have pinned digests')
         cases['runtime:'+row['id']]=sha({'source':row,'expectation':'Runtime v2: no processing/grounding errors; unresolved context or scope is deferred, not repaired or semantic gold'})
-    contextual=read(config['context_fixtures'])['cases'] if config.get('context_fixtures') else []
+    additional=config.get('additional_context_fixtures',[])
+    if not isinstance(additional,list) or any(not isinstance(p,str) for p in additional):raise ValueError('Additional contextual fixtures must be paths')
+    if additional and not config.get('context_fixtures'):raise ValueError('Additional contextual fixtures require a primary fixture')
+    contextual=[c for path in ([config['context_fixtures'],*additional] if config.get('context_fixtures') else []) for c in read(path)['cases']]
     cases.update({'context:'+c['id']:sha(c) for c in contextual})
     if len(cases)!=len(gold['cases'])+len(manifest['sources'])+len(contextual):raise ValueError('Duplicate evaluation case IDs')
     return cases
@@ -75,6 +78,7 @@ def evaluate(config,target,output):
     contextual=None
     if config.get('context_fixtures'):
         cmd=[config['python'],str(target/'tools/evaluate_contextual_review.py'),'--fixtures',config['context_fixtures'],'--output',str(output/'context.json'),'--soba-repo',config['soba_repo'],'--mlx-python',config['mlx_python']]
+        for fixture in config.get('additional_context_fixtures',[]):cmd+=['--additional-fixtures',fixture]
         with (output/'context.log').open('w') as log:subprocess.run(cmd,cwd=target,env=env,stdout=log,stderr=subprocess.STDOUT,check=True)
         contextual=read(output/'context.json')
     if digest(target)!=source:raise ValueError('Target changed during evaluation')

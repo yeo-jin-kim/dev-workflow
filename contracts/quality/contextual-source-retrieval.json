@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "id": "contextual-source-retrieval-prototype",
+  "status": "owner_requested_next_step_implementation_review_not_repair_episode_authority",
+  "goal": "Review scoped, read-only cross-event original-source retrieval and its assessment/pool gate; no autonomous alternative rewriting.",
+  "allowed_paths": [
+    "src/cora/cognition/contextual_sources.py",
+    "src/cora/cognition/contextual_review.py",
+    "src/cora/cognition/staged_topics.py",
+    "src/cora/visualization/topic_review.html",
+    "tools/evaluate_contextual_review.py",
+    "tools/evaluate_topic_subjects.py",
+    "tests/test_contextual_sources.py",
+    "tests/test_staged_topics.py",
+    "tests/fixtures/contextual_source_cases.json",
+    "docs/design/16-contextual-interpretation-review.md",
+    "docs/design/15-topic-candidate-review.md",
+    "docs/implementation/04-real-data-recall-review.md",
+    "docs/00-master-design.md"
+  ],
+  "protected_expectations": [
+    "Existing semantic labels, source data, graph, approval/hit gates and prior episodes",
+    "Original claim, role requirements, citations, no fabricated sources or metadata-only proof",
+    "No matches is not contradiction; incomplete search cannot approve; no hidden failure-to-deferral repair credit"
+  ],
+  "review_scope": [
+    "Read target diff against a25b899 and controller diff against be125af; existing earlier review is not certification of these changes.",
+    "Review actual source/diff, supplied test logs/code bindings and bounded local-model pilot including failures. Inspect new sections of bilingual docs and master status.",
+    "Check only supplied entity snapshot/manifest is searched; originals resolved through existing resolver, exact facets/as-of constraints, namespace/source hash/quote preservation and linkage checks; related sources never add pool hits.",
+    "Review no silent source truncation, future/missing-time behavior, corpus limits and unavailable/oversize originals. Distinguish deterministic gating tests and same-model semantic quality.",
+    "Controller may add frozen extra fixture files; reject missing/duplicate coverage and preserve old cases/episodes.",
+    "Read-only: no source changes, agents, publication, merge, provider choices, budget renewals or test reruns requiring writes. Review ordinary actionable corrections without inventing new permission requirements."
+  ],
+  "mandatory_evidence": [
+    "Hash-bound target/controller tests",
+    "Frozen source-context positive/negative cases, previous labels preserved",
+    "Bilingual implementation/design synchronization",
+    "Source-aware review UI source/syntax inspection; no unperformed browser claim"
+  ],
+  "merge_authorized": false
+}
